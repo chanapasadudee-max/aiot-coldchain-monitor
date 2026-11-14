@@ -3,31 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AIoT Industrial Cold Chain Monitor</title>
-  
+  <title>AIoT Industrial Cold Chain — Smart Facility Guard</title>
+
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  
-  <!-- Fonts & Chart.js -->
+
+  <!-- Google Fonts & Chart.js -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     :root {
-      --bg: #0b1120;
-      --card-bg: rgba(30, 41, 59, 0.7);
+      --bg: #070b14;
+      --card-bg: rgba(17, 24, 39, 0.72);
+      --card-hover: rgba(30, 41, 59, 0.85);
       --card-border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
+      --text: #f1f5f9;
       --text-dim: #94a3b8;
+      --track: rgba(255, 255, 255, 0.07);
       --primary: #38bdf8;
-      --success: #10b981;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --glow-danger: rgba(239, 68, 68, 0.35);
-      --glow-success: rgba(16, 185, 129, 0.25);
+      --primary-glow: rgba(56, 189, 248, 0.3);
+      --temp-good: #10b981;
+      --temp-warn: #f59e0b;
+      --temp-crit: #ef4444;
+      --humid-color: #38bdf8;
+      --slope-color: #a855f7;
+      --shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5);
+      --orb-opacity: 0.16;
+    }
+
+    html[data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-hover: rgba(255, 255, 255, 0.95);
+      --card-border: rgba(15, 23, 42, 0.08);
+      --text: #0f172a;
+      --text-dim: #64748b;
+      --track: rgba(15, 23, 42, 0.08);
+      --shadow: 0 15px 35px -8px rgba(15, 23, 42, 0.12);
+      --orb-opacity: 0.08;
     }
 
     body {
@@ -35,390 +52,663 @@
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 16px;
+      padding: 24px 20px 40px;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
 
-    .container {
+    /* Ambient Glowing Orbs */
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(100px); opacity: var(--orb-opacity);
+      pointer-events: none; z-index: 0;
+      transition: opacity 0.5s ease;
+    }
+    .orb-1 { width: 450px; height: 450px; background: #0284c7; top: -140px; left: -100px; animation: float1 24s ease-in-out infinite alternate; }
+    .orb-2 { width: 400px; height: 400px; background: #7e22ce; bottom: -120px; right: -80px; animation: float2 28s ease-in-out infinite alternate; }
+    .orb-3 { width: 320px; height: 320px; background: #059669; top: 35%; right: 25%; animation: float1 32s ease-in-out infinite alternate-reverse; }
+
+    @keyframes float1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 35px) scale(1.1); } }
+    @keyframes float2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-60px, -45px) scale(0.92); } }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 650px;
+      max-width: 960px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
     }
 
-    /* Header */
+    /* Header Nav */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
+      padding: 16px 22px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .brand-icon {
-      font-size: 26px;
-      background: rgba(56, 189, 248, 0.15);
-      padding: 6px 10px;
-      border-radius: 12px;
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 8px 20px var(--primary-glow);
     }
 
-    .brand-title {
-      font-size: 15px;
+    .brand-text h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
       font-weight: 700;
-      line-height: 1.2;
+      letter-spacing: -0.02em;
     }
 
-    .brand-sub {
-      font-size: 11px;
+    .brand-text p {
+      font-size: 0.78rem;
       color: var(--text-dim);
-    }
-
-    .live-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--success);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
       border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--temp-good);
     }
 
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
+    .status-dot {
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-      animation: pulse 1.8s infinite;
+      background: var(--temp-good);
+      box-shadow: 0 0 10px var(--temp-good);
+      animation: pulseDot 1.8s infinite;
     }
 
-    @keyframes pulse {
+    @keyframes pulseDot {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(0.85); }
     }
 
-    /* Status Banner */
-    .status-banner {
-      padding: 14px 18px;
-      border-radius: 16px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid var(--success);
+    .theme-toggle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      transition: all 0.4s ease;
-    }
-
-    .status-banner.warning {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: var(--warning);
-    }
-
-    .status-banner.critical {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: var(--danger);
-      box-shadow: 0 0 24px var(--glow-danger);
-      animation: blinkBorder 1.5s infinite;
-    }
-
-    @keyframes blinkBorder {
-      0%, 100% { border-color: var(--danger); }
-      50% { border-color: transparent; }
-    }
-
-    .status-info h3 {
+      justify-content: center;
+      cursor: pointer;
       font-size: 16px;
-      font-weight: 700;
+      transition: all 0.25s ease;
+    }
+    .theme-toggle-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
     }
 
-    .status-info p {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 2px;
-    }
-
-    .status-badge {
-      font-size: 12px;
-      font-weight: 800;
-      padding: 6px 12px;
-      border-radius: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    /* Metric Cards Grid */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      backdrop-filter: blur(12px);
-      position: relative;
-    }
-
-    .card-label {
-      font-size: 12px;
-      color: var(--text-dim);
-      font-weight: 600;
+    /* Hero Banner Alert */
+    .hero-banner {
+      padding: 18px 24px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 78, 59, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      backdrop-filter: blur(14px);
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      transition: all 0.4s ease;
+      box-shadow: var(--shadow);
     }
 
-    .card-value {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 32px;
-      font-weight: 800;
-      margin: 6px 0 2px;
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
+    .hero-banner.warning {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(120, 53, 15, 0.25));
+      border-color: var(--temp-warn);
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
     }
 
-    .card-unit {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text-dim);
+    .hero-banner.critical {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(127, 29, 29, 0.35));
+      border-color: var(--temp-crit);
+      box-shadow: 0 10px 35px rgba(239, 68, 68, 0.3);
+      animation: alertPulse 1.5s infinite;
     }
 
-    .card-subtext {
-      font-size: 11px;
-      color: var(--text-dim);
+    @keyframes alertPulse {
+      0%, 100% { border-color: var(--temp-crit); box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); }
+      50% { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 0 10px rgba(239, 68, 68, 0.1); }
     }
 
-    /* AI Predictive Insights */
-    .ai-box {
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 16px;
-      padding: 14px 16px;
-    }
-
-    .ai-header {
+    .hero-content h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 8px;
     }
 
-    .ai-row {
+    .hero-content p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .hero-badge {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 10px;
+      background: rgba(16, 185, 129, 0.25);
+      color: var(--temp-good);
+      letter-spacing: 0.5px;
+    }
+
+    /* 3 Circular Gauges Grid */
+    .gauges-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .gauges-grid { grid-template-columns: 1fr; }
+    }
+
+    .gauge-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 20px 18px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .gauge-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .gauge-header {
+      width: 100%;
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
-      padding: 4px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
     }
 
-    .ai-row:last-child { border-bottom: none; }
-    .ai-val { font-weight: 700; }
+    .gauge-svg-wrap {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg-wrap svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: var(--track);
+      stroke-width: 14;
+    }
+
+    .circle-bar {
+      fill: none;
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 440;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), stroke 0.4s ease;
+    }
+
+    .gauge-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .gauge-center .big-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .gauge-center .unit-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .gauge-footer-tag {
+      margin-top: 14px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
+    }
+
+    /* AI Anomaly Insights Card */
+    .ai-card {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px;
+      padding: 20px 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .ai-card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .ai-card-title h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .ai-metrics-row { grid-template-columns: 1fr 1fr; }
+    }
+
+    .ai-metric-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .ai-metric-label {
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .ai-metric-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .ai-incident-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      display: none;
+      font-size: 0.82rem;
+    }
 
     /* Chart Card */
     .chart-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 14px 16px;
+      border-radius: 20px;
+      padding: 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
     }
 
-    .chart-header {
+    .chart-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
 
     .chart-title {
-      font-size: 13px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
       font-weight: 700;
     }
 
-    .safe-range-tag {
-      font-size: 10px;
-      padding: 2px 8px;
+    .chart-badges {
+      display: flex;
+      gap: 8px;
+    }
+
+    .legend-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
       border-radius: 6px;
-      background: rgba(56, 189, 248, 0.15);
+      background: rgba(56, 189, 248, 0.12);
       color: var(--primary);
     }
 
-    /* Action & Scenarios */
-    .action-section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .scenario-buttons {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-    }
-
-    button.btn {
-      padding: 10px;
-      border-radius: 12px;
+    /* Interactive Scenarios */
+    .scenarios-card {
+      background: var(--card-bg);
       border: 1px solid var(--card-border);
-      font-size: 12px;
+      border-radius: 20px;
+      padding: 18px 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .scenarios-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .scenarios-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .scenarios-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    button.btn-scenario {
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-family: inherit;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.06);
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    button.btn:active {
+    button.btn-scenario:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    button.btn-scenario:active {
       transform: scale(0.97);
     }
 
-    button.btn-normal:hover { background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
-    button.btn-warning:hover { background: rgba(245, 158, 11, 0.2); border-color: var(--warning); }
-    button.btn-danger:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--danger); }
+    button.btn-scenario.normal:hover { border-color: var(--temp-good); color: var(--temp-good); }
+    button.btn-scenario.warn:hover { border-color: var(--temp-warn); color: var(--temp-warn); }
+    button.btn-scenario.crit:hover { border-color: var(--temp-crit); color: var(--temp-crit); }
+    button.btn-scenario.glitch:hover { border-color: var(--slope-color); color: var(--slope-color); }
 
+    /* Footer */
     footer {
       text-align: center;
-      font-size: 11px;
+      font-size: 0.78rem;
       color: var(--text-dim);
-      padding: 10px 0;
+      padding: 12px 0 6px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- Header -->
+  <!-- Ambient Glowing Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="app-container">
+
+    <!-- Header Navigation -->
     <header>
       <div class="brand">
-        <div class="brand-icon">❄️</div>
-        <div>
-          <div class="brand-title">AIoT Cold Chain Guard</div>
-          <div class="brand-sub">ตู้แช่ยา & ห้อง Server (บอร์ด Cucumber)</div>
+        <div class="brand-logo">❄️</div>
+        <div class="brand-text">
+          <h1>AIoT Industrial Cold Chain</h1>
+          <p><span>บอร์ด Cucumber (ESP32)</span> • <span>ตู้แช่ยา & Server Room</span></p>
         </div>
       </div>
-      <div class="live-badge">
-        <div class="pulse-dot"></div>
-        <span id="mqtt-status">ONLINE</span>
+      <div class="nav-actions">
+        <div class="status-pill">
+          <div class="status-dot"></div>
+          <span id="mqtt-status-pill">MQTT LIVE</span>
+        </div>
+        <button class="theme-toggle-btn" onclick="toggleTheme()" title="สลับธีม สว่าง/มืด">🌓</button>
       </div>
     </header>
 
-    <!-- Status Banner -->
-    <div id="status-banner" class="status-banner">
-      <div class="status-info">
-        <h3 id="status-title">ระบบทำงานปกติ (Normal)</h3>
-        <p id="status-desc">อุณหภูมิอยู่ในช่วงปลอดภัย 2.0°C - 8.0°C (มาตรฐาน GMP)</p>
+    <!-- Hero Status Banner -->
+    <div id="hero-banner" class="hero-banner">
+      <div class="hero-content">
+        <h2 id="hero-title">
+          <span id="hero-icon">🟢</span> 
+          <span id="hero-heading">สภาวะความเย็นปกติ (Normal Operation)</span>
+        </h2>
+        <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัยมาตรฐาน GMP / FDA (2.0°C – 8.0°C)</p>
       </div>
-      <div id="status-badge" class="status-badge" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">
-        SAFE
-      </div>
+      <div id="hero-badge" class="hero-badge">OPTIMAL</div>
     </div>
 
-    <!-- Metrics Cards -->
-    <div class="metrics-grid">
-      <div class="card">
-        <div class="card-label">
+    <!-- 3 Circular Gauges -->
+    <div class="gauges-grid">
+
+      <!-- Gauge 1: Temperature -->
+      <div class="gauge-card">
+        <div class="gauge-header">
           <span>อุณหภูมิตู้แช่</span>
-          <span>🌡️</span>
+          <span>🌡️ SENSOR 01</span>
         </div>
-        <div class="card-value">
-          <span id="temp-val">--</span>
-          <span class="card-unit">°C</span>
+        <div class="gauge-svg-wrap">
+          <svg viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="tempGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10b981" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+            <circle class="circle-bg" cx="80" cy="80" r="70" />
+            <circle id="temp-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#tempGradient)" />
+          </svg>
+          <div class="gauge-center">
+            <div id="temp-val" class="big-number" style="color: var(--temp-good);">4.2</div>
+            <div class="unit-label">องศาเซลเซียส (°C)</div>
+          </div>
         </div>
-        <div class="card-subtext" id="temp-sub">เกณฑ์ปลอดภัย: 2°C – 8°C</div>
+        <div class="gauge-footer-tag" id="temp-tag">ช่วงปลอดภัย: 2°C – 8°C</div>
       </div>
 
-      <div class="card">
-        <div class="card-label">
+      <!-- Gauge 2: Humidity -->
+      <div class="gauge-card">
+        <div class="gauge-header">
           <span>ความชื้นสัมพัทธ์</span>
-          <span>💧</span>
+          <span>💧 HTS221</span>
         </div>
-        <div class="card-value">
-          <span id="humid-val">--</span>
-          <span class="card-unit">%</span>
+        <div class="gauge-svg-wrap">
+          <svg viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="humidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#818cf8" />
+              </linearGradient>
+            </defs>
+            <circle class="circle-bg" cx="80" cy="80" r="70" />
+            <circle id="humid-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#humidGradient)" />
+          </svg>
+          <div class="gauge-center">
+            <div id="humid-val" class="big-number" style="color: var(--humid-color);">61.5</div>
+            <div class="unit-label">เปอร์เซ็นต์ (%RH)</div>
+          </div>
         </div>
-        <div class="card-subtext" id="humid-sub">ระดับเป้าหมาย: 50% – 70%</div>
+        <div class="gauge-footer-tag">เป้าหมาย: 50% – 70%</div>
+      </div>
+
+      <!-- Gauge 3: Trend Slope -->
+      <div class="gauge-card">
+        <div class="gauge-header">
+          <span>ความชันอุณหภูมิ (AI)</span>
+          <span>📈 PREDICTIVE</span>
+        </div>
+        <div class="gauge-svg-wrap">
+          <svg viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="slopeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#a855f7" />
+                <stop offset="100%" stop-color="#ec4899" />
+              </linearGradient>
+            </defs>
+            <circle class="circle-bg" cx="80" cy="80" r="70" />
+            <circle id="slope-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#slopeGradient)" />
+          </svg>
+          <div class="gauge-center">
+            <div id="slope-val" class="big-number" style="color: var(--slope-color);">+0.01</div>
+            <div class="unit-label">°C ต่อสเต็ป</div>
+          </div>
+        </div>
+        <div class="gauge-footer-tag" id="slope-tag">ความชันคงที่ (ปลอดภัย)</div>
+      </div>
+
+    </div>
+
+    <!-- AI Anomaly Insights -->
+    <div class="ai-card">
+      <div class="ai-card-title">
+        <h3><span>🧠</span> การวิเคราะห์เชิงพยากรณ์ล่วงหน้า (AI Anomaly Engine)</h3>
+        <span class="legend-badge">HYBRID AI: SLOPE + Z-SCORE</span>
+      </div>
+      <div class="ai-metrics-row">
+        <div class="ai-metric-item">
+          <div class="ai-metric-label">ระดับความเสี่ยง (Risk Level)</div>
+          <div id="ai-risk-val" class="ai-metric-val" style="color: var(--temp-good);">NORMAL</div>
+        </div>
+        <div class="ai-metric-item">
+          <div class="ai-metric-label">เวลาที่เหลือก่อนวิกฤต (ETTF)</div>
+          <div id="ai-ettf-val" class="ai-metric-val" style="color: var(--primary);">ปลอดภัย (∞)</div>
+        </div>
+        <div class="ai-metric-item">
+          <div class="ai-metric-label">ค่าเบี่ยงเบนสถิติ (Z-Score)</div>
+          <div id="ai-zscore-val" class="ai-metric-val">0.05</div>
+        </div>
+        <div class="ai-metric-item">
+          <div class="ai-metric-label">ค่าเฉลี่ยเคลื่อนที่ (Mean)</div>
+          <div id="ai-mean-val" class="ai-metric-val">4.21 °C</div>
+        </div>
+      </div>
+
+      <div id="ai-incident-box" class="ai-incident-box">
+        <strong id="ai-incident-title">⚠️ ตรวจพบแนวโน้มวิกฤต:</strong>
+        <p id="ai-incident-desc" style="margin-top: 4px; color: var(--text-dim);"></p>
       </div>
     </div>
 
-    <!-- AI Predictive Insights -->
-    <div class="ai-box">
-      <div class="ai-header">
-        <span>🧠 การวิเคราะห์เชิงพยากรณ์ล่วงหน้า (AI Predictive Engine)</span>
-      </div>
-      <div class="ai-row">
-        <span>แนวโน้มความชันอุณหภูมิ (Trend Slope):</span>
-        <span id="ai-slope" class="ai-val">--</span>
-      </div>
-      <div class="ai-row">
-        <span>ค่าเบี่ยงเบนทางสถิติ (Z-Score):</span>
-        <span id="ai-zscore" class="ai-val">--</span>
-      </div>
-      <div class="ai-row">
-        <span>เวลาที่เหลือก่อนวิกฤต (ETTF):</span>
-        <span id="ai-ettf" class="ai-val" style="color: var(--primary);">ปลอดภัย</span>
-      </div>
-      <div class="ai-row" id="ai-reasons-row" style="display: none; color: var(--danger);">
-        <span>ข้อความเตือน AI:</span>
-        <span id="ai-reasons" class="ai-val"></span>
-      </div>
-    </div>
-
-    <!-- Real-time Chart -->
+    <!-- Real-time Chart Card -->
     <div class="chart-card">
-      <div class="chart-header">
-        <div class="chart-title">📈 กราฟอุณหภูมิย้อนหลังแบบ Real-Time</div>
-        <div class="safe-range-tag">Safe Band: 2-8°C</div>
+      <div class="chart-card-header">
+        <div class="chart-title">📈 กราฟอุณหภูมิย้อนหลังแบบ Real-Time (Continuous Telemetry)</div>
+        <div class="chart-badges">
+          <span class="legend-badge">เกณฑ์ปลอดภัย: 2°C – 8°C</span>
+        </div>
       </div>
-      <div style="position: relative; height: 190px; width: 100%;">
-        <canvas id="tempChart"></canvas>
+      <div style="position: relative; height: 210px; width: 100%;">
+        <canvas id="liveChart"></canvas>
       </div>
     </div>
 
-    <!-- Scenario Simulator Controls -->
-    <div class="action-section">
-      <div style="font-size: 12px; font-weight: 700; color: var(--text-dim);">
-        ⚡ จำลองสถานการณ์ทดสอบ AI (Crisis Simulator):
-      </div>
-      <div class="scenario-buttons">
-        <button class="btn btn-normal" onclick="simulate('normal')">
-          <span>🟢</span> ปกติ
+    <!-- Scenarios Tester Controls -->
+    <div class="scenarios-card">
+      <div class="scenarios-title">⚡ จำลองสถานการณ์ทดสอบระบบ AI (Crisis Simulation Bar):</div>
+      <div class="scenarios-grid">
+        <button class="btn-scenario normal" onclick="triggerScenario('normal')">
+          <span>🟢</span> สภาวะปกติ
         </button>
-        <button class="btn btn-warning" onclick="simulate('warning')">
-          <span>⚠️</span> แอร์เริ่มแผ่ว
+        <button class="btn-scenario warn" onclick="triggerScenario('warning')">
+          <span>⚠️</span> แอร์แผ่ว (เตือนล่วงหน้า)
         </button>
-        <button class="btn btn-danger" onclick="simulate('failure')">
-          <span>🚨</span> คอมฯ ดับ
+        <button class="btn-scenario crit" onclick="triggerScenario('failure')">
+          <span>🚨</span> คอมเพรสเซอร์ดับ
+        </button>
+        <button class="btn-scenario glitch" onclick="triggerScenario('glitch')">
+          <span>⚡</span> สัญญาณรบกวน
         </button>
       </div>
     </div>
 
     <!-- Footer -->
     <footer>
-      CN466 Project • IoT & AI Educational Platform • 6610680214
+      CN466 Project • IoT & AI Educational Platform • Chanapa Sadudee (6610680214)
     </footer>
+
   </div>
 
   <script>
@@ -427,9 +717,8 @@
     if (tg) {
       tg.ready();
       tg.expand();
-      // ปรับแต่งสี Header ให้เข้ากับแอป
-      if (tg.setHeaderColor) tg.setHeaderColor('#0b1120');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#0b1120');
+      if (tg.setHeaderColor) tg.setHeaderColor('#070b14');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#070b14');
     }
 
     function triggerHaptic(type = 'medium') {
@@ -438,9 +727,31 @@
       }
     }
 
-    // Chart.js Setup
-    const ctx = document.getElementById('tempChart').getContext('2d');
-    const tempChart = new Chart(ctx, {
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+    }
+
+    // Set Radial Gauge Value helper
+    // circumference of r=70 is 2 * PI * 70 = 439.82 (~440)
+    const CIRCUMFERENCE = 440;
+    function setGaugePercent(elementId, percent) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const p = Math.max(0, Math.min(100, percent));
+      const offset = CIRCUMFERENCE - (p / 100) * CIRCUMFERENCE;
+      el.style.strokeDashoffset = offset;
+    }
+
+    // Chart.js Setup with Neon Gradient
+    const ctx = document.getElementById('liveChart').getContext('2d');
+    const gradStroke = ctx.createLinearGradient(0, 0, 0, 200);
+    gradStroke.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+    gradStroke.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+
+    const liveChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: [],
@@ -449,26 +760,27 @@
             label: 'อุณหภูมิจริง (°C)',
             data: [],
             borderColor: '#38bdf8',
-            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            borderWidth: 2.5,
+            backgroundColor: gradStroke,
             fill: true,
             tension: 0.35,
-            borderWidth: 2.5,
-            pointRadius: 2.5
+            pointRadius: 2.5,
+            pointBackgroundColor: '#38bdf8'
           },
           {
-            label: 'ขีดจำกัดสูงสุด (8°C)',
+            label: 'เพดานวิกฤต (8.0°C)',
             data: [],
-            borderColor: 'rgba(239, 68, 68, 0.5)',
-            borderDash: [4, 4],
+            borderColor: 'rgba(239, 68, 68, 0.65)',
+            borderDash: [5, 5],
             borderWidth: 1.5,
             pointRadius: 0,
             fill: false
           },
           {
-            label: 'ขีดจำกัดต่ำสุด (2°C)',
+            label: 'ขอบเขตต่ำสุด (2.0°C)',
             data: [],
-            borderColor: 'rgba(56, 189, 248, 0.4)',
-            borderDash: [4, 4],
+            borderColor: 'rgba(56, 189, 248, 0.45)',
+            borderDash: [5, 5],
             borderWidth: 1.5,
             pointRadius: 0,
             fill: false
@@ -483,100 +795,135 @@
         },
         scales: {
           x: {
-            display: false
+            grid: { display: false },
+            ticks: { color: '#64748b', font: { size: 10 } }
           },
           y: {
             min: 0,
             max: 12,
-            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
             ticks: { color: '#94a3b8', font: { size: 10 } }
           }
         }
       }
     });
 
-    // Update UI elements
-    async function updateDashboard() {
+    // Update Dashboard Data
+    async function fetchLatestData() {
       try {
         const res = await fetch('/api/latest');
         if (!res.ok) return;
         const data = await res.json();
-        
         const ai = data.ai_evaluation;
-        const tele = data.telemetry;
         if (!ai) return;
 
         const temp = ai.current_temp;
         const humid = ai.current_humid;
+        const slope = ai.slope_per_step;
         const risk = ai.risk_level;
 
+        // 1. Update Gauge 1: Temperature (0 - 12°C mapped to 0-100%)
         document.getElementById('temp-val').innerText = temp.toFixed(1);
+        const tempPct = (temp / 12) * 100;
+        setGaugePercent('temp-bar', tempPct);
+
+        const tempValEl = document.getElementById('temp-val');
+        if (temp > 8.0) {
+          tempValEl.style.color = 'var(--temp-crit)';
+          document.getElementById('temp-tag').innerText = '🚨 อุณหภูมิเกินเกณฑ์ปลอดภัย!';
+        } else if (temp < 2.0) {
+          tempValEl.style.color = 'var(--temp-warn)';
+          document.getElementById('temp-tag').innerText = '⚠️ อุณหภูมิต่ำเสี่ยงเป็นน้ำแข็ง';
+        } else {
+          tempValEl.style.color = 'var(--temp-good)';
+          document.getElementById('temp-tag').innerText = 'ช่วงปลอดภัย: 2°C – 8°C';
+        }
+
+        // 2. Update Gauge 2: Humidity (0 - 100%)
         document.getElementById('humid-val').innerText = humid.toFixed(1);
+        setGaugePercent('humid-bar', humid);
 
-        // Slope & Z-score
-        const slopeEl = document.getElementById('ai-slope');
-        const sign = ai.slope_per_step > 0 ? '+' : '';
-        slopeEl.innerText = `${sign}${ai.slope_per_step.toFixed(3)} °C/step`;
-        slopeEl.style.color = ai.slope_per_step > 0.15 ? 'var(--danger)' : 'var(--text)';
+        // 3. Update Gauge 3: Slope (-0.5 to +0.5 mapped to 0-100%)
+        const slopeSign = slope > 0 ? '+' : '';
+        document.getElementById('slope-val').innerText = `${slopeSign}${slope.toFixed(2)}`;
+        const slopePct = Math.max(0, Math.min(100, ((slope + 0.2) / 0.7) * 100));
+        setGaugePercent('slope-bar', slopePct);
 
-        document.getElementById('ai-zscore').innerText = `${ai.z_score.toFixed(2)}`;
+        const slopeTag = document.getElementById('slope-tag');
+        if (slope > 0.18) {
+          slopeTag.innerText = '⚠️ กำลังไต่ระดับขึ้นเร็ว!';
+          slopeTag.style.color = 'var(--temp-crit)';
+        } else {
+          slopeTag.innerText = 'ความชันคงที่ (ปลอดภัย)';
+          slopeTag.style.color = 'var(--text-dim)';
+        }
 
-        // ETTF
-        const ettfEl = document.getElementById('ai-ettf');
+        // 4. Update AI Insights
+        const riskEl = document.getElementById('ai-risk-val');
+        riskEl.innerText = risk;
+        riskEl.style.color = risk === 'NORMAL' ? 'var(--temp-good)' : (risk === 'WARNING' ? 'var(--temp-warn)' : 'var(--temp-crit)');
+
+        const ettfEl = document.getElementById('ai-ettf-val');
         if (ai.ettf_seconds) {
-          ettfEl.innerText = `⚠️ เสี่ยงวิกฤตใน ~${ai.ettf_seconds.toFixed(0)} วินาที`;
-          ettfEl.style.color = 'var(--danger)';
+          ettfEl.innerText = `~${ai.ettf_seconds.toFixed(0)} วินาที`;
+          ettfEl.style.color = 'var(--temp-crit)';
         } else {
-          ettfEl.innerText = '🟢 สภาวะเสถียร (ปลอดภัย)';
-          ettfEl.style.color = 'var(--success)';
+          ettfEl.innerText = 'ปลอดภัย (∞)';
+          ettfEl.style.color = 'var(--temp-good)';
         }
 
-        // Reasons
-        const reasonsRow = document.getElementById('ai-reasons-row');
-        const reasonsEl = document.getElementById('ai-reasons');
-        if (ai.anomaly_reasons && ai.anomaly_reasons.length > 0) {
-          reasonsRow.style.display = 'flex';
-          reasonsEl.innerText = ai.anomaly_reasons[0];
-        } else {
-          reasonsRow.style.display = 'none';
-        }
+        document.getElementById('ai-zscore-val').innerText = ai.z_score.toFixed(2);
+        document.getElementById('ai-mean-val').innerText = `${ai.moving_mean.toFixed(2)} °C`;
 
-        // Status Banner Styling
-        const banner = document.getElementById('status-banner');
-        const title = document.getElementById('status-title');
-        const desc = document.getElementById('status-desc');
-        const badge = document.getElementById('status-badge');
+        // 5. Update Hero Banner
+        const hero = document.getElementById('hero-banner');
+        const hTitle = document.getElementById('hero-heading');
+        const hDesc = document.getElementById('hero-desc');
+        const hBadge = document.getElementById('hero-badge');
+        const hIcon = document.getElementById('hero-icon');
 
-        banner.className = 'status-banner';
+        hero.className = 'hero-banner';
         if (risk === 'CRITICAL') {
-          banner.classList.add('critical');
-          title.innerText = '🚨 วิกฤตความเย็นล้มเหลว (CRITICAL)';
-          desc.innerText = 'อุณหภูมิเกินพิกัดความปลอดภัย ยาและวัคซีนเสี่ยงเสียหาย!';
-          badge.innerText = 'CRITICAL';
-          badge.style.background = 'rgba(239, 68, 68, 0.25)';
-          badge.style.color = 'var(--danger)';
+          hero.classList.add('critical');
+          hIcon.innerText = '🚨';
+          hTitle.innerText = 'วิกฤตความเย็นล้มเหลว (CRITICAL FAILURE)';
+          hDesc.innerText = 'อุณหภูมิเกินพิกัดความปลอดภัย 8.0°C ยาและวัคซีนเสี่ยงเสียหาย!';
+          hBadge.innerText = 'CRITICAL';
+          hBadge.style.color = 'var(--temp-crit)';
+          hBadge.style.background = 'rgba(239, 68, 68, 0.25)';
         } else if (risk === 'WARNING') {
-          banner.classList.add('warning');
-          title.innerText = '⚠️ ตรวจพบแนวโน้มผิดปกติ (PREDICTIVE WARNING)';
-          desc.innerText = 'AI ตรวจจับอุณหภูมิไต่ขึ้นเร็วผิดปกติ กรุณาตรวจเช็กตู้แช่';
-          badge.innerText = 'WARNING';
-          badge.style.background = 'rgba(245, 158, 11, 0.25)';
-          badge.style.color = 'var(--warning)';
+          hero.classList.add('warning');
+          hIcon.innerText = '⚠️';
+          hTitle.innerText = 'ตรวจพบแนวโน้มผิดปกติ (PREDICTIVE WARNING)';
+          hDesc.innerText = 'ความชันอุณหภูมิไต่ระดับขึ้นเร็วผิดปกติ แนะนำให้ตรวจสอบตู้แช่ทันที';
+          hBadge.innerText = 'WARNING';
+          hBadge.style.color = 'var(--temp-warn)';
+          hBadge.style.background = 'rgba(245, 158, 11, 0.25)';
         } else {
-          title.innerText = 'ระบบทำงานปกติ (Normal)';
-          desc.innerText = 'อุณหภูมิอยู่ในช่วงปลอดภัย 2.0°C - 8.0°C (มาตรฐาน GMP)';
-          badge.innerText = 'SAFE';
-          badge.style.background = 'rgba(16, 185, 129, 0.2)';
-          badge.style.color = 'var(--success)';
+          hIcon.innerText = '🟢';
+          hTitle.innerText = 'สภาวะความเย็นปกติ (Normal Operation)';
+          hDesc.innerText = 'อุณหภูมิอยู่ในเกณฑ์ปลอดภัยมาตรฐาน GMP / FDA (2.0°C – 8.0°C)';
+          hBadge.innerText = 'OPTIMAL';
+          hBadge.style.color = 'var(--temp-good)';
+          hBadge.style.background = 'rgba(16, 185, 129, 0.25)';
         }
 
-      } catch (err) {
-        console.error('Update error:', err);
+        // Anomaly Incident Box
+        const incBox = document.getElementById('ai-incident-box');
+        if (ai.anomaly_reasons && ai.anomaly_reasons.length > 0) {
+          incBox.style.display = 'block';
+          document.getElementById('ai-incident-desc').innerText = ai.anomaly_reasons[0];
+        } else {
+          incBox.style.display = 'none';
+        }
+
+      } catch (e) {
+        console.error('Fetch error:', e);
       }
     }
 
     // Update History Chart
-    async function updateChart() {
+    async function fetchHistoryData() {
       try {
         const res = await fetch('/api/history?limit=25');
         if (!res.ok) return;
@@ -588,35 +935,37 @@
         const upperLimit = records.map(() => 8.0);
         const lowerLimit = records.map(() => 2.0);
 
-        tempChart.data.labels = labels;
-        tempChart.data.datasets[0].data = temps;
-        tempChart.data.datasets[1].data = upperLimit;
-        tempChart.data.datasets[2].data = lowerLimit;
-        tempChart.update();
-      } catch (err) {
-        console.error('Chart update error:', err);
-      }
-    }
-
-    // Simulate scenario button
-    async function simulate(scenario) {
-      triggerHaptic(scenario === 'normal' ? 'light' : 'heavy');
-      try {
-        await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
-        setTimeout(() => {
-          updateDashboard();
-          updateChart();
-        }, 300);
+        liveChart.data.labels = labels;
+        liveChart.data.datasets[0].data = temps;
+        liveChart.data.datasets[1].data = upperLimit;
+        liveChart.data.datasets[2].data = lowerLimit;
+        liveChart.update('none'); // non-blocking smooth animation
       } catch (e) {
-        console.error(e);
+        console.error('History chart error:', e);
       }
     }
 
-    // Periodic Polling
-    setInterval(updateDashboard, 1500);
-    setInterval(updateChart, 3000);
-    updateDashboard();
-    updateChart();
+    // Trigger Simulator Scenario
+    async function triggerScenario(type) {
+      triggerHaptic(type === 'normal' ? 'light' : 'heavy');
+      try {
+        await fetch(`/api/simulate-scenario?scenario=${type}`, { method: 'POST' });
+        setTimeout(() => {
+          fetchLatestData();
+          fetchHistoryData();
+        }, 200);
+      } catch (err) {
+        console.error('Scenario error:', err);
+      }
+    }
+
+    // Polling Intervals
+    setInterval(fetchLatestData, 1200);
+    setInterval(fetchHistoryData, 2500);
+
+    // Initial load
+    fetchLatestData();
+    fetchHistoryData();
   </script>
 </body>
 </html>

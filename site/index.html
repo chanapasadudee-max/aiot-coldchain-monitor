@@ -51,6 +51,8 @@
       
     
     
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -502,10 +504,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#business-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        💡 ภาพรวมของระบบ (Overview)
+        💡 ภาพรวมและความสำคัญทางธุรกิจ (Business Value)
       
     </span>
   </a>
@@ -524,10 +526,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#target-audience" class="md-nav__link">
+  <a href="#curriculum-modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🎯 กลุ่มเป้าหมายของหลักสูตร (Target Audience)
+        📚 สารบัญบทเรียนในหลักสูตร (Curriculum Modules)
       
     </span>
   </a>
@@ -785,10 +787,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#business-value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        💡 ภาพรวมของระบบ (Overview)
+        💡 ภาพรวมและความสำคัญทางธุรกิจ (Business Value)
       
     </span>
   </a>
@@ -807,10 +809,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#target-audience" class="md-nav__link">
+  <a href="#curriculum-modules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🎯 กลุ่มเป้าหมายของหลักสูตร (Target Audience)
+        📚 สารบัญบทเรียนในหลักสูตร (Curriculum Modules)
       
     </span>
   </a>
@@ -838,21 +840,27 @@
 
 
 <h1 id="aiot-for-industry-server">🏭 AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server<a class="headerlink" href="#aiot-for-industry-server" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>หลักสูตรการเรียนรู้และพัฒนาเทคโนโลยี AIoT ระดับอุตสาหกรรม (Industrial AIoT Learning Platform)</strong><br />
-<strong>วิชา:</strong> CN466 Project - Internet of Things &amp; AI | มหาวิทยาลัยธรรมศาสตร์ (TSE)<br />
-<strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (รหัสนักศึกษา: 6610680214)</p>
-</blockquote>
+<div class="hero-box">
+  <h3>🌟 แพลตฟอร์มการเรียนรู้และพัฒนาระบบ AIoT ระดับอุตสาหกรรม (Industrial AIoT)</h3>
+  <p>
+    ออกแบบและพัฒนาสำหรับการเฝ้าระวังและตรวจจับความผิดปกติของตู้แช่ยา วัคซีน และห้อง Server แบบเรียลไทม์ 
+    ด้วยการผสานฮาร์ดแวร์ <strong>บอร์ด Cucumber (ESP32)</strong>, โพรโทคอล <strong>MQTT</strong>, 
+    เอนจิน <strong>AI Predictive Anomaly Detection</strong>, และ <strong>Telegram Mini App</strong>
+  </p>
+  <p style="margin-bottom: 0; font-size: 0.85rem; color: #94a3b8;">
+    <strong>วิชา:</strong> CN466 Project - Internet of Things & AI | มหาวิทยาลัยธรรมศาสตร์ (TSE)<br>
+    <strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (รหัสนักศึกษา: 6610680214)
+  </p>
+</div>
+
 <hr />
-<h2 id="overview">💡 ภาพรวมของระบบ (Overview)<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>ในภาคอุตสาหกรรม การแพทย์ และดาต้าเซ็นเตอร์ <strong>"ความเย็น"</strong> คือหัวใจสำคัญของความอยู่รอดทางธุรกิจ:
-- <strong>ตู้แช่ยาและวัคซีน (Cold Chain):</strong> หากอุณหภูมิหลุดจากช่วง <strong>2°C – 8°C</strong> เกิน 2 ชั่วโมง ยาและชีววัตถุอาจเสื่อมสภาพ มูลค่าความเสียหายต่อครั้งสูงถึง <strong>หลักแสนถึงหลักล้านบาท</strong>
-- <strong>ห้อง Server / Data Center:</strong> หากระบบปรับอากาศล้มเหลว อุณหภูมิที่สูงเกิน <strong>25°C</strong> จะทำให้เซิร์ฟเวอร์ตัดการทำงาน เกิดภาวะ Downtime ธุรกิจหยุดชะงักทันที</p>
-<p>โปรเจกต์นี้จึงถูกออกแบบมาเพื่อ <strong>สอนและสาธิตการสร้างระบบ AIoT แบบครบวงจร (End-to-End AIoT Platform)</strong> โดยผสานการทำงานระหว่าง:
-1. <strong>บอร์ดไมโครคอนโทรลเลอร์ Cucumber (ESP32)</strong> ทำหน้าที่อ่านค่าเซ็นเซอร์จริง (หรือ Industrial Simulator)
-2. <strong>ระบบรับส่งข้อมูลแบบ Real-Time ผ่านโพรโทคอล MQTT</strong> สู่ Cloud Broker
-3. <strong>เอนจินปัญญาประดิษฐ์ (Predictive AI Anomaly Engine)</strong> บน Python / Colab ที่ไม่เพียงแค่ดูค่าปัจจุบัน แต่คำนวณ <strong>"อัตราความชันการเพิ่มของอุณหภูมิ (Trend Slope)"</strong> เพื่อส่งสัญญาณเตือนล่วงหน้าก่อนที่ยาจะเสียหาย
-4. <strong>ส่วนติดต่อผู้ใช้งาน (UI) ผ่าน Telegram Mini App และ Web Dashboard</strong> แสดงผลกราฟิกและแจ้งเตือนวิกฤตถึงมือวิศวกรแบบเรียลไทม์</p>
+<h2 id="business-value">💡 ภาพรวมและความสำคัญทางธุรกิจ (Business Value)<a class="headerlink" href="#business-value" title="Permanent link">&para;</a></h2>
+<p>ในภาคอุตสาหกรรม การแพทย์ และศูนย์ข้อมูล (Data Center) <strong>"ความเย็น"</strong> คือหัวใจสำคัญของความอยู่รอดทางธุรกิจ:</p>
+<ul>
+<li>💊 <strong>ตู้แช่ยาและวัคซีน (Cold Chain):</strong> หากอุณหภูมิหลุดจากช่วง <strong>2°C – 8°C</strong> เกิน 2 ชั่วโมง ยาและชีววัตถุอาจเสื่อมสภาพ มูลค่าความเสียหายต่อครั้งสูงถึง <strong>300,000 – 5,000,000 บาท</strong></li>
+<li>🖥️ <strong>ห้อง Server / Data Center:</strong> หากระบบปรับอากาศล้มเหลว อุณหภูมิที่สูงเกิน <strong>25°C</strong> จะทำให้เซิร์ฟเวอร์ตัดการทำงาน เกิดภาวะ Downtime ธุรกิจหยุดชะงัก มูลค่าความเสียหายนาทีละหลายหมื่นบาท</li>
+</ul>
+<p>โปรเจกต์นี้จึงสร้างขึ้นเพื่อ <strong>แก้ Pain Point จากระบบแจ้งเตือนแบบเดิม</strong> ที่มักเตือนช้าเกินไป โดยเปลี่ยนมาใช้ <strong>AI วิเคราะห์ความชัน (Trend Slope)</strong> เพื่อส่งสัญญาณเตือนล่วงหน้าก่อนที่สินค้าจะเสียหายจริง!</p>
 <hr />
 <h2 id="system-architecture">📐 แผนภาพสถาปัตยกรรมระบบ (System Architecture)<a class="headerlink" href="#system-architecture" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -885,59 +893,50 @@
     ANOMALY --&gt;|ยิงเตือนเมื่อเข้าขั้นวิกฤต| TG_BOT
     DOCKER --&gt;|REST API &amp; WebApp| MINI_APP</code></pre>
 <hr />
-<h2 id="target-audience">🎯 กลุ่มเป้าหมายของหลักสูตร (Target Audience)<a class="headerlink" href="#target-audience" title="Permanent link">&para;</a></h2>
-<p>หลักสูตรนี้จัดทำขึ้นโดยเน้นกลุ่มเป้าหมาย <strong>"วิศวกรโรงงาน, ช่างเทคนิคอาชีวะ/อุตสาหกรรม และนักศึกษาด้านวิศวกรรมคอมพิวเตอร์และ IoT"</strong> เพื่อให้สามารถนำความรู้ไปประยุกต์ใช้งานเชิงพาณิชย์และมาตรฐานอุตสาหกรรม (GMP / GDP / FDA) ได้จริง</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">บทเรียน</th>
-<th>เนื้อหาหลัก</th>
-<th>สิ่งที่จะได้ลงมือทำ</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;"><strong><a href="01_system_architecture/">บทที่ 1</a></strong></td>
-<td>สถาปัตยกรรมระบบ IoT ระดับอุตสาหกรรม</td>
-<td>เข้าใจ Data Flow ตั้งแต่ฮาร์ดแวร์ถึงคลาวด์</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="02_cucumber_hardware/">บทที่ 2</a></strong></td>
-<td>บอร์ด Cucumber &amp; เซ็นเซอร์</td>
-<td>ต่อวงจร, อัปโหลดเฟิร์มแวร์ C++ หรือใช้ Simulator</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="03_mqtt_cloud_broker/">บทที่ 3</a></strong></td>
-<td>การสื่อสารผ่าน MQTT Broker</td>
-<td>ตั้งค่าการส่ง Payload JSON และ QoS</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="04_ai_anomaly_detection/">บทที่ 4</a></strong></td>
-<td>ปัญญาประดิษฐ์ตรวจจับวิกฤต (AI Anomaly)</td>
-<td>เทรนโมเดลบน Google Colab &amp; เขียนเอนจิน Slope</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="05_telegram_mini_app/">บทที่ 5</a></strong></td>
-<td>UI &amp; Telegram Mini App</td>
-<td>สร้าง Dashboard ด้วย HTML/JS &amp; ฝัง SDK Telegram</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="06_docker_deployment/">บทที่ 6</a></strong></td>
-<td>การติดตั้งใน Docker &amp; Dev Tunnels</td>
-<td>Pack เป็นคอนเทนเนอร์ &amp; ทำ Port Forwarding (HTTPS)</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="07_business_case/">บทที่ 7</a></strong></td>
-<td>โมเดลธุรกิจ &amp; ความคุ้มค่าทางเศรษฐกิจ</td>
-<td>การคิด ROI และการเปิดบริการ B2B SaaS</td>
-</tr>
-<tr>
-<td style="text-align: center;"><strong><a href="08_video_walkthrough/">บทที่ 8</a></strong></td>
-<td>สคริปต์คลิปนำเสนอ AI Flow ส่งงาน</td>
-<td>แนวทางการบันทึกคลิปส่งอาจารย์</td>
-</tr>
-</tbody>
-</table>
+<h2 id="curriculum-modules">📚 สารบัญบทเรียนในหลักสูตร (Curriculum Modules)<a class="headerlink" href="#curriculum-modules" title="Permanent link">&para;</a></h2>
+<div class="grid-cards">
+
+  <div class="course-card">
+    <h4><a href="01_system_architecture/">บทที่ 1: สถาปัตยกรรมระบบ</a></h4>
+    <p>สถาปัตยกรรมระดับอุตสาหกรรม การออกแบบ Data Pipeline แบบ End-to-End</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="02_cucumber_hardware/">บทที่ 2: บอร์ด Cucumber & เซ็นเซอร์</a></h4>
+    <p>การต่อวงจรเซ็นเซอร์ HTS221 (I2C), โค้ด C++ และการใช้งาน Simulator</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="03_mqtt_cloud_broker/">บทที่ 3: การสื่อสารผ่าน MQTT</a></h4>
+    <p>การเชื่อมต่อ Public Broker (EMQX), การจัดรูปแบบ JSON Telemetry และ QoS</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="04_ai_anomaly_detection/">บทที่ 4: AI Anomaly Detection</a></h4>
+    <p>โมเดลสถิติ Z-Score, การคำนวณ Trend Slope, ETTF และโมเดล Colab</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="05_telegram_mini_app/">บทที่ 5: UI & Telegram Mini App</a></h4>
+    <p>การพัฒนา Dashboard บนมือถือ, การฝัง SDK Telegram และระบบ Haptic</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="06_docker_deployment/">บทที่ 6: การติดตั้งและรันระบบ</a></h4>
+    <p>การ Pack ลง Docker Container และการทำ Port Forwarding (HTTPS)</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="07_business_case/">บทที่ 7: โมเดลธุรกิจ & ความคุ้มค่า</a></h4>
+    <p>การคำนวณ ROI ความคุ้มค่าทางเศรษฐกิจ มาตรฐาน GMP/FDA และ B2B SaaS</p>
+  </div>
+
+  <div class="course-card">
+    <h4><a href="08_video_walkthrough/">บทที่ 8: สคริปต์คลิปนำเสนอ AI Flow</a></h4>
+    <p>แนวทางการบันทึกคลิปส่งงาน 3-5 นาที อธิบายกระบวนการสั่งงานและตรวจงาน AI</p>
+  </div>
+
+</div>
 
 
 
