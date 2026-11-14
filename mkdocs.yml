@@ -1,0 +1,59 @@
+site_name: AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+site_description: คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม
+site_author: Chanapa Sadudee (6610680214)
+repo_name: aiot-coldchain-monitor
+repo_url: https://github.com/
+
+theme:
+  name: material
+  language: th
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: cyan
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: สลับเป็นธีมสว่าง
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: สลับเป็นธีมมืด
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - หน้าแรก: index.md
+  - 1. สถาปัตยกรรมระบบ: 01_system_architecture.md
+  - 2. บอร์ด Cucumber & เซ็นเซอร์: 02_cucumber_hardware.md
+  - 3. การสื่อสาร MQTT: 03_mqtt_cloud_broker.md
+  - 4. ปัญญาประดิษฐ์ (AI Anomaly): 04_ai_anomaly_detection.md
+  - 5. UI & Telegram Mini App: 05_telegram_mini_app.md
+  - 6. การ Deploy ระบบ: 06_docker_deployment.md
+  - 7. โมเดลธุรกิจ & ความคุ้มค่า: 07_business_case.md
+  - 8. สคริปต์คลิปนำเสนอ AI Flow: 08_video_walkthrough.md

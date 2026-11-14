@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AIoT Industrial Cold Chain Monitor</title>
+  
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Fonts & Chart.js -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #0b1120;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+      --primary: #38bdf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --glow-danger: rgba(239, 68, 68, 0.35);
+      --glow-success: rgba(16, 185, 129, 0.25);
+    }
+
+    body {
+      font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      font-size: 26px;
+      background: rgba(56, 189, 248, 0.15);
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Status Banner */
+    .status-banner {
+      padding: 14px 18px;
+      border-radius: 16px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.4s ease;
+    }
+
+    .status-banner.warning {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--warning);
+    }
+
+    .status-banner.critical {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+      box-shadow: 0 0 24px var(--glow-danger);
+      animation: blinkBorder 1.5s infinite;
+    }
+
+    @keyframes blinkBorder {
+      0%, 100% { border-color: var(--danger); }
+      50% { border-color: transparent; }
+    }
+
+    .status-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .status-info p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    .status-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 12px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    /* Metric Cards Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      backdrop-filter: blur(12px);
+      position: relative;
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .card-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 32px;
+      font-weight: 800;
+      margin: 6px 0 2px;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .card-unit {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .card-subtext {
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* AI Predictive Insights */
+    .ai-box {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .ai-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .ai-row:last-child { border-bottom: none; }
+    .ai-val { font-weight: 700; }
+
+    /* Chart Card */
+    .chart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .chart-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .safe-range-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+    }
+
+    /* Action & Scenarios */
+    .action-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scenario-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    button.btn {
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    button.btn:active {
+      transform: scale(0.97);
+    }
+
+    button.btn-normal:hover { background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
+    button.btn-warning:hover { background: rgba(245, 158, 11, 0.2); border-color: var(--warning); }
+    button.btn-danger:hover { background: rgba(239, 68, 68, 0.25); border-color: var(--danger); }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-dim);
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">❄️</div>
+        <div>
+          <div class="brand-title">AIoT Cold Chain Guard</div>
+          <div class="brand-sub">ตู้แช่ยา & ห้อง Server (บอร์ด Cucumber)</div>
+        </div>
+      </div>
+      <div class="live-badge">
+        <div class="pulse-dot"></div>
+        <span id="mqtt-status">ONLINE</span>
+      </div>
+    </header>
+
+    <!-- Status Banner -->
+    <div id="status-banner" class="status-banner">
+      <div class="status-info">
+        <h3 id="status-title">ระบบทำงานปกติ (Normal)</h3>
+        <p id="status-desc">อุณหภูมิอยู่ในช่วงปลอดภัย 2.0°C - 8.0°C (มาตรฐาน GMP)</p>
+      </div>
+      <div id="status-badge" class="status-badge" style="background: rgba(16, 185, 129, 0.2); color: var(--success);">
+        SAFE
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <div class="card">
+        <div class="card-label">
+          <span>อุณหภูมิตู้แช่</span>
+          <span>🌡️</span>
+        </div>
+        <div class="card-value">
+          <span id="temp-val">--</span>
+          <span class="card-unit">°C</span>
+        </div>
+        <div class="card-subtext" id="temp-sub">เกณฑ์ปลอดภัย: 2°C – 8°C</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">
+          <span>ความชื้นสัมพัทธ์</span>
+          <span>💧</span>
+        </div>
+        <div class="card-value">
+          <span id="humid-val">--</span>
+          <span class="card-unit">%</span>
+        </div>
+        <div class="card-subtext" id="humid-sub">ระดับเป้าหมาย: 50% – 70%</div>
+      </div>
+    </div>
+
+    <!-- AI Predictive Insights -->
+    <div class="ai-box">
+      <div class="ai-header">
+        <span>🧠 การวิเคราะห์เชิงพยากรณ์ล่วงหน้า (AI Predictive Engine)</span>
+      </div>
+      <div class="ai-row">
+        <span>แนวโน้มความชันอุณหภูมิ (Trend Slope):</span>
+        <span id="ai-slope" class="ai-val">--</span>
+      </div>
+      <div class="ai-row">
+        <span>ค่าเบี่ยงเบนทางสถิติ (Z-Score):</span>
+        <span id="ai-zscore" class="ai-val">--</span>
+      </div>
+      <div class="ai-row">
+        <span>เวลาที่เหลือก่อนวิกฤต (ETTF):</span>
+        <span id="ai-ettf" class="ai-val" style="color: var(--primary);">ปลอดภัย</span>
+      </div>
+      <div class="ai-row" id="ai-reasons-row" style="display: none; color: var(--danger);">
+        <span>ข้อความเตือน AI:</span>
+        <span id="ai-reasons" class="ai-val"></span>
+      </div>
+    </div>
+
+    <!-- Real-time Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">📈 กราฟอุณหภูมิย้อนหลังแบบ Real-Time</div>
+        <div class="safe-range-tag">Safe Band: 2-8°C</div>
+      </div>
+      <div style="position: relative; height: 190px; width: 100%;">
+        <canvas id="tempChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Scenario Simulator Controls -->
+    <div class="action-section">
+      <div style="font-size: 12px; font-weight: 700; color: var(--text-dim);">
+        ⚡ จำลองสถานการณ์ทดสอบ AI (Crisis Simulator):
+      </div>
+      <div class="scenario-buttons">
+        <button class="btn btn-normal" onclick="simulate('normal')">
+          <span>🟢</span> ปกติ
+        </button>
+        <button class="btn btn-warning" onclick="simulate('warning')">
+          <span>⚠️</span> แอร์เริ่มแผ่ว
+        </button>
+        <button class="btn btn-danger" onclick="simulate('failure')">
+          <span>🚨</span> คอมฯ ดับ
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      CN466 Project • IoT & AI Educational Platform • 6610680214
+    </footer>
+  </div>
+
+  <script>
+    // Initialize Telegram WebApp SDK
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      // ปรับแต่งสี Header ให้เข้ากับแอป
+      if (tg.setHeaderColor) tg.setHeaderColor('#0b1120');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#0b1120');
+    }
+
+    function triggerHaptic(type = 'medium') {
+      if (tg?.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred(type);
+      }
+    }
+
+    // Chart.js Setup
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    const tempChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'อุณหภูมิจริง (°C)',
+            data: [],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2.5,
+            pointRadius: 2.5
+          },
+          {
+            label: 'ขีดจำกัดสูงสุด (8°C)',
+            data: [],
+            borderColor: 'rgba(239, 68, 68, 0.5)',
+            borderDash: [4, 4],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false
+          },
+          {
+            label: 'ขีดจำกัดต่ำสุด (2°C)',
+            data: [],
+            borderColor: 'rgba(56, 189, 248, 0.4)',
+            borderDash: [4, 4],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            display: false
+          },
+          y: {
+            min: 0,
+            max: 12,
+            grid: { color: 'rgba(255, 255, 255, 0.06)' },
+            ticks: { color: '#94a3b8', font: { size: 10 } }
+          }
+        }
+      }
+    });
+
+    // Update UI elements
+    async function updateDashboard() {
+      try {
+        const res = await fetch('/api/latest');
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        const ai = data.ai_evaluation;
+        const tele = data.telemetry;
+        if (!ai) return;
+
+        const temp = ai.current_temp;
+        const humid = ai.current_humid;
+        const risk = ai.risk_level;
+
+        document.getElementById('temp-val').innerText = temp.toFixed(1);
+        document.getElementById('humid-val').innerText = humid.toFixed(1);
+
+        // Slope & Z-score
+        const slopeEl = document.getElementById('ai-slope');
+        const sign = ai.slope_per_step > 0 ? '+' : '';
+        slopeEl.innerText = `${sign}${ai.slope_per_step.toFixed(3)} °C/step`;
+        slopeEl.style.color = ai.slope_per_step > 0.15 ? 'var(--danger)' : 'var(--text)';
+
+        document.getElementById('ai-zscore').innerText = `${ai.z_score.toFixed(2)}`;
+
+        // ETTF
+        const ettfEl = document.getElementById('ai-ettf');
+        if (ai.ettf_seconds) {
+          ettfEl.innerText = `⚠️ เสี่ยงวิกฤตใน ~${ai.ettf_seconds.toFixed(0)} วินาที`;
+          ettfEl.style.color = 'var(--danger)';
+        } else {
+          ettfEl.innerText = '🟢 สภาวะเสถียร (ปลอดภัย)';
+          ettfEl.style.color = 'var(--success)';
+        }
+
+        // Reasons
+        const reasonsRow = document.getElementById('ai-reasons-row');
+        const reasonsEl = document.getElementById('ai-reasons');
+        if (ai.anomaly_reasons && ai.anomaly_reasons.length > 0) {
+          reasonsRow.style.display = 'flex';
+          reasonsEl.innerText = ai.anomaly_reasons[0];
+        } else {
+          reasonsRow.style.display = 'none';
+        }
+
+        // Status Banner Styling
+        const banner = document.getElementById('status-banner');
+        const title = document.getElementById('status-title');
+        const desc = document.getElementById('status-desc');
+        const badge = document.getElementById('status-badge');
+
+        banner.className = 'status-banner';
+        if (risk === 'CRITICAL') {
+          banner.classList.add('critical');
+          title.innerText = '🚨 วิกฤตความเย็นล้มเหลว (CRITICAL)';
+          desc.innerText = 'อุณหภูมิเกินพิกัดความปลอดภัย ยาและวัคซีนเสี่ยงเสียหาย!';
+          badge.innerText = 'CRITICAL';
+          badge.style.background = 'rgba(239, 68, 68, 0.25)';
+          badge.style.color = 'var(--danger)';
+        } else if (risk === 'WARNING') {
+          banner.classList.add('warning');
+          title.innerText = '⚠️ ตรวจพบแนวโน้มผิดปกติ (PREDICTIVE WARNING)';
+          desc.innerText = 'AI ตรวจจับอุณหภูมิไต่ขึ้นเร็วผิดปกติ กรุณาตรวจเช็กตู้แช่';
+          badge.innerText = 'WARNING';
+          badge.style.background = 'rgba(245, 158, 11, 0.25)';
+          badge.style.color = 'var(--warning)';
+        } else {
+          title.innerText = 'ระบบทำงานปกติ (Normal)';
+          desc.innerText = 'อุณหภูมิอยู่ในช่วงปลอดภัย 2.0°C - 8.0°C (มาตรฐาน GMP)';
+          badge.innerText = 'SAFE';
+          badge.style.background = 'rgba(16, 185, 129, 0.2)';
+          badge.style.color = 'var(--success)';
+        }
+
+      } catch (err) {
+        console.error('Update error:', err);
+      }
+    }
+
+    // Update History Chart
+    async function updateChart() {
+      try {
+        const res = await fetch('/api/history?limit=25');
+        if (!res.ok) return;
+        const records = await res.json();
+        if (!records || records.length === 0) return;
+
+        const labels = records.map(r => r.ts ? r.ts.substring(11, 19) : '');
+        const temps = records.map(r => r.temp);
+        const upperLimit = records.map(() => 8.0);
+        const lowerLimit = records.map(() => 2.0);
+
+        tempChart.data.labels = labels;
+        tempChart.data.datasets[0].data = temps;
+        tempChart.data.datasets[1].data = upperLimit;
+        tempChart.data.datasets[2].data = lowerLimit;
+        tempChart.update();
+      } catch (err) {
+        console.error('Chart update error:', err);
+      }
+    }
+
+    // Simulate scenario button
+    async function simulate(scenario) {
+      triggerHaptic(scenario === 'normal' ? 'light' : 'heavy');
+      try {
+        await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
+        setTimeout(() => {
+          updateDashboard();
+          updateChart();
+        }, 300);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Periodic Polling
+    setInterval(updateDashboard, 1500);
+    setInterval(updateChart, 3000);
+    updateDashboard();
+    updateChart();
+  </script>
+</body>
+</html>

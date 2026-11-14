@@ -1,0 +1,14 @@
+services:
+  coldchain-service:
+    build: .
+    container_name: coldchain-aiot-service
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MQTT_HOST=broker.emqx.io
+      - MQTT_PORT=1883
+      - MQTT_TOPIC=tse/cn466/chanapa/telemetry
+    volumes:
+      - ./backend/coldchain.db:/app/backend/coldchain.db

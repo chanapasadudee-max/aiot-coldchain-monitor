@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+
+# Database
+*.db
+*.sqlite3
+
+# MkDocs build cache
+# site/ (can be ignored or tracked if manual deploy, let's keep site out of main source)
+.cache/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
