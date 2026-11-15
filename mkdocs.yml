@@ -1,5 +1,5 @@
-site_name: AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
-site_description: คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม
+site_name: TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+site_description: คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม (คณะวิศวกรรมศาสตร์ มธ.)
 site_author: Chanapa Sadudee (6610680214)
 repo_name: aiot-coldchain-monitor
 repo_url: https://github.com/
@@ -7,20 +7,20 @@ repo_url: https://github.com/
 theme:
   name: material
   language: th
-  icon:
-    logo: material/snowflake
+  logo: assets/images/tse_logo.png
+  favicon: assets/images/tse_logo.png
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: black
-      accent: light blue
+      accent: amber
       toggle:
         icon: material/brightness-4
         name: สลับเป็นธีมสว่าง
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: light blue
-      accent: cyan
+      primary: red
+      accent: amber
       toggle:
         icon: material/brightness-7
         name: สลับเป็นธีมมืด

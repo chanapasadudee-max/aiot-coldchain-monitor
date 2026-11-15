@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AIoT Industrial Cold Chain — Smart Facility Guard</title>
+  <title>TSE AIoT Industrial Cold Chain — คณะวิศวกรรมศาสตร์ มหาวิทยาลัยธรรมศาสตร์</title>
+  <link rel="icon" type="image/png" href="tse_logo.png">
 
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -16,34 +17,44 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+    /* TSE Official Identity Palette (แดง-ทอง ธรรมศาสตร์) */
     :root {
-      --bg: #070b14;
-      --card-bg: rgba(17, 24, 39, 0.72);
-      --card-hover: rgba(30, 41, 59, 0.85);
+      --tse-red: #8c181c;
+      --tse-red-light: #b91c1c;
+      --tse-gold: #ffd04f;
+      --tse-gold-dark: #eab308;
+      --tse-graphite: #58585a;
+      
+      --bg: #0c0e12;
+      --card-bg: rgba(22, 25, 33, 0.78);
+      --card-hover: rgba(30, 35, 46, 0.9);
       --card-border: rgba(255, 255, 255, 0.08);
-      --text: #f1f5f9;
+      --text: #f8fafc;
       --text-dim: #94a3b8;
       --track: rgba(255, 255, 255, 0.07);
-      --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.3);
+      
+      --primary: #ffd04f;              /* TSE Gold */
+      --primary-red: #8c181c;          /* TSE Red */
+      --primary-glow: rgba(255, 208, 79, 0.3);
+      --red-glow: rgba(140, 24, 28, 0.45);
+      
       --temp-good: #10b981;
-      --temp-warn: #f59e0b;
-      --temp-crit: #ef4444;
-      --humid-color: #38bdf8;
-      --slope-color: #a855f7;
-      --shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5);
-      --orb-opacity: 0.16;
+      --temp-warn: #ffd04f;
+      --temp-crit: #b91c1c;
+      
+      --shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+      --orb-opacity: 0.18;
     }
 
     html[data-theme="light"] {
-      --bg: #f8fafc;
-      --card-bg: rgba(255, 255, 255, 0.85);
-      --card-hover: rgba(255, 255, 255, 0.95);
-      --card-border: rgba(15, 23, 42, 0.08);
-      --text: #0f172a;
+      --bg: #f8f9fb;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --card-hover: rgba(255, 255, 255, 1);
+      --card-border: rgba(140, 24, 28, 0.12);
+      --text: #1a1d24;
       --text-dim: #64748b;
-      --track: rgba(15, 23, 42, 0.08);
-      --shadow: 0 15px 35px -8px rgba(15, 23, 42, 0.12);
+      --track: rgba(140, 24, 28, 0.08);
+      --shadow: 0 15px 35px -8px rgba(140, 24, 28, 0.1);
       --orb-opacity: 0.08;
     }
 
@@ -60,16 +71,16 @@
       transition: background-color 0.4s ease, color 0.4s ease;
     }
 
-    /* Ambient Glowing Orbs */
+    /* Ambient Glowing Orbs in TSE Colors (Crimson Red & Warm Gold) */
     .orb {
       position: fixed; border-radius: 50%;
-      filter: blur(100px); opacity: var(--orb-opacity);
+      filter: blur(110px); opacity: var(--orb-opacity);
       pointer-events: none; z-index: 0;
       transition: opacity 0.5s ease;
     }
-    .orb-1 { width: 450px; height: 450px; background: #0284c7; top: -140px; left: -100px; animation: float1 24s ease-in-out infinite alternate; }
-    .orb-2 { width: 400px; height: 400px; background: #7e22ce; bottom: -120px; right: -80px; animation: float2 28s ease-in-out infinite alternate; }
-    .orb-3 { width: 320px; height: 320px; background: #059669; top: 35%; right: 25%; animation: float1 32s ease-in-out infinite alternate-reverse; }
+    .orb-1 { width: 480px; height: 480px; background: #8c181c; top: -140px; left: -100px; animation: float1 26s ease-in-out infinite alternate; }
+    .orb-2 { width: 420px; height: 420px; background: #ffd04f; bottom: -120px; right: -80px; animation: float2 30s ease-in-out infinite alternate; }
+    .orb-3 { width: 340px; height: 340px; background: #58585a; top: 40%; right: 20%; animation: float1 34s ease-in-out infinite alternate-reverse; }
 
     @keyframes float1 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 35px) scale(1.1); } }
     @keyframes float2 { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(-60px, -45px) scale(0.92); } }
@@ -89,30 +100,29 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 22px;
+      padding: 14px 22px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 20px;
       backdrop-filter: blur(16px);
       box-shadow: var(--shadow);
+      border-left: 4px solid var(--tse-red);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
-    .brand-logo {
+    .brand-logo-img {
       width: 44px;
       height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #0284c7, #38bdf8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 8px 20px var(--primary-glow);
+      border-radius: 12px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 4px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .brand-text h1 {
@@ -128,6 +138,11 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .brand-text p .tu-tag {
+      color: var(--tse-gold);
+      font-weight: 600;
     }
 
     .nav-actions {
@@ -179,7 +194,7 @@
     }
     .theme-toggle-btn:hover {
       transform: translateY(-2px);
-      border-color: var(--primary);
+      border-color: var(--tse-gold);
     }
 
     /* Hero Banner Alert */
@@ -197,21 +212,21 @@
     }
 
     .hero-banner.warning {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(120, 53, 15, 0.25));
-      border-color: var(--temp-warn);
-      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.2);
+      background: linear-gradient(135deg, rgba(255, 208, 79, 0.15), rgba(140, 24, 28, 0.2));
+      border-color: var(--tse-gold);
+      box-shadow: 0 10px 30px rgba(255, 208, 79, 0.2);
     }
 
     .hero-banner.critical {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(127, 29, 29, 0.35));
-      border-color: var(--temp-crit);
-      box-shadow: 0 10px 35px rgba(239, 68, 68, 0.3);
+      background: linear-gradient(135deg, rgba(140, 24, 28, 0.35), rgba(90, 10, 15, 0.6));
+      border-color: var(--tse-red-light);
+      box-shadow: 0 10px 35px var(--red-glow);
       animation: alertPulse 1.5s infinite;
     }
 
     @keyframes alertPulse {
-      0%, 100% { border-color: var(--temp-crit); box-shadow: 0 0 25px rgba(239, 68, 68, 0.4); }
-      50% { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 0 10px rgba(239, 68, 68, 0.1); }
+      0%, 100% { border-color: var(--tse-red-light); box-shadow: 0 0 25px var(--red-glow); }
+      50% { border-color: rgba(185, 28, 28, 0.3); box-shadow: 0 0 10px rgba(185, 28, 28, 0.1); }
     }
 
     .hero-content h2 {
@@ -268,7 +283,7 @@
 
     .gauge-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(56, 189, 248, 0.4);
+      border-color: rgba(255, 208, 79, 0.4);
     }
 
     .gauge-header {
@@ -351,8 +366,8 @@
 
     /* AI Anomaly Insights Card */
     .ai-card {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(15, 23, 42, 0.95));
-      border: 1px solid rgba(56, 189, 248, 0.25);
+      background: linear-gradient(135deg, rgba(22, 25, 33, 0.9), rgba(14, 16, 21, 0.95));
+      border: 1px solid rgba(255, 208, 79, 0.25);
       border-radius: 20px;
       padding: 20px 22px;
       backdrop-filter: blur(14px);
@@ -370,7 +385,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.95rem;
       font-weight: 700;
-      color: var(--primary);
+      color: var(--tse-gold);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -410,8 +425,8 @@
       margin-top: 14px;
       padding: 12px 16px;
       border-radius: 12px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(140, 24, 28, 0.15);
+      border: 1px solid rgba(140, 24, 28, 0.4);
       display: none;
       font-size: 0.82rem;
     }
@@ -449,8 +464,8 @@
       font-weight: 600;
       padding: 3px 10px;
       border-radius: 6px;
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--primary);
+      background: rgba(255, 208, 79, 0.14);
+      color: var(--tse-gold);
     }
 
     /* Interactive Scenarios */
@@ -509,9 +524,9 @@
     }
 
     button.btn-scenario.normal:hover { border-color: var(--temp-good); color: var(--temp-good); }
-    button.btn-scenario.warn:hover { border-color: var(--temp-warn); color: var(--temp-warn); }
-    button.btn-scenario.crit:hover { border-color: var(--temp-crit); color: var(--temp-crit); }
-    button.btn-scenario.glitch:hover { border-color: var(--slope-color); color: var(--slope-color); }
+    button.btn-scenario.warn:hover { border-color: var(--tse-gold); color: var(--tse-gold); }
+    button.btn-scenario.crit:hover { border-color: var(--tse-red-light); color: var(--tse-red-light); }
+    button.btn-scenario.glitch:hover { border-color: var(--tse-graphite); color: var(--text); }
 
     /* Footer */
     footer {
@@ -524,20 +539,23 @@
 </head>
 <body>
 
-  <!-- Ambient Glowing Orbs -->
+  <!-- Ambient Glowing Orbs in TSE Red & Gold -->
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 
   <div class="app-container">
 
-    <!-- Header Navigation -->
+    <!-- Header Navigation with Official TSE Branding -->
     <header>
       <div class="brand">
-        <div class="brand-logo">❄️</div>
+        <img src="tse_logo.png" alt="TSE Logo" class="brand-logo-img">
         <div class="brand-text">
-          <h1>AIoT Industrial Cold Chain</h1>
-          <p><span>บอร์ด Cucumber (ESP32)</span> • <span>ตู้แช่ยา & Server Room</span></p>
+          <h1>TSE AIoT Industrial Cold Chain</h1>
+          <p>
+            <span class="tu-tag">คณะวิศวกรรมศาสตร์ มธ. (TSE)</span> • 
+            <span>บอร์ด Cucumber (ESP32)</span>
+          </p>
         </div>
       </div>
       <div class="nav-actions">
@@ -561,7 +579,7 @@
       <div id="hero-badge" class="hero-badge">OPTIMAL</div>
     </div>
 
-    <!-- 3 Circular Gauges -->
+    <!-- 3 Circular Gauges (TSE Gold & Crimson Palette) -->
     <div class="gauges-grid">
 
       <!-- Gauge 1: Temperature -->
@@ -574,8 +592,8 @@
           <svg viewBox="0 0 160 160">
             <defs>
               <linearGradient id="tempGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#10b981" />
-                <stop offset="100%" stop-color="#38bdf8" />
+                <stop offset="0%" stop-color="#ffd04f" />
+                <stop offset="100%" stop-color="#8c181c" />
               </linearGradient>
             </defs>
             <circle class="circle-bg" cx="80" cy="80" r="70" />
@@ -599,15 +617,15 @@
           <svg viewBox="0 0 160 160">
             <defs>
               <linearGradient id="humidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#38bdf8" />
-                <stop offset="100%" stop-color="#818cf8" />
+                <stop offset="0%" stop-color="#ffd04f" />
+                <stop offset="100%" stop-color="#f59e0b" />
               </linearGradient>
             </defs>
             <circle class="circle-bg" cx="80" cy="80" r="70" />
             <circle id="humid-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#humidGradient)" />
           </svg>
           <div class="gauge-center">
-            <div id="humid-val" class="big-number" style="color: var(--humid-color);">61.5</div>
+            <div id="humid-val" class="big-number" style="color: var(--tse-gold);">61.5</div>
             <div class="unit-label">เปอร์เซ็นต์ (%RH)</div>
           </div>
         </div>
@@ -624,15 +642,15 @@
           <svg viewBox="0 0 160 160">
             <defs>
               <linearGradient id="slopeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#a855f7" />
-                <stop offset="100%" stop-color="#ec4899" />
+                <stop offset="0%" stop-color="#ffd04f" />
+                <stop offset="100%" stop-color="#8c181c" />
               </linearGradient>
             </defs>
             <circle class="circle-bg" cx="80" cy="80" r="70" />
             <circle id="slope-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#slopeGradient)" />
           </svg>
           <div class="gauge-center">
-            <div id="slope-val" class="big-number" style="color: var(--slope-color);">+0.01</div>
+            <div id="slope-val" class="big-number" style="color: var(--tse-red-light);">+0.01</div>
             <div class="unit-label">°C ต่อสเต็ป</div>
           </div>
         </div>
@@ -644,7 +662,7 @@
     <!-- AI Anomaly Insights -->
     <div class="ai-card">
       <div class="ai-card-title">
-        <h3><span>🧠</span> การวิเคราะห์เชิงพยากรณ์ล่วงหน้า (AI Anomaly Engine)</h3>
+        <h3><span>🧠</span> การวิเคราะห์เชิงพยากรณ์ล่วงหน้า (TSE AI Anomaly Engine)</h3>
         <span class="legend-badge">HYBRID AI: SLOPE + Z-SCORE</span>
       </div>
       <div class="ai-metrics-row">
@@ -654,7 +672,7 @@
         </div>
         <div class="ai-metric-item">
           <div class="ai-metric-label">เวลาที่เหลือก่อนวิกฤต (ETTF)</div>
-          <div id="ai-ettf-val" class="ai-metric-val" style="color: var(--primary);">ปลอดภัย (∞)</div>
+          <div id="ai-ettf-val" class="ai-metric-val" style="color: var(--tse-gold);">ปลอดภัย (∞)</div>
         </div>
         <div class="ai-metric-item">
           <div class="ai-metric-label">ค่าเบี่ยงเบนสถิติ (Z-Score)</div>
@@ -704,9 +722,9 @@
       </div>
     </div>
 
-    <!-- Footer -->
+    <!-- Footer with TSE Identity -->
     <footer>
-      CN466 Project • IoT & AI Educational Platform • Chanapa Sadudee (6610680214)
+      CN466 Project • คณะวิศวกรรมศาสตร์ มหาวิทยาลัยธรรมศาสตร์ (TSE) • Chanapa Sadudee (6610680214)
     </footer>
 
   </div>
@@ -717,8 +735,8 @@
     if (tg) {
       tg.ready();
       tg.expand();
-      if (tg.setHeaderColor) tg.setHeaderColor('#070b14');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#070b14');
+      if (tg.setHeaderColor) tg.setHeaderColor('#0c0e12');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#0c0e12');
     }
 
     function triggerHaptic(type = 'medium') {
@@ -734,8 +752,6 @@
       html.setAttribute('data-theme', next);
     }
 
-    // Set Radial Gauge Value helper
-    // circumference of r=70 is 2 * PI * 70 = 439.82 (~440)
     const CIRCUMFERENCE = 440;
     function setGaugePercent(elementId, percent) {
       const el = document.getElementById(elementId);
@@ -745,11 +761,11 @@
       el.style.strokeDashoffset = offset;
     }
 
-    // Chart.js Setup with Neon Gradient
+    // Chart.js Setup with Warm TSE Gold & Crimson Accent
     const ctx = document.getElementById('liveChart').getContext('2d');
     const gradStroke = ctx.createLinearGradient(0, 0, 0, 200);
-    gradStroke.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
-    gradStroke.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+    gradStroke.addColorStop(0, 'rgba(255, 208, 79, 0.4)');
+    gradStroke.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
 
     const liveChart = new Chart(ctx, {
       type: 'line',
@@ -759,18 +775,18 @@
           {
             label: 'อุณหภูมิจริง (°C)',
             data: [],
-            borderColor: '#38bdf8',
+            borderColor: '#ffd04f',
             borderWidth: 2.5,
             backgroundColor: gradStroke,
             fill: true,
             tension: 0.35,
             pointRadius: 2.5,
-            pointBackgroundColor: '#38bdf8'
+            pointBackgroundColor: '#ffd04f'
           },
           {
             label: 'เพดานวิกฤต (8.0°C)',
             data: [],
-            borderColor: 'rgba(239, 68, 68, 0.65)',
+            borderColor: 'rgba(185, 28, 28, 0.8)',
             borderDash: [5, 5],
             borderWidth: 1.5,
             pointRadius: 0,
@@ -779,7 +795,7 @@
           {
             label: 'ขอบเขตต่ำสุด (2.0°C)',
             data: [],
-            borderColor: 'rgba(56, 189, 248, 0.45)',
+            borderColor: 'rgba(255, 208, 79, 0.5)',
             borderDash: [5, 5],
             borderWidth: 1.5,
             pointRadius: 0,
@@ -822,28 +838,28 @@
         const slope = ai.slope_per_step;
         const risk = ai.risk_level;
 
-        // 1. Update Gauge 1: Temperature (0 - 12°C mapped to 0-100%)
+        // 1. Update Gauge 1: Temperature
         document.getElementById('temp-val').innerText = temp.toFixed(1);
         const tempPct = (temp / 12) * 100;
         setGaugePercent('temp-bar', tempPct);
 
         const tempValEl = document.getElementById('temp-val');
         if (temp > 8.0) {
-          tempValEl.style.color = 'var(--temp-crit)';
+          tempValEl.style.color = 'var(--tse-red-light)';
           document.getElementById('temp-tag').innerText = '🚨 อุณหภูมิเกินเกณฑ์ปลอดภัย!';
         } else if (temp < 2.0) {
-          tempValEl.style.color = 'var(--temp-warn)';
+          tempValEl.style.color = 'var(--tse-gold)';
           document.getElementById('temp-tag').innerText = '⚠️ อุณหภูมิต่ำเสี่ยงเป็นน้ำแข็ง';
         } else {
           tempValEl.style.color = 'var(--temp-good)';
           document.getElementById('temp-tag').innerText = 'ช่วงปลอดภัย: 2°C – 8°C';
         }
 
-        // 2. Update Gauge 2: Humidity (0 - 100%)
+        // 2. Update Gauge 2: Humidity
         document.getElementById('humid-val').innerText = humid.toFixed(1);
         setGaugePercent('humid-bar', humid);
 
-        // 3. Update Gauge 3: Slope (-0.5 to +0.5 mapped to 0-100%)
+        // 3. Update Gauge 3: Slope
         const slopeSign = slope > 0 ? '+' : '';
         document.getElementById('slope-val').innerText = `${slopeSign}${slope.toFixed(2)}`;
         const slopePct = Math.max(0, Math.min(100, ((slope + 0.2) / 0.7) * 100));
@@ -852,7 +868,7 @@
         const slopeTag = document.getElementById('slope-tag');
         if (slope > 0.18) {
           slopeTag.innerText = '⚠️ กำลังไต่ระดับขึ้นเร็ว!';
-          slopeTag.style.color = 'var(--temp-crit)';
+          slopeTag.style.color = 'var(--tse-red-light)';
         } else {
           slopeTag.innerText = 'ความชันคงที่ (ปลอดภัย)';
           slopeTag.style.color = 'var(--text-dim)';
@@ -861,12 +877,12 @@
         // 4. Update AI Insights
         const riskEl = document.getElementById('ai-risk-val');
         riskEl.innerText = risk;
-        riskEl.style.color = risk === 'NORMAL' ? 'var(--temp-good)' : (risk === 'WARNING' ? 'var(--temp-warn)' : 'var(--temp-crit)');
+        riskEl.style.color = risk === 'NORMAL' ? 'var(--temp-good)' : (risk === 'WARNING' ? 'var(--tse-gold)' : 'var(--tse-red-light)');
 
         const ettfEl = document.getElementById('ai-ettf-val');
         if (ai.ettf_seconds) {
           ettfEl.innerText = `~${ai.ettf_seconds.toFixed(0)} วินาที`;
-          ettfEl.style.color = 'var(--temp-crit)';
+          ettfEl.style.color = 'var(--tse-red-light)';
         } else {
           ettfEl.innerText = 'ปลอดภัย (∞)';
           ettfEl.style.color = 'var(--temp-good)';
@@ -889,16 +905,16 @@
           hTitle.innerText = 'วิกฤตความเย็นล้มเหลว (CRITICAL FAILURE)';
           hDesc.innerText = 'อุณหภูมิเกินพิกัดความปลอดภัย 8.0°C ยาและวัคซีนเสี่ยงเสียหาย!';
           hBadge.innerText = 'CRITICAL';
-          hBadge.style.color = 'var(--temp-crit)';
-          hBadge.style.background = 'rgba(239, 68, 68, 0.25)';
+          hBadge.style.color = 'var(--tse-red-light)';
+          hBadge.style.background = 'rgba(185, 28, 28, 0.25)';
         } else if (risk === 'WARNING') {
           hero.classList.add('warning');
           hIcon.innerText = '⚠️';
           hTitle.innerText = 'ตรวจพบแนวโน้มผิดปกติ (PREDICTIVE WARNING)';
           hDesc.innerText = 'ความชันอุณหภูมิไต่ระดับขึ้นเร็วผิดปกติ แนะนำให้ตรวจสอบตู้แช่ทันที';
           hBadge.innerText = 'WARNING';
-          hBadge.style.color = 'var(--temp-warn)';
-          hBadge.style.background = 'rgba(245, 158, 11, 0.25)';
+          hBadge.style.color = 'var(--tse-gold)';
+          hBadge.style.background = 'rgba(255, 208, 79, 0.25)';
         } else {
           hIcon.innerText = '🟢';
           hTitle.innerText = 'สภาวะความเย็นปกติ (Normal Operation)';
@@ -939,7 +955,7 @@
         liveChart.data.datasets[0].data = temps;
         liveChart.data.datasets[1].data = upperLimit;
         liveChart.data.datasets[2].data = lowerLimit;
-        liveChart.update('none'); // non-blocking smooth animation
+        liveChart.update('none');
       } catch (e) {
         console.error('History chart error:', e);
       }
@@ -963,7 +979,6 @@
     setInterval(fetchLatestData, 1200);
     setInterval(fetchHistoryData, 2500);
 
-    // Initial load
     fetchLatestData();
     fetchHistoryData();
   </script>
