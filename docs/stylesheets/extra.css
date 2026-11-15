@@ -66,9 +66,10 @@ body, .md-typeset {
 }
 
 .md-logo img {
-  border-radius: 6px;
-  background: #ffffff;
-  padding: 2px;
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
 }
 
 /* Headings */

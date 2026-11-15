@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>TSE AIoT Industrial Cold Chain — คณะวิศวกรรมศาสตร์ มหาวิทยาลัยธรรมศาสตร์</title>
-  <link rel="icon" type="image/png" href="tse_logo.png">
+  <title>AIoT Industrial Cold Chain — Project Final (CN466)</title>
+  <link rel="icon" type="image/png" href="logo.png">
 
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -116,13 +116,16 @@
     }
 
     .brand-logo-img {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      width: 46px;
+      height: 46px;
       object-fit: contain;
-      background: #ffffff;
-      padding: 4px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      background: transparent;
+      padding: 0;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+      transition: transform 0.3s ease;
+    }
+    .brand-logo-img:hover {
+      transform: scale(1.08) rotate(5deg);
     }
 
     .brand-text h1 {
@@ -546,14 +549,14 @@
 
   <div class="app-container">
 
-    <!-- Header Navigation with Official TSE Branding -->
+    <!-- Header Navigation with Custom Project P-Logo -->
     <header>
       <div class="brand">
-        <img src="tse_logo.png" alt="TSE Logo" class="brand-logo-img">
+        <img id="brand-logo-img" src="logo_dark.png" alt="Project Logo" class="brand-logo-img">
         <div class="brand-text">
-          <h1>TSE AIoT Industrial Cold Chain</h1>
+          <h1>AIoT Industrial Cold Chain</h1>
           <p>
-            <span class="tu-tag">คณะวิศวกรรมศาสตร์ มธ. (TSE)</span> • 
+            <span class="tu-tag">Smart Facility Monitor</span> • 
             <span>บอร์ด Cucumber (ESP32)</span>
           </p>
         </div>
@@ -750,6 +753,11 @@
       const current = html.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
+
+      const logo = document.getElementById('brand-logo-img');
+      if (logo) {
+        logo.src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+      }
     }
 
     const CIRCUMFERENCE = 440;

@@ -7,8 +7,8 @@ repo_url: https://github.com/
 theme:
   name: material
   language: th
-  logo: assets/images/tse_logo.png
-  favicon: assets/images/tse_logo.png
+  logo: assets/images/logo.png
+  favicon: assets/images/logo.png
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
