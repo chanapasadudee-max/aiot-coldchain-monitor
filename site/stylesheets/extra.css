@@ -1,81 +1,183 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Sarabun:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+
+/* ==============================================================================
+   Unified Industrial Brand Palette (Matching Dashboard & Docs)
+   ============================================================================== */
 
 :root {
   --md-text-font: "Sarabun", -apple-system, BlinkMacSystemFont, sans-serif;
   --md-code-font: "JetBrains Mono", Consolas, monospace;
+  --brand-primary: #38bdf8;
+  --brand-navy: #070b14;
+  --brand-slate: #0f172a;
+  --brand-card: rgba(17, 24, 39, 0.75);
+}
+
+/* Dark Mode (Slate) — Matches Dashboard #070b14 */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #070b14;
+  --md-default-bg-color--light: #0d1527;
+  --md-default-bg-color--lighter: #131e38;
+  --md-default-fg-color: #f1f5f9;
+  --md-default-fg-color--light: #94a3b8;
+  --md-default-fg-color--lighter: #64748b;
+  --md-primary-fg-color: #070b14;
+  --md-primary-fg-color--light: #38bdf8;
+  --md-primary-fg-color--dark: #0284c7;
+  --md-primary-bg-color: #f1f5f9;
+  --md-accent-fg-color: #38bdf8;
+  --md-typeset-a-color: #38bdf8;
+}
+
+/* Light Mode (Default) — Matches Dashboard #f8fafc */
+[data-md-color-scheme="default"] {
+  --md-default-bg-color: #f8fafc;
+  --md-default-bg-color--light: #ffffff;
+  --md-default-fg-color: #0f172a;
+  --md-default-fg-color--light: #475569;
+  --md-primary-fg-color: #0284c7;
+  --md-primary-fg-color--light: #38bdf8;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #0284c7;
+  --md-typeset-a-color: #0284c7;
 }
 
 body, .md-typeset {
   font-family: var(--md-text-font);
-  font-size: 0.88rem;
-  line-height: 1.7;
+  font-size: 0.9rem;
+  line-height: 1.75;
 }
 
+/* Top Header Bar */
 .md-header {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  background: var(--brand-navy) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(14px);
 }
 
-.md-typeset h1, .md-typeset h2, .md-typeset h3 {
+.md-header__title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Headings */
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
   font-family: "Space Grotesk", "Sarabun", sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .md-typeset h1 {
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  background: linear-gradient(135deg, #38bdf8 20%, #818cf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.1rem;
+  margin-bottom: 1.2rem;
 }
 
-/* Hero Card Styling */
+.md-typeset h2 {
+  border-bottom: 2px solid rgba(56, 189, 248, 0.2);
+  padding-bottom: 6px;
+  margin-top: 2rem;
+  color: #38bdf8;
+}
+
+/* Hero Box Container */
 .hero-box {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.1));
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  border-radius: 16px;
-  padding: 24px 28px;
-  margin: 20px 0 30px;
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(129, 140, 248, 0.08));
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 20px;
+  padding: 26px 30px;
+  margin: 20px 0 32px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.4);
 }
 
 .hero-box h3 {
   margin-top: 0;
+  font-size: 1.25rem;
   color: #38bdf8;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-/* Card Grids */
+/* Grid Cards */
 .grid-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
-  margin: 20px 0;
+  margin: 24px 0;
 }
 
 .course-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 18px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all 0.25s ease;
+  border-radius: 16px;
+  padding: 20px 22px;
+  background: rgba(17, 24, 39, 0.65);
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+[data-md-color-scheme="default"] .course-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
 }
 
 .course-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: #38bdf8;
-  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15);
+  box-shadow: 0 15px 30px rgba(56, 189, 248, 0.2);
 }
 
-/* Table Styling */
+.course-card h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.course-card h4 a {
+  color: #38bdf8 !important;
+  text-decoration: none;
+}
+
+.course-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* Tables */
 .md-typeset table:not([class]) {
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .md-typeset table:not([class]) th {
-  background: rgba(56, 189, 248, 0.12);
+  background: rgba(56, 189, 248, 0.15);
   color: #38bdf8;
   font-weight: 700;
+  padding: 10px 16px;
+}
+
+.md-typeset table:not([class]) td {
+  padding: 10px 16px;
+}
+
+/* Code Blocks */
+.highlight {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Admonitions (Callout boxes) */
+.md-typeset .admonition {
+  border-radius: 14px;
+  border-left-width: 5px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }

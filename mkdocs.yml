@@ -7,17 +7,19 @@ repo_url: https://github.com/
 theme:
   name: material
   language: th
+  icon:
+    logo: material/snowflake
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: cyan
+      primary: black
       accent: light blue
       toggle:
         icon: material/brightness-4
         name: สลับเป็นธีมสว่าง
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
+      primary: light blue
       accent: cyan
       toggle:
         icon: material/brightness-7
