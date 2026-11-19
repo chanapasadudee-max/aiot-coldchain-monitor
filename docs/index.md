@@ -1,28 +1,18 @@
 # 🏭 AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
 
 <div class="hero-box">
-  <h3>🌟 แพลตฟอร์มการเรียนรู้และพัฒนาระบบ AIoT ระดับอุตสาหกรรม (Industrial AIoT)</h3>
+  <h3>🌟 แพลตฟอร์มการเรียนรู้และระบบ AIoT แบบสองทางระดับอุตสาหกรรม (Full-Stack Bidirectional AIoT)</h3>
   <p>
-    ออกแบบและพัฒนาสำหรับการเฝ้าระวังและตรวจจับความผิดปกติของตู้แช่ยา วัคซีน และห้อง Server แบบเรียลไทม์ 
-    ด้วยการผสานฮาร์ดแวร์ <strong>บอร์ด Cucumber (ESP32)</strong>, โพรโทคอล <strong>MQTT</strong>, 
-    เอนจิน <strong>AI Predictive Anomaly Detection</strong>, และ <strong>Telegram Mini App</strong>
+    ผสานฮาร์ดแวร์จริง <strong>บอร์ด Cucumber RIS (ESP32-S2)</strong> อ่านเซ็นเซอร์พร้อมกัน 3 ชนิด (<strong>HTS221 + BMP280 + MPU6050</strong>) 
+    ควบคุมไฟ <strong>NeoPixel RGB LED</strong> ผ่าน MQTT สองทาง ขับเคลื่อนด้วย <strong>Triple-Layer Hybrid AI</strong> 
+    (Predictive Slope/Shock Engine + Local Ollama <code>qwen2.5</code> Copilot + Deterministic Safety Guardrails + Google Colab) 
+    พร้อม UI ผ่าน <strong>Web Command Center & Telegram Mini App</strong>
   </p>
-  <p style="margin-bottom: 0; font-size: 0.85rem; color: #94a3b8;">
-    <strong>วิชา:</strong> CN466 Project - Internet of Things & AI | มหาวิทยาลัยธรรมศาสตร์ (TSE)<br>
-    <strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (รหัสนักศึกษา: 6610680214)
+  <p style="margin-bottom: 0; font-size: 0.85rem; opacity: 0.88;">
+    <strong>วิชา:</strong> CN466 Project - Internet of Things & AI | <strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (6610680214)<br>
+    👉 <a href="live_sandbox/"><strong>คลิกทดลองเล่น Live MQTT Sandbox สดบนหน้าเว็บได้เลย!</strong></a>
   </p>
 </div>
-
----
-
-## 💡 ภาพรวมและความสำคัญทางธุรกิจ (Business Value)
-
-ในภาคอุตสาหกรรม การแพทย์ และศูนย์ข้อมูล (Data Center) **"ความเย็น"** คือหัวใจสำคัญของความอยู่รอดทางธุรกิจ:
-
-- 💊 **ตู้แช่ยาและวัคซีน (Cold Chain):** หากอุณหภูมิหลุดจากช่วง **2°C – 8°C** เกิน 2 ชั่วโมง ยาและชีววัตถุอาจเสื่อมสภาพ มูลค่าความเสียหายต่อครั้งสูงถึง **300,000 – 5,000,000 บาท**
-- 🖥️ **ห้อง Server / Data Center:** หากระบบปรับอากาศล้มเหลว อุณหภูมิที่สูงเกิน **25°C** จะทำให้เซิร์ฟเวอร์ตัดการทำงาน เกิดภาวะ Downtime ธุรกิจหยุดชะงัก มูลค่าความเสียหายนาทีละหลายหมื่นบาท
-
-โปรเจกต์นี้จึงสร้างขึ้นเพื่อ **แก้ Pain Point จากระบบแจ้งเตือนแบบเดิม** ที่มักเตือนช้าเกินไป โดยเปลี่ยนมาใช้ **AI วิเคราะห์ความชัน (Trend Slope)** เพื่อส่งสัญญาณเตือนล่วงหน้าก่อนที่สินค้าจะเสียหายจริง!
 
 ---
 
@@ -30,80 +20,84 @@
 
 ```mermaid
 flowchart TD
-    subgraph IOT ["1. ชั้นอุปกรณ์ IoT (Field Devices)"]
-        direction TB
-        CUCUMBER["บอร์ด Cucumber (ESP32)<br>เซ็นเซอร์วัด Temp / Humid"]
-        SIM["Industrial Simulator<br>(จำลองสถานการณ์ตู้แช่พัง)"]
+    subgraph IOT ["1. Cucumber RIS (ESP32-S2) — Multi-Sensor + Actuator"]
+        S["HTS221 (Temp/Humid)<br>BMP280 (Pressure)<br>MPU6050 (Vibration/Shock)"] --> MCU["ESP32-S2<br>PlatformIO C++"]
+        MCU --> LED["NeoPixel RGB LED<br>(GPIO 18)"]
     end
 
-    subgraph CLOUD ["2. ชั้นสื่อสารและคลาวด์ (Cloud & Gateway)"]
-        BROKER["MQTT Broker<br>(broker.emqx.io:1883)<br>Topic: tse/cn466/chanapa/telemetry"]
-        DOCKER["Docker Container<br>FastAPI + SQLite"]
+    subgraph CLOUD ["2. Cloud MQTT Broker & FastAPI Gateway"]
+        BROKER["broker.emqx.io<br>TX: telemetry | RX: cmd"]
+        API["FastAPI + SQLite + GMP CSV"]
     end
 
-    subgraph AI ["3. ชั้นปัญญาประดิษฐ์ (AI Engine)"]
-        ANOMALY["Predictive Anomaly Detection<br>(Slope + Z-Score)"]
-        ADVISOR["AI Incident Advisor<br>(วิเคราะห์สาเหตุ & มาตรการแก้ไข CAPA)"]
+    subgraph AI ["3. Triple-Layer Hybrid AI"]
+        L1["Layer 1: Anomaly Engine<br>(Slope, Z-Score, ETTF, Shock)"]
+        L2["Layer 2: Local Ollama qwen2.5<br>Thai Copilot + 🛡️ Safety Guardrails"]
+        L3["Layer 3: Google Colab<br>(Isolation Forest vs One-Class SVM)"]
     end
 
-    subgraph UI ["4. ชั้นผู้ใช้งาน (User Interface)"]
-        TG_BOT["Telegram Alert Bot<br>(@Chanaps_Bot)"]
-        MINI_APP["Telegram Mini App /<br>Industrial Web Dashboard"]
+    subgraph UI ["4. User Interface & Learning Platform"]
+        WEB["Web Command Center /<br>Telegram Mini App"]
+        BOT["Telegram Bot (@Chanaps_Bot)"]
+        GHP["GitHub Pages Docs +<br>Live WSS Sandbox"]
     end
 
-    CUCUMBER -->|MQTT Publish| BROKER
-    SIM -->|MQTT Publish| BROKER
-    BROKER -->|MQTT Subscribe| DOCKER
-    DOCKER --> ANOMALY
-    ANOMALY --> ADVISOR
-    ANOMALY -->|ยิงเตือนเมื่อเข้าขั้นวิกฤต| TG_BOT
-    DOCKER -->|REST API & WebApp| MINI_APP
+    MCU -- "Publish JSON" --> BROKER --> API
+    API --> L1 --> L2
+    L2 -- "Validated CMD" --> BROKER -- "Subscribe" --> MCU
+    API <--> WEB
+    API <--> BOT
+    BROKER -. "WSS :8084" .-> GHP
 ```
 
 ---
 
-## 📚 สารบัญบทเรียนในหลักสูตร (Curriculum Modules)
+## 📚 เส้นทางการเรียนรู้ (แบ่งแทร็กตามบทบาท)
 
+### 🎓 สำหรับผู้เรียน (Learner Track)
 <div class="grid-cards">
-
   <div class="course-card">
-    <h4><a href="01_system_architecture/">บทที่ 1: สถาปัตยกรรมระบบ</a></h4>
-    <p>สถาปัตยกรรมระดับอุตสาหกรรม การออกแบบ Data Pipeline แบบ End-to-End</p>
+    <h4><a href="01_system_architecture/">บทที่ 1: สถาปัตยกรรมระบบ AIoT</a></h4>
+    <p>Data Pipeline ระดับอุตสาหกรรมตั้งแต่เซ็นเซอร์ถึง AI และแอคชูเอเตอร์</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="02_cucumber_hardware/">บทที่ 2: บอร์ด Cucumber & เซ็นเซอร์</a></h4>
-    <p>การต่อวงจรเซ็นเซอร์ HTS221 (I2C), โค้ด C++ และการใช้งาน Simulator</p>
+    <h4><a href="02_cucumber_hardware/">บทที่ 2: บอร์ด Cucumber RIS & Multi-Sensor</a></h4>
+    <p>สแกน I2C (HTS221 + BMP280 + MPU6050) และคุมไฟ NeoPixel RGB LED</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="03_mqtt_cloud_broker/">บทที่ 3: การสื่อสารผ่าน MQTT</a></h4>
-    <p>การเชื่อมต่อ Public Broker (EMQX), การจัดรูปแบบ JSON Telemetry และ QoS</p>
+    <h4><a href="03_mqtt_cloud_broker/">บทที่ 3: การสื่อสาร MQTT สองทาง</a></h4>
+    <p>การ Publish Telemetry และ Subscribe Command บน Public Broker EMQX</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="04_ai_anomaly_detection/">บทที่ 4: AI Anomaly Detection</a></h4>
-    <p>โมเดลสถิติ Z-Score, การคำนวณ Trend Slope, ETTF และโมเดล Colab</p>
+    <h4><a href="04_ai_anomaly_detection/">บทที่ 4: AI Anomaly & Google Colab</a></h4>
+    <p>Predictive Slope, Z-Score, ETTF และ Workshop เทรน Isolation Forest vs OC-SVM</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="05_telegram_mini_app/">บทที่ 5: UI & Telegram Mini App</a></h4>
-    <p>การพัฒนา Dashboard บนมือถือ, การฝัง SDK Telegram และระบบ Haptic</p>
+    <h4><a href="05_telegram_mini_app/">บทที่ 5: UI, AI Copilot & Telegram Mini App</a></h4>
+    <p>แดชบอร์ด Command Center, แชตภาษาไทยคุมบอร์ดจริง และ Telegram Bot</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="06_docker_deployment/">บทที่ 6: การติดตั้งและรันระบบ</a></h4>
-    <p>การ Pack ลง Docker Container และการทำ Port Forwarding (HTTPS)</p>
+    <h4><a href="live_sandbox/">🧪 Live MQTT Sandbox (เล่นสดทันที)</a></h4>
+    <p>ต่อ WSS ดูค่าสดจากบอร์ด Cucumber หรือทดลองจำลองวิกฤตบน GitHub Pages</p>
   </div>
+</div>
 
+### 🧑‍🏫 สำหรับผู้สอนและวิศวกร (Instructor & Engineer Track)
+<div class="grid-cards">
   <div class="course-card">
-    <h4><a href="07_business_case/">บทที่ 7: โมเดลธุรกิจ & ความคุ้มค่า</a></h4>
-    <p>การคำนวณ ROI ความคุ้มค่าทางเศรษฐกิจ มาตรฐาน GMP/FDA และ B2B SaaS</p>
+    <h4><a href="06_docker_deployment/">บทที่ 6: การติดตั้ง Docker & Dev Tunnels</a></h4>
+    <p>รันระบบด้วย Docker Compose และเปิด HTTPS Port Forwarding</p>
   </div>
-
   <div class="course-card">
-    <h4><a href="08_video_walkthrough/">บทที่ 8: สคริปต์คลิปนำเสนอ AI Flow</a></h4>
-    <p>แนวทางการบันทึกคลิปส่งงาน 3-5 นาที อธิบายกระบวนการสั่งงานและตรวจงาน AI</p>
+    <h4><a href="07_business_case/">บทที่ 7: โมเดลธุรกิจ & ความคุ้มค่า (ROI)</a></h4>
+    <p>B2B SaaS Cold Chain, มาตรฐาน GMP/GDP/FDA และการคำนวณจุดคุ้มทุน</p>
   </div>
-
+  <div class="course-card">
+    <h4><a href="09_ai_safety_guardrails/">บทที่ 8: ความปลอดภัย AI & Guardrails</a></h4>
+    <p>การออกแบบ Deterministic Guardrails ป้องกัน AI สั่งงานอันตรายต่อฮาร์ดแวร์</p>
+  </div>
+  <div class="course-card">
+    <h4><a href="08_video_walkthrough/">บทที่ 9: สคริปต์คลิปนำเสนอ AI Flow</a></h4>
+    <p>แนวทางอัดคลิปส่งงาน 3–5 นาที อธิบายการสั่งงานและตรวจงานกับ AI</p>
+  </div>
 </div>

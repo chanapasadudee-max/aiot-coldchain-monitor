@@ -10,8 +10,15 @@ env/
 *.db
 *.sqlite3
 
+# Secrets (NEVER commit Wi-Fi / API keys)
+secrets.h
+**/secrets.h
+
+# PlatformIO build artifacts
+.pio/
+**/.pio/
+
 # MkDocs build cache
-# site/ (can be ignored or tracked if manual deploy, let's keep site out of main source)
 .cache/
 
 # OS / IDE

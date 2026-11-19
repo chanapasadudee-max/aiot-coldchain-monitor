@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม (คณะวิศวกรรมศาสตร์ มธ.)">
+        <meta name="description" content="คู่มือและบทเรียนการพัฒนา AIoT ระดับอุตสาหกรรมด้วยบอร์ด Cucumber RIS + Local Ollama AI Copilot + Guardrails + Telegram Mini App">
       
       
         <meta name="author" content="Chanapa Sadudee (6610680214)">
@@ -27,7 +27,7 @@
     
     
       
-        <title>6. การ Deploy ระบบ - TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server</title>
+        <title>6. การติดตั้ง Docker & Dev Tunnels - AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server</title>
       
     
     
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
-    <a href=".." title="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-header__button md-logo" aria-label="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
+    <a href=".." title="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-header__button md-logo" aria-label="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
       
   <img src="../assets/images/logo.png" alt="logo">
 
@@ -107,13 +107,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+            AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              6. การ Deploy ระบบ
+              6. การติดตั้ง Docker & Dev Tunnels
             
           </span>
         </div>
@@ -245,13 +245,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../01_system_architecture/" class="md-tabs__link">
+      <a href="../live_sandbox/" class="md-tabs__link">
         
   
   
     
   
-  1. สถาปัตยกรรมระบบ
+  🧪 Live Sandbox
 
       </a>
     </li>
@@ -263,74 +263,18 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../02_cucumber_hardware/" class="md-tabs__link">
-        
-  
-  
     
-  
-  2. บอร์ด Cucumber & เซ็นเซอร์
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../03_mqtt_cloud_broker/" class="md-tabs__link">
-        
-  
-  
     
+      <li class="md-tabs__item">
+        <a href="../01_system_architecture/" class="md-tabs__link">
+          
   
-  3. การสื่อสาร MQTT
+  
+  สำหรับผู้เรียน (Learner)
 
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../04_ai_anomaly_detection/" class="md-tabs__link">
-        
-  
-  
+        </a>
+      </li>
     
-  
-  4. ปัญญาประดิษฐ์ (AI Anomaly)
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../05_telegram_mini_app/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  5. UI & Telegram Mini App
-
-      </a>
-    </li>
   
 
       
@@ -341,55 +285,18 @@
     
   
   
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
-        
-  
-  
     
-  
-  6. การ Deploy ระบบ
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../07_business_case/" class="md-tabs__link">
-        
-  
-  
     
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
   
-  7. โมเดลธุรกิจ & ความคุ้มค่า
+  
+  สำหรับผู้สอน / วิศวกร (Instructor)
 
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../08_video_walkthrough/" class="md-tabs__link">
-        
-  
-  
+        </a>
+      </li>
     
-  
-  8. สคริปต์คลิปนำเสนอ AI Flow
-
-      </a>
-    </li>
   
 
       
@@ -415,12 +322,12 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ตัวนำทาง" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-nav__button md-logo" aria-label="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
+    <a href=".." title="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-nav__button md-logo" aria-label="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
       
   <img src="../assets/images/logo.png" alt="logo">
 
     </a>
-    TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+    AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
   </label>
   
     <div class="md-nav__source">
@@ -471,14 +378,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../01_system_architecture/" class="md-nav__link">
+      <a href="../live_sandbox/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    1. สถาปัตยกรรมระบบ
+    🧪 Live Sandbox
   
 
     
@@ -493,6 +400,86 @@
     
       
       
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สำหรับผู้เรียน (Learner)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สำหรับผู้เรียน (Learner)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_system_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. สถาปัตยกรรมระบบ AIoT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
@@ -505,7 +492,7 @@
   <span class="md-ellipsis">
     
   
-    2. บอร์ด Cucumber & เซ็นเซอร์
+    2. บอร์ด Cucumber RIS & Multi-Sensor
   
 
     
@@ -517,9 +504,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -532,7 +520,7 @@
   <span class="md-ellipsis">
     
   
-    3. การสื่อสาร MQTT
+    3. การสื่อสาร MQTT สองทาง
   
 
     
@@ -544,9 +532,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -559,7 +548,7 @@
   <span class="md-ellipsis">
     
   
-    4. ปัญญาประดิษฐ์ (AI Anomaly)
+    4. AI Anomaly & Google Colab
   
 
     
@@ -571,9 +560,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -586,7 +576,7 @@
   <span class="md-ellipsis">
     
   
-    5. UI & Telegram Mini App
+    5. UI, AI Copilot & Telegram Mini App
   
 
     
@@ -598,9 +588,74 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สำหรับผู้สอน / วิศวกร (Instructor)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สำหรับผู้สอน / วิศวกร (Instructor)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
@@ -622,7 +677,7 @@
   <span class="md-ellipsis">
     
   
-    6. การ Deploy ระบบ
+    6. การติดตั้ง Docker & Dev Tunnels
   
 
     
@@ -640,7 +695,7 @@
   <span class="md-ellipsis">
     
   
-    6. การ Deploy ระบบ
+    6. การติดตั้ง Docker & Dev Tunnels
   
 
     
@@ -722,9 +777,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -737,7 +793,7 @@
   <span class="md-ellipsis">
     
   
-    7. โมเดลธุรกิจ & ความคุ้มค่า
+    7. โมเดลธุรกิจ & ความคุ้มค่า (ROI)
   
 
     
@@ -749,9 +805,38 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09_ai_safety_guardrails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
-      
-      
+  
+    8. ความปลอดภัย AI & Guardrails
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
@@ -764,7 +849,7 @@
   <span class="md-ellipsis">
     
   
-    8. สคริปต์คลิปนำเสนอ AI Flow
+    9. สคริปต์คลิปนำเสนอ AI Flow
   
 
     
@@ -773,6 +858,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 

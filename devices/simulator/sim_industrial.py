@@ -1,11 +1,12 @@
 """
-AIoT Industrial Cold Chain & Sensitive Facility Simulator
+AIoT Industrial Cold Chain & Sensitive Facility Simulator (Multi-Sensor Edition)
 File: sim_industrial.py
 Author: Chanapa Sadudee (6610680214)
 
-โปรแกรมจำลองอุปกรณ์ IoT ประจำตู้แช่ยา/วัคซีน และห้อง Server ระดับอุตสาหกรรม
-ส่งข้อมูล Telemetry ทาง MQTT พร้อมรองรับการจำลองวิกฤตความเย็น (Crisis Scenarios)
-เพื่อให้ AI Engine และระบบแจ้งเตือน Telegram แสดงประสิทธิภาพในการตรวจจับ
+จำลองบอร์ด Cucumber RIS (ESP32-S2) ครบทุกเซ็นเซอร์:
+  - HTS221: Temperature (°C), Humidity (%RH)
+  - BMP280: Barometric Pressure (hPa)
+  - MPU6050: Vibration Peak (G), Shock Detection
 """
 
 import argparse
@@ -24,44 +25,44 @@ SCENARIOS = {
     "normal": "สภาวะปกติ (ตู้แช่ยา 2°C - 6°C)",
     "server": "สภาวะปกติ (ห้อง Server 19°C - 23°C)",
     "failure": "วิกฤต: คอมเพรสเซอร์เสีย (อุณหภูมิไต่ระดับขึ้นเร็วผิดปกติ)",
-    "door_ajar": "วิกฤต: ลืมปิดประตูตู้แช่ (อุณหภูมิและความชื้นพุ่งสูง)",
+    "door_ajar": "วิกฤต: ลืมปิดประตูตู้แช่ (อุณหภูมิ/ความชื้นพุ่ง + ความดันเปลี่ยน)",
+    "door_slam": "วิกฤต: แรงกระแทก/เปิดประตูแรง (MPU6050 Shock > 0.35g)",
     "glitch": "สไปก์ชั่วขณะ (Sensor Glitch จากคลื่นรบกวน)",
 }
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description="AIoT Industrial Sensor Simulator")
+    parser = argparse.ArgumentParser(description="AIoT Industrial Multi-Sensor Simulator")
     parser.add_argument("--host", default=BROKER_DEFAULT, help="MQTT Broker Host")
     parser.add_argument("--port", type=int, default=PORT_DEFAULT, help="MQTT Broker Port")
     parser.add_argument("--topic", default=TOPIC_DEFAULT, help="MQTT Topic")
     parser.add_argument("--interval", type=float, default=2.0, help="Publish interval in seconds")
     parser.add_argument("--scenario", default="normal", choices=list(SCENARIOS.keys()), help="Scenario mode")
-    parser.add_argument("--node-id", default="cucumber-coldchain-01", help="Node ID")
+    parser.add_argument("--node-id", default="cucumber-sim-01", help="Node ID")
     return parser.parse_args()
+
 
 def main():
     args = parse_args()
-    print("=" * 65)
-    print(" 🏭 AIoT Industrial Cold Chain Simulator")
+    print("=" * 68)
+    print(" AIoT Industrial Cold Chain Multi-Sensor Simulator")
     print(f" Target: {args.host}:{args.port} | Topic: {args.topic}")
     print(f" Scenario: {args.scenario} -> {SCENARIOS[args.scenario]}")
-    print("=" * 65)
+    print("=" * 68)
 
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     try:
         client.connect(args.host, args.port, keepalive=60)
         client.loop_start()
-        print(f"✅ เชื่อมต่อ MQTT Broker สำเร็จ! เริ่มส่งข้อมูลทุกๆ {args.interval} วินาที...")
+        print(f"[OK] Connected to MQTT Broker. Publishing every {args.interval}s...")
     except Exception as e:
-        print(f"❌ เชื่อมต่อ MQTT ล้มเหลว: {e}")
+        print(f"[ERR] MQTT connect failed: {e}")
         sys.exit(1)
 
-    # กำหนดค่าเริ่มต้นตามสถานการณ์
     if args.scenario == "server":
-        temp = 21.0
-        humid = 45.0
+        temp, humid, pressure = 21.0, 45.0, 1011.5
     else:
-        temp = 4.2
-        humid = 62.0
+        temp, humid, pressure = 4.2, 61.0, 1012.8
 
     step = 0
     scenario = args.scenario
@@ -70,29 +71,34 @@ def main():
         while True:
             step += 1
             now_iso = datetime.now(timezone.utc).isoformat()
+            vib_g = round(random.uniform(0.01, 0.05), 3)
+            shock = False
 
-            # คำนวณค่าตามสถานการณ์
             if scenario == "normal":
-                temp += random.uniform(-0.15, 0.15)
-                temp = max(3.0, min(5.5, temp))
-                humid += random.uniform(-0.5, 0.5)
-                humid = max(55.0, min(68.0, humid))
+                temp = max(3.0, min(5.5, temp + random.uniform(-0.15, 0.15)))
+                humid = max(55.0, min(68.0, humid + random.uniform(-0.5, 0.5)))
+                pressure = max(1010.0, min(1015.0, pressure + random.uniform(-0.1, 0.1)))
             elif scenario == "server":
-                temp += random.uniform(-0.2, 0.2)
-                temp = max(19.0, min(23.5, temp))
-                humid += random.uniform(-0.4, 0.4)
-                humid = max(40.0, min(50.0, humid))
+                temp = max(19.0, min(23.5, temp + random.uniform(-0.2, 0.2)))
+                humid = max(40.0, min(50.0, humid + random.uniform(-0.4, 0.4)))
+                pressure = max(1009.0, min(1014.0, pressure + random.uniform(-0.1, 0.1)))
             elif scenario == "failure":
-                # คอมเพรสเซอร์หยุดทำงาน อุณหภูมิไต่ขึ้นเร็วต่อเนื่อง
-                temp += random.uniform(0.3, 0.6)
+                temp += random.uniform(0.30, 0.55)
                 humid += random.uniform(0.2, 0.8)
+                vib_g = round(random.uniform(0.12, 0.28), 3)
             elif scenario == "door_ajar":
-                # ลืมปิดประตู ความร้อนชื้นภายนอกไหลเข้า
-                temp += random.uniform(0.2, 0.45)
+                temp += random.uniform(0.20, 0.45)
                 humid += random.uniform(0.8, 1.8)
+                pressure -= random.uniform(0.2, 0.5)
+            elif scenario == "door_slam":
+                temp += random.uniform(0.10, 0.25)
+                humid += random.uniform(0.4, 1.0)
+                if step % 3 == 0:
+                    vib_g = round(random.uniform(0.65, 1.45), 3)
+                    shock = True
             elif scenario == "glitch":
                 if step % 5 == 0:
-                    temp = 14.8  # ค่าเด้งผิดปกติ 1 รอบ
+                    temp = 14.8
                 else:
                     temp = 4.1 + random.uniform(-0.1, 0.1)
 
@@ -102,22 +108,25 @@ def main():
                 "step": step,
                 "temp": round(temp, 2),
                 "humid": round(humid, 2),
-                "scenario": scenario
+                "pressure": round(pressure, 2),
+                "vib_g": vib_g,
+                "shock": shock,
+                "sensors": ["HTS221", "BMP280", "MPU6050"],
+                "scenario": scenario,
             }
 
-            json_str = json.dumps(payload)
-            client.publish(args.topic, json_str)
-            
-            # สัญลักษณ์บอกสถานะบนคอนโซล
-            status_icon = "🟢" if temp <= 8.0 else ("🟡" if temp <= 10.0 else "🔴 ALERT")
-            print(f"[{step:03d}] {status_icon} Temp: {temp:5.2f} °C | Humid: {humid:5.2f} % | {scenario} ({args.topic})")
-
+            client.publish(args.topic, json.dumps(payload))
+            status = "SAFE" if temp <= 8.0 and not shock else "ALERT"
+            print(
+                f"[{step:03d}] {status:5} | Temp:{temp:5.2f}C | Humid:{humid:5.2f}% | "
+                f"Press:{pressure:7.2f}hPa | Vib:{vib_g:.3f}g | Shock:{shock}"
+            )
             time.sleep(args.interval)
-
     except KeyboardInterrupt:
-        print("\n⏹️ หยุดการทำงานของ Simulator...")
+        print("\n[STOP] Simulator stopped.")
         client.loop_stop()
         client.disconnect()
+
 
 if __name__ == "__main__":
     main()

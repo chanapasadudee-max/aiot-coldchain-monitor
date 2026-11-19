@@ -1,5 +1,5 @@
-site_name: TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
-site_description: คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม (คณะวิศวกรรมศาสตร์ มธ.)
+site_name: AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+site_description: คู่มือและบทเรียนการพัฒนา AIoT ระดับอุตสาหกรรมด้วยบอร์ด Cucumber RIS + Local Ollama AI Copilot + Guardrails + Telegram Mini App
 site_author: Chanapa Sadudee (6610680214)
 repo_name: aiot-coldchain-monitor
 repo_url: https://github.com/
@@ -54,11 +54,15 @@ markdown_extensions:
 
 nav:
   - หน้าแรก: index.md
-  - 1. สถาปัตยกรรมระบบ: 01_system_architecture.md
-  - 2. บอร์ด Cucumber & เซ็นเซอร์: 02_cucumber_hardware.md
-  - 3. การสื่อสาร MQTT: 03_mqtt_cloud_broker.md
-  - 4. ปัญญาประดิษฐ์ (AI Anomaly): 04_ai_anomaly_detection.md
-  - 5. UI & Telegram Mini App: 05_telegram_mini_app.md
-  - 6. การ Deploy ระบบ: 06_docker_deployment.md
-  - 7. โมเดลธุรกิจ & ความคุ้มค่า: 07_business_case.md
-  - 8. สคริปต์คลิปนำเสนอ AI Flow: 08_video_walkthrough.md
+  - 🧪 Live Sandbox: live_sandbox.md
+  - สำหรับผู้เรียน (Learner):
+      - 1. สถาปัตยกรรมระบบ AIoT: 01_system_architecture.md
+      - 2. บอร์ด Cucumber RIS & Multi-Sensor: 02_cucumber_hardware.md
+      - 3. การสื่อสาร MQTT สองทาง: 03_mqtt_cloud_broker.md
+      - 4. AI Anomaly & Google Colab: 04_ai_anomaly_detection.md
+      - 5. UI, AI Copilot & Telegram Mini App: 05_telegram_mini_app.md
+  - สำหรับผู้สอน / วิศวกร (Instructor):
+      - 6. การติดตั้ง Docker & Dev Tunnels: 06_docker_deployment.md
+      - 7. โมเดลธุรกิจ & ความคุ้มค่า (ROI): 07_business_case.md
+      - 8. ความปลอดภัย AI & Guardrails: 09_ai_safety_guardrails.md
+      - 9. สคริปต์คลิปนำเสนอ AI Flow: 08_video_walkthrough.md

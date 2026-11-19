@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="คู่มือและบทเรียนการพัฒนา AIoT สำหรับตรวจจับความผิดปกติของตู้แช่ยาและห้อง Server อุตสาหกรรม (คณะวิศวกรรมศาสตร์ มธ.)">
+        <meta name="description" content="คู่มือและบทเรียนการพัฒนา AIoT ระดับอุตสาหกรรมด้วยบอร์ด Cucumber RIS + Local Ollama AI Copilot + Guardrails + Telegram Mini App">
       
       
         <meta name="author" content="Chanapa Sadudee (6610680214)">
@@ -27,7 +27,7 @@
     
     
       
-        <title>2. บอร์ด Cucumber & เซ็นเซอร์ - TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server</title>
+        <title>2. บอร์ด Cucumber RIS & Multi-Sensor - AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2-cucumber-hardware-firmware" class="md-skip">
+        <a href="#2-cucumber-ris-multi-sensor-hardware-platformio" class="md-skip">
           ข้ามไปที่เนื้อหา
         </a>
       
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="หัวข้อ">
-    <a href=".." title="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-header__button md-logo" aria-label="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
+    <a href=".." title="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-header__button md-logo" aria-label="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
       
   <img src="../assets/images/logo.png" alt="logo">
 
@@ -107,13 +107,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+            AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              2. บอร์ด Cucumber & เซ็นเซอร์
+              2. บอร์ด Cucumber RIS & Multi-Sensor
             
           </span>
         </div>
@@ -245,13 +245,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../01_system_architecture/" class="md-tabs__link">
+      <a href="../live_sandbox/" class="md-tabs__link">
         
   
   
     
   
-  1. สถาปัตยกรรมระบบ
+  🧪 Live Sandbox
 
       </a>
     </li>
@@ -265,17 +265,18 @@
     
   
   
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
-        
-  
-  
     
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../01_system_architecture/" class="md-tabs__link">
+          
   
-  2. บอร์ด Cucumber & เซ็นเซอร์
+  
+  สำหรับผู้เรียน (Learner)
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -284,112 +285,18 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../03_mqtt_cloud_broker/" class="md-tabs__link">
-        
-  
-  
     
-  
-  3. การสื่อสาร MQTT
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../04_ai_anomaly_detection/" class="md-tabs__link">
-        
-  
-  
     
+      <li class="md-tabs__item">
+        <a href="../06_docker_deployment/" class="md-tabs__link">
+          
   
-  4. ปัญญาประดิษฐ์ (AI Anomaly)
+  
+  สำหรับผู้สอน / วิศวกร (Instructor)
 
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../05_telegram_mini_app/" class="md-tabs__link">
-        
-  
-  
+        </a>
+      </li>
     
-  
-  5. UI & Telegram Mini App
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../06_docker_deployment/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  6. การ Deploy ระบบ
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../07_business_case/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  7. โมเดลธุรกิจ & ความคุ้มค่า
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../08_video_walkthrough/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  8. สคริปต์คลิปนำเสนอ AI Flow
-
-      </a>
-    </li>
   
 
       
@@ -415,12 +322,12 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ตัวนำทาง" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-nav__button md-logo" aria-label="TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
+    <a href=".." title="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา &amp; ห้อง Server" class="md-nav__button md-logo" aria-label="AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server" data-md-component="logo">
       
   <img src="../assets/images/logo.png" alt="logo">
 
     </a>
-    TSE AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
+    AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
   </label>
   
     <div class="md-nav__source">
@@ -471,14 +378,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../01_system_architecture/" class="md-nav__link">
+      <a href="../live_sandbox/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    1. สถาปัตยกรรมระบบ
+    🧪 Live Sandbox
   
 
     
@@ -493,6 +400,91 @@
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สำหรับผู้เรียน (Learner)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สำหรับผู้เรียน (Learner)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_system_architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1. สถาปัตยกรรมระบบ AIoT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
     
@@ -514,7 +506,7 @@
   <span class="md-ellipsis">
     
   
-    2. บอร์ด Cucumber & เซ็นเซอร์
+    2. บอร์ด Cucumber RIS & Multi-Sensor
   
 
     
@@ -532,7 +524,7 @@
   <span class="md-ellipsis">
     
   
-    2. บอร์ด Cucumber & เซ็นเซอร์
+    2. บอร์ด Cucumber RIS & Multi-Sensor
   
 
     
@@ -558,10 +550,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#21-cucumber-esp32" class="md-nav__link">
+  <a href="#21-cucumber-ris-esp32-s2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 บอร์ด Cucumber (ESP32) คืออะไร?
+        2.1 อุปกรณ์บนบอร์ด Cucumber RIS (ESP32-S2) ที่ใช้งานจริง
       
     </span>
   </a>
@@ -569,32 +561,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#22-hts221-cucumber" class="md-nav__link">
+  <a href="#22-platformio-devicescucumber_pio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 การต่อวงจรเซ็นเซอร์ HTS221 กับบอร์ด Cucumber
+        2.2 โครงสร้างโปรเจกต์ PlatformIO (devices/cucumber_pio/)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 โครงสร้างโปรเจกต์ PlatformIO (devices/cucumber_pio/)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        คำสั่ง Build และ Flash ลงบอร์ดจริง
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#23-arduino-c-cucumber" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#serial-monitor-cucumber-ris-com6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 โค้ดเฟิร์มแวร์ Arduino C++ สำหรับบอร์ด Cucumber
+        ตัวอย่างผลลัพธ์จริงจาก Serial Monitor บนบอร์ด Cucumber RIS (COM6)
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#24-industrial-simulator" class="md-nav__link">
+  <a href="#23-industrial-multi-sensor-simulator" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.4 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Simulator
+        2.3 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Multi-Sensor Simulator
       
     </span>
   </a>
@@ -608,9 +617,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -623,7 +633,7 @@
   <span class="md-ellipsis">
     
   
-    3. การสื่อสาร MQTT
+    3. การสื่อสาร MQTT สองทาง
   
 
     
@@ -635,9 +645,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -650,7 +661,7 @@
   <span class="md-ellipsis">
     
   
-    4. ปัญญาประดิษฐ์ (AI Anomaly)
+    4. AI Anomaly & Google Colab
   
 
     
@@ -662,9 +673,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -677,7 +689,7 @@
   <span class="md-ellipsis">
     
   
-    5. UI & Telegram Mini App
+    5. UI, AI Copilot & Telegram Mini App
   
 
     
@@ -689,9 +701,69 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    สำหรับผู้สอน / วิศวกร (Instructor)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    สำหรับผู้สอน / วิศวกร (Instructor)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
   
@@ -704,7 +776,7 @@
   <span class="md-ellipsis">
     
   
-    6. การ Deploy ระบบ
+    6. การติดตั้ง Docker & Dev Tunnels
   
 
     
@@ -716,9 +788,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -731,7 +804,7 @@
   <span class="md-ellipsis">
     
   
-    7. โมเดลธุรกิจ & ความคุ้มค่า
+    7. โมเดลธุรกิจ & ความคุ้มค่า (ROI)
   
 
     
@@ -743,9 +816,38 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09_ai_safety_guardrails/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
-      
-      
+  
+    8. ความปลอดภัย AI & Guardrails
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
   
   
   
@@ -758,7 +860,7 @@
   <span class="md-ellipsis">
     
   
-    8. สคริปต์คลิปนำเสนอ AI Flow
+    9. สคริปต์คลิปนำเสนอ AI Flow
   
 
     
@@ -767,6 +869,14 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -798,10 +908,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#21-cucumber-esp32" class="md-nav__link">
+  <a href="#21-cucumber-ris-esp32-s2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.1 บอร์ด Cucumber (ESP32) คืออะไร?
+        2.1 อุปกรณ์บนบอร์ด Cucumber RIS (ESP32-S2) ที่ใช้งานจริง
       
     </span>
   </a>
@@ -809,32 +919,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#22-hts221-cucumber" class="md-nav__link">
+  <a href="#22-platformio-devicescucumber_pio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.2 การต่อวงจรเซ็นเซอร์ HTS221 กับบอร์ด Cucumber
+        2.2 โครงสร้างโปรเจกต์ PlatformIO (devices/cucumber_pio/)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 โครงสร้างโปรเจกต์ PlatformIO (devices/cucumber_pio/)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-flash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        คำสั่ง Build และ Flash ลงบอร์ดจริง
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#23-arduino-c-cucumber" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#serial-monitor-cucumber-ris-com6" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.3 โค้ดเฟิร์มแวร์ Arduino C++ สำหรับบอร์ด Cucumber
+        ตัวอย่างผลลัพธ์จริงจาก Serial Monitor บนบอร์ด Cucumber RIS (COM6)
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#24-industrial-simulator" class="md-nav__link">
+  <a href="#23-industrial-multi-sensor-simulator" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2.4 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Simulator
+        2.3 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Multi-Sensor Simulator
       
     </span>
   </a>
@@ -861,110 +988,84 @@
   
 
 
-<h1 id="2-cucumber-hardware-firmware">บทที่ 2: บอร์ด Cucumber &amp; เซ็นเซอร์ (Hardware &amp; Firmware)<a class="headerlink" href="#2-cucumber-hardware-firmware" title="Permanent link">&para;</a></h1>
+<h1 id="2-cucumber-ris-multi-sensor-hardware-platformio">บทที่ 2: บอร์ด Cucumber RIS &amp; Multi-Sensor (Hardware &amp; PlatformIO)<a class="headerlink" href="#2-cucumber-ris-multi-sensor-hardware-platformio" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>คู่มือการต่อวงจรบอร์ด Cucumber (ESP32) เพื่อส่งข้อมูลอุณหภูมิและความชื้นเข้าสู่ระบบ หรือการใช้งาน Industrial Simulator</p>
+<p>คู่มือการพัฒนาเฟิร์มแวร์ภาษา C++ (PlatformIO / ESP32-S2) อ่านเซ็นเซอร์ I2C พร้อมกัน 3 ชนิด และควบคุมไฟ NeoPixel RGB LED แบบสองทางผ่าน MQTT</p>
 </blockquote>
 <hr />
-<h2 id="21-cucumber-esp32">2.1 บอร์ด Cucumber (ESP32) คืออะไร?<a class="headerlink" href="#21-cucumber-esp32" title="Permanent link">&para;</a></h2>
-<p><strong>บอร์ด Cucumber</strong> เป็นบอร์ดไมโครคอนโทรลเลอร์ที่ใช้ชิปประมวลผล <strong>ESP32</strong> (Dual-core Xtensa 32-bit LX6) ซึ่งมีคุณสมบัติโดดเด่นสำหรับงาน IoT:
-- มีโมดูล <strong>Wi-Fi 802.11 b/g/n (2.4 GHz)</strong> และ Bluetooth ในตัว
-- รองรับการเชื่อมต่อเซ็นเซอร์ผ่าน I2C, SPI, UART และขา Analog/Digital หลากหลาย
-- ใช้พลังงานต่ำ เหมาะสำหรับการติดตั้งประจำตู้แช่หรือแร็คเซิร์ฟเวอร์</p>
-<hr />
-<h2 id="22-hts221-cucumber">2.2 การต่อวงจรเซ็นเซอร์ HTS221 กับบอร์ด Cucumber<a class="headerlink" href="#22-hts221-cucumber" title="Permanent link">&para;</a></h2>
-<p>เซ็นเซอร์ <strong>HTS221</strong> เป็นเซ็นเซอร์วัดอุณหภูมิและความชื้นความแม่นยำสูง เชื่อมต่อผ่านบัส <strong>I2C</strong>:</p>
+<h2 id="21-cucumber-ris-esp32-s2">2.1 อุปกรณ์บนบอร์ด Cucumber RIS (ESP32-S2) ที่ใช้งานจริง<a class="headerlink" href="#21-cucumber-ris-esp32-s2" title="Permanent link">&para;</a></h2>
+<p>บอร์ด <strong>Gravitech Cucumber RIS</strong> มีเซ็นเซอร์ระดับอุตสาหกรรมและแอคชูเอเตอร์ติดตั้งมาให้บนบอร์ดครบชุด (เชื่อมผ่านบัส <strong>I2C: SDA=41, SCL=40</strong>):</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: center;">ขาของเซ็นเซอร์ HTS221</th>
-<th style="text-align: center;">ขาบนบอร์ด Cucumber (ESP32)</th>
-<th>คำอธิบาย</th>
+<th style="text-align: left;">ชิป / อุปกรณ์</th>
+<th style="text-align: center;">I2C Address / Pin</th>
+<th>หน้าที่ในระบบ Cold Chain &amp; Server Room</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center;"><strong>VCC</strong></td>
-<td style="text-align: center;">3.3V</td>
-<td>แหล่งจ่ายไฟบวก 3.3 โวลต์</td>
+<td style="text-align: left;"><strong>HTS221</strong></td>
+<td style="text-align: center;"><code>0x5F</code></td>
+<td>วัดอุณหภูมิ (°C) และความชื้นสัมพัทธ์ (%RH) ความแม่นยำสูง</td>
 </tr>
 <tr>
-<td style="text-align: center;"><strong>GND</strong></td>
-<td style="text-align: center;">GND</td>
-<td>กราวด์ร่วม</td>
+<td style="text-align: left;"><strong>BMP280</strong></td>
+<td style="text-align: center;"><code>0x76</code></td>
+<td>วัดความดันบรรยากาศ (hPa) ช่วยตรวจจับการเปิดประตูห้องเย็น/แรงดันตก</td>
 </tr>
 <tr>
-<td style="text-align: center;"><strong>SDA</strong></td>
-<td style="text-align: center;">GPIO 21 (SDA)</td>
-<td>สายรับส่งข้อมูลข้อมูล I2C</td>
+<td style="text-align: left;"><strong>MPU6050</strong></td>
+<td style="text-align: center;"><code>0x68</code></td>
+<td>วัดความเร่ง 6 แกน คำนวณแรงสั่นสะเทือน (G-force) จับแรงกระแทก/คอมเพรสเซอร์สั่น</td>
 </tr>
 <tr>
-<td style="text-align: center;"><strong>SCL</strong></td>
-<td style="text-align: center;">GPIO 22 (SCL)</td>
-<td>สายสัญญาณนาฬิกา I2C</td>
+<td style="text-align: left;"><strong>NeoPixel RGB LED</strong></td>
+<td style="text-align: center;"><code>GPIO 18</code></td>
+<td>แอคชูเอเตอร์แสดงสถานะไฟจริง (🟢 Safe / 🟡 Warning / 🔴 Critical Blink) รับคำสั่งจาก AI</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>[!WARNING]
-ห้ามต่อขา VCC ของเซ็นเซอร์เข้ากับ 5V เพราะอาจทำให้วงจรภายในเซ็นเซอร์เสียหายได้</p>
-</blockquote>
 <hr />
-<h2 id="23-arduino-c-cucumber">2.3 โค้ดเฟิร์มแวร์ Arduino C++ สำหรับบอร์ด Cucumber<a class="headerlink" href="#23-arduino-c-cucumber" title="Permanent link">&para;</a></h2>
-<p>ซอร์สโค้ดฉบับเต็มอยู่ที่ไฟล์ <code>devices/cucumber_firmware/cucumber_firmware.ino</code></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;WiFi.h&gt;</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;PubSubClient.h&gt;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ArduinoJson.h&gt;</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">ssid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"YOUR_WIFI_SSID"</span><span class="p">;</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"YOUR_WIFI_PASSWORD"</span><span class="p">;</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">mqtt_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"broker.emqx.io"</span><span class="p">;</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mqtt_port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1883</span><span class="p">;</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">mqtt_topic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"tse/cn466/chanapa/telemetry"</span><span class="p">;</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">WiFiClient</span><span class="w"> </span><span class="n">espClient</span><span class="p">;</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">PubSubClient</span><span class="w"> </span><span class="nf">client</span><span class="p">(</span><span class="n">espClient</span><span class="p">);</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">115200</span><span class="p">);</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="n">WiFi</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">ssid</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">);</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">status</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">WL_CONNECTED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="n">delay</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"."</span><span class="p">);</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">  </span><span class="n">client</span><span class="p">.</span><span class="n">setServer</span><span class="p">(</span><span class="n">mqtt_server</span><span class="p">,</span><span class="w"> </span><span class="n">mqtt_port</span><span class="p">);</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">}</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="kt">void</span><span class="w"> </span><span class="nf">loop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">client</span><span class="p">.</span><span class="n">connected</span><span class="p">())</span><span class="w"> </span><span class="n">reconnect</span><span class="p">();</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">  </span><span class="n">client</span><span class="p">.</span><span class="n">loop</span><span class="p">();</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">  </span><span class="c1">// อ่านค่าเซ็นเซอร์และส่ง JSON ทุก 2 วินาที</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">  </span><span class="n">StaticJsonDocument</span><span class="o">&lt;</span><span class="mi">200</span><span class="o">&gt;</span><span class="w"> </span><span class="n">doc</span><span class="p">;</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">  </span><span class="n">doc</span><span class="p">[</span><span class="s">"node_id"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"cucumber-01"</span><span class="p">;</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">  </span><span class="n">doc</span><span class="p">[</span><span class="s">"temp"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">4.25</span><span class="p">;</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">  </span><span class="n">doc</span><span class="p">[</span><span class="s">"humid"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">62.10</span><span class="p">;</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">  </span><span class="n">serializeJson</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">  </span><span class="n">client</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span><span class="n">mqtt_topic</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">  </span><span class="n">delay</span><span class="p">(</span><span class="mi">2000</span><span class="p">);</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="p">}</span>
+<h2 id="22-platformio-devicescucumber_pio">2.2 โครงสร้างโปรเจกต์ PlatformIO (<code>devices/cucumber_pio/</code>)<a class="headerlink" href="#22-platformio-devicescucumber_pio" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>devices/cucumber_pio/
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── platformio.ini            # บอร์ด esp32-s2-saola-1 + ไลบรารี HTS221, BMP280, MPU6050, NeoPixel
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── include/
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── secrets.example.h     # แม่แบบการตั้งค่า Wi-Fi / MQTT (อัปโหลดขึ้น GitHub)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   └── secrets.h             # รหัส Wi-Fi จริง (ติด .gitignore ไม่หลุดขึ้น GitHub)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>└── src/
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    └── main.cpp              # I2C Auto-Scan + High-rate Vibration Sampling + Bidirectional MQTT
+</code></pre></div>
+<h3 id="build-flash">คำสั่ง Build และ Flash ลงบอร์ดจริง<a class="headerlink" href="#build-flash" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>devices/cucumber_pio
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pio<span class="w"> </span>run<span class="w"> </span>-t<span class="w"> </span>upload<span class="w"> </span>--upload-port<span class="w"> </span>COM6
+</code></pre></div>
+<h3 id="serial-monitor-cucumber-ris-com6">ตัวอย่างผลลัพธ์จริงจาก Serial Monitor บนบอร์ด Cucumber RIS (<code>COM6</code>)<a class="headerlink" href="#serial-monitor-cucumber-ris-com6" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>====================================================
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  AIoT Cold Chain Monitor — Cucumber RIS (ESP32-S2)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>====================================================
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>[I2C] Scanning bus (SDA=41, SCL=40)...
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  -&gt; Found I2C device at 0x5F
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  -&gt; Found I2C device at 0x68
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  -&gt; Found I2C device at 0x76
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>[I2C] Scan complete. Total devices: 3
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>[SENSOR] HTS221 ready (Temp/Humid)
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>[SENSOR] BMP280 ready (Pressure)
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>[SENSOR] MPU6050 ready (Vibration/Shock)
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>[WiFi] Connected!
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>[MQTT] Subscribed CMD: tse/cn466/chanapa/cmd
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>[TELEMETRY] {"node_id":"cucumber-ris-01","temp":34.50,"humid":49.20,"pressure":1008.40,"vib_g":0.025,"shock":false,"led_mode":"safe","sensors":["HTS221","BMP280","MPU6050"]}
 </code></pre></div>
 <hr />
-<h2 id="24-industrial-simulator">2.4 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Simulator<a class="headerlink" href="#24-industrial-simulator" title="Permanent link">&para;</a></h2>
-<p>ในกรณีที่ไม่มีบอร์ดจริงหรือต้องการทดสอบจำลองวิกฤต เช่น คอมเพรสเซอร์ดับหรือประตูตู้แช่เปิดทิ้งไว้ สามารถรันสคริปต์จำลองบนคอมพิวเตอร์ได้ทันที:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># ติดตั้งไลบรารี</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>pip<span class="w"> </span>install<span class="w"> </span>paho-mqtt
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># รันโหมดปกติ (สภาวะตู้แช่ยา 2-6°C)</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>normal
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># รันโหมดวิกฤต (จำลองคอมเพรสเซอร์ดับ อุณหภูมิไต่ขึ้นเร็ว)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>failure
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># รันโหมดลืมปิดประตูตู้แช่</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>door_ajar
+<h2 id="23-industrial-multi-sensor-simulator">2.3 กรณีไม่มีบอร์ดจริง? ใช้ Industrial Multi-Sensor Simulator<a class="headerlink" href="#23-industrial-multi-sensor-simulator" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># โหมดปกติ (ตู้แช่ยา 2–6°C)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>normal
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># โหมดวิกฤตคอมเพรสเซอร์ดับ</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>failure
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># โหมดตรวจจับแรงกระแทก/เปิดประตูแรง (MPU6050 Shock)</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>python<span class="w"> </span>devices/simulator/sim_industrial.py<span class="w"> </span>--scenario<span class="w"> </span>door_slam
 </code></pre></div>
 
 

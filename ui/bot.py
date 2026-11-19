@@ -1,121 +1,170 @@
 """
-Telegram Bot & Mini App Integration for Industrial Cold Chain
+Telegram Bot & Mini App + AI Copilot Integration (@Chanaps_Bot)
 File: bot.py
 Author: Chanapa Sadudee (6610680214)
 
-แชตบอต Telegram สำหรับ:
-  1. ส่งปุ่ม WebApp เพื่อเปิด Telegram Mini App (Dashboard)
-  2. รายงานสถานะอุณหภูมิและความชื้นแบบ Real-Time ด้วยคำสั่ง /status
-  3. สรุปรายงานวิเคราะห์สาเหตุ (Root Cause Analysis) ด้วยคำสั่ง /report
-  4. มอนิเตอร์และส่งข้อความเตือนภัยฉุกเฉินอัตโนมัติ (Automated Crisis Alert)
+ความสามารถ:
+  1. ปุ่ม Menu Button & Inline Button เปิด Telegram Mini App Dashboard
+  2. พิมพ์แชตภาษาไทยคุยกับ AI Copilot (Ollama + Guardrails) เพื่อสั่งคุมบอร์ด Cucumber จริง
+  3. คำสั่งด่วน: /start, /status, /report, /led <safe|warning|critical|off>, /profile <coldchain|server|room>
+  4. Background Alert Watcher: แจ้งเตือนอัตโนมัติเมื่อระบบเข้าขั้น WARNING หรือ CRITICAL
 """
 
 import asyncio
 import logging
 import os
+import time
 import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, MenuButtonWebApp, Update, WebAppInfo
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
 
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
-)
+logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 
-# ---------------- การตั้งค่า ----------------
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8659693742:AAET9v5UZjv8CaoEPJEznf_vz-bEknQS6r0")
 BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://127.0.0.1:5000")
-# URL ของ Mini App (หากทำ Dev Tunnels หรือ Cloudflare ให้เปลี่ยน URL ตรงนี้)
-WEBAPP_URL = os.getenv("WEBAPP_URL", "http://127.0.0.1:5000")
+WEBAPP_URL = os.getenv("WEBAPP_URL", "https://example.devtunnels.ms")
 
-# เก็บ Chat ID ล่าสุดเพื่อยิงแจ้งเตือน
-registered_chats = set()
+registered_chats: set[int] = set()
+last_alert_time: float = 0.0
+ALERT_COOLDOWN_SEC = 60.0
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     registered_chats.add(chat_id)
 
-    # ตั้งค่า Menu Button ด้านล่างแชต
-    try:
-        await context.bot.set_chat_menu_button(
-            chat_id=chat_id,
-            menu_button=MenuButtonWebApp(text="📊 เปิด Mini App", web_app=WebAppInfo(url=WEBAPP_URL))
-        )
-    except Exception as e:
-        logging.warning(f"Set menu button warning: {e}")
+    if WEBAPP_URL.startswith("https://"):
+        try:
+            await context.bot.set_chat_menu_button(
+                chat_id=chat_id,
+                menu_button=MenuButtonWebApp(text="📊 เปิด Mini App", web_app=WebAppInfo(url=WEBAPP_URL)),
+            )
+        except Exception as e:
+            logging.warning(f"Menu button warning: {e}")
 
-    keyboard = [
-        [InlineKeyboardButton("❄️ เปิด Industrial Mini App", web_app=WebAppInfo(url=WEBAPP_URL))],
-        [
-            InlineKeyboardButton("📊 เช็กสถานะล่าสุด", callback_data="status"),
-            InlineKeyboardButton("🛠️ วิเคราะห์ปัญหา (CAPA)", callback_data="report")
-        ]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    buttons = []
+    if WEBAPP_URL.startswith("https://"):
+        buttons.append([InlineKeyboardButton("❄️ เปิด Industrial Mini App", web_app=WebAppInfo(url=WEBAPP_URL))])
 
     welcome_text = (
-        "🏭 **ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server อุตสาหกรรม (AIoT)**\n"
-        "สวัสดีครับ! บอทนี้เชื่อมต่อกับบอร์ด Cucumber และระบบ AI Anomaly Detection\n\n"
-        "💡 **คำสั่งที่ใช้งานได้:**\n"
-        "• `/status` - ตรวจสอบอุณหภูมิและความเสี่ยงปัจจุบัน\n"
-        "• `/report` - ขอรายงานวิเคราะห์สาเหตุและมาตรการแก้ไข (AI CAPA)\n\n"
-        "👇 กดปุ่มด้านล่างเพื่อเปิด **Telegram Mini App Dashboard**:"
+        "🏭 *AIoT Industrial Cold Chain Copilot*\n"
+        "เชื่อมต่อบอร์ด Cucumber RIS (HTS221 + BMP280 + MPU6050 + RGB LED) เรียบร้อยแล้ว!\n\n"
+        "💬 *พิมพ์แชตภาษาไทยได้เลย* เช่น:\n"
+        "• \"สรุปสถานะตอนนี้\"\n"
+        "• \"เปิดไฟสีแดงฉุกเฉิน\"\n"
+        "• \"เปลี่ยนเป็นโหมดห้องเซิร์ฟเวอร์\"\n\n"
+        "⚡ *คำสั่งด่วน:*\n"
+        "`/status` | `/report` | `/led safe|warning|critical|off` | `/profile coldchain|server|room`"
     )
-    await update.message.reply_text(welcome_text, reply_markup=reply_markup, parse_mode="Markdown")
+    markup = InlineKeyboardMarkup(buttons) if buttons else None
+    await update.message.reply_text(welcome_text, reply_markup=markup, parse_mode="Markdown")
+
 
 async def status_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    registered_chats.add(update.effective_chat.id)
     try:
-        res = requests.get(f"{BACKEND_API_URL}/api/latest", timeout=3)
-        if res.status_code == 200:
-            data = res.json()
-            ai = data.get("ai_evaluation", {})
-            temp = ai.get("current_temp", "N/A")
-            humid = ai.get("current_humid", "N/A")
-            risk = ai.get("risk_level", "NORMAL")
-            slope = ai.get("slope_per_step", 0.0)
-
-            icon = "🟢" if risk == "NORMAL" else ("🟡" if risk == "WARNING" else "🚨")
-            msg = (
-                f"{icon} **สถานะปัจจุบันของตู้แช่ยา:**\n"
-                f"🌡️ อุณหภูมิ: `{temp}°C` (เกณฑ์ปลอดภัย: 2 - 8°C)\n"
-                f"💧 ความชื้น: `{humid}%`\n"
-                f"📈 แนวโน้มอุณหภูมิ: `{slope:+.3f}°C/step`\n"
-                f"🛡️ ระดับความเสี่ยง AI: **{risk}**"
-            )
-        else:
-            msg = "❌ ไม่สามารถดึงข้อมูลจากเซิร์ฟเวอร์ Backend ได้"
+        res = requests.get(f"{BACKEND_API_URL}/api/latest", timeout=4).json()
+        ai = res.get("ai_evaluation", {})
+        risk = ai.get("risk_level", "NORMAL")
+        icon = "🟢" if risk == "NORMAL" else ("🟡" if risk == "WARNING" else "🚨")
+        msg = (
+            f"{icon} *สถานะล่าสุด ({ai.get('profile_name')})*\n"
+            f"🌡️ อุณหภูมิ: `{ai.get('current_temp')}°C` (เกณฑ์ `{ai.get('safe_range')}`)\n"
+            f"💧 ความชื้น: `{ai.get('current_humid')}%` | 🧭 ความดัน: `{ai.get('current_pressure')} hPa`\n"
+            f"📳 แรงสั่น: `{ai.get('current_vib_g')}g` | ❤️ Health: `{ai.get('health_score')}/100`\n"
+            f"🛡️ ความเสี่ยง AI: *{risk}*"
+        )
     except Exception as e:
-        msg = f"❌ ไม่สามารถเชื่อมต่อกับ Backend ({BACKEND_API_URL}): {e}"
-
+        msg = f"❌ ติดต่อ Backend ไม่ได้: {e}"
     await update.message.reply_text(msg, parse_mode="Markdown")
+
 
 async def report_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    registered_chats.add(update.effective_chat.id)
     try:
-        res = requests.get(f"{BACKEND_API_URL}/api/incident-report", timeout=3)
-        if res.status_code == 200:
-            rep = res.json()
-            msg = rep.get("summary_text", "ไม่มีรายงานสรุปในขณะนี้")
-        else:
-            msg = "❌ ดึงรายงานไม่สำเร็จ"
+        rep = requests.get(f"{BACKEND_API_URL}/api/incident-report", timeout=4).json()
+        msg = rep.get("summary_text", "ไม่มีรายงาน")
     except Exception as e:
-        msg = f"❌ ติดต่อเซิร์ฟเวอร์ไม่สำเร็จ: {e}"
-
+        msg = f"❌ ดึงรายงาน CAPA ไม่สำเร็จ: {e}"
     await update.message.reply_text(msg, parse_mode="Markdown")
 
+
+async def led_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mode = context.args[0].lower() if context.args else "safe"
+    try:
+        res = requests.post(f"{BACKEND_API_URL}/api/command/led", json={"mode": mode}, timeout=4)
+        if res.status_code == 200:
+            msg = f"💡 สั่งเปลี่ยนไฟ RGB LED บนบอร์ด Cucumber -> `{mode.upper()}` แล้วครับ"
+        else:
+            msg = f"🛡️ {res.json().get('detail', 'คำสั่งถูกบล็อก')}"
+    except Exception as e:
+        msg = f"❌ ส่งคำสั่งไม่สำเร็จ: {e}"
+    await update.message.reply_text(msg, parse_mode="Markdown")
+
+
+async def profile_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    profile = context.args[0].lower() if context.args else "coldchain"
+    try:
+        res = requests.post(f"{BACKEND_API_URL}/api/profile", json={"profile": profile}, timeout=4)
+        if res.status_code == 200:
+            info = res.json()["profile"]
+            msg = f"✅ สลับโหมดเป็น *{info['name']}* (เกณฑ์ {info['safe_range'][0]}–{info['safe_range'][1]}°C)"
+        else:
+            msg = f"❌ {res.json().get('detail')}"
+    except Exception as e:
+        msg = f"❌ สลับโหมดไม่สำเร็จ: {e}"
+    await update.message.reply_text(msg, parse_mode="Markdown")
+
+
+async def chat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    registered_chats.add(update.effective_chat.id)
+    text = update.message.text
+    try:
+        res = requests.post(f"{BACKEND_API_URL}/api/chat", json={"message": text}, timeout=15).json()
+        badge = "✅ Guardrail OK" if res.get("guardrail_allowed") else "🛡️ Guardrail Blocked"
+        reply = f"{res.get('reply')}\n\n_[{res.get('engine')} • {res.get('action')} • {badge}]_"
+    except Exception as e:
+        reply = f"❌ ไม่สามารถติดต่อ AI Copilot ได้: {e}"
+    await update.message.reply_text(reply, parse_mode="Markdown")
+
+
+async def alert_watcher(context: ContextTypes.DEFAULT_TYPE):
+    global last_alert_time
+    if not registered_chats:
+        return
+    if time.time() - last_alert_time < ALERT_COOLDOWN_SEC:
+        return
+    try:
+        res = requests.get(f"{BACKEND_API_URL}/api/latest", timeout=3).json()
+        ai = res.get("ai_evaluation", {})
+        if ai.get("risk_level") in ("WARNING", "CRITICAL"):
+            rep = requests.get(f"{BACKEND_API_URL}/api/incident-report", timeout=3).json()
+            text = rep.get("summary_text", "⚠️ ตรวจพบความผิดปกติ!")
+            for cid in list(registered_chats):
+                await context.bot.send_message(chat_id=cid, text=text, parse_mode="Markdown")
+            last_alert_time = time.time()
+    except Exception:
+        pass
+
+
 def main():
-    print("=" * 60)
-    print(" 🤖 Telegram Bot for AIoT Cold Chain Monitor")
-    print(f" Backend URL: {BACKEND_API_URL}")
-    print(f" Mini App URL: {WEBAPP_URL}")
-    print("=" * 60)
+    print("=" * 64)
+    print(" Telegram AIoT Copilot Bot (@Chanaps_Bot)")
+    print(f" Backend: {BACKEND_API_URL} | Mini App: {WEBAPP_URL}")
+    print("=" * 64)
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("status", status_cmd))
+    app.add_handler(CommandHandler("report", report_cmd))
+    app.add_handler(CommandHandler("led", led_cmd))
+    app.add_handler(CommandHandler("profile", profile_cmd))
+    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), chat_handler))
 
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("status", status_cmd))
-    application.add_handler(CommandHandler("report", report_cmd))
+    if app.job_queue:
+        app.job_queue.run_repeating(alert_watcher, interval=10, first=5)
 
-    print("✅ บอทกำลัง Polling รอรับคำสั่งใน Telegram...")
-    application.run_polling()
+    app.run_polling()
+
 
 if __name__ == "__main__":
     main()
