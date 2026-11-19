@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 /* ==============================================================================
    TSE Thammasat identity (แดง-ทอง ธรรมศาสตร์), restrained
    - TSE Crimson : #8c181c   - TU Gold : #e9b949 (dark) / #b7830f (light)
-   One family (IBM Plex Sans Thai) covers Thai + Latin, so text no longer
+   One family (Sarabun) covers Thai + Latin, so text no longer
    falls back between fonts mid-sentence.
    ============================================================================== */
 
 :root {
-  --md-text-font: "IBM Plex Sans Thai";
+  --md-text-font: "Sarabun";
   --md-code-font: "IBM Plex Mono";
   --tse-red: #8c181c;
   --tse-gold: #e9b949;
@@ -72,7 +72,7 @@
   --x-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.7);
 }
 
-.md-typeset { font-size: 0.86rem; line-height: 1.8; }
+.md-typeset { font-size: 0.92rem; line-height: 1.75; }
 .md-typeset code, .md-typeset kbd, .md-typeset pre { font-variant-ligatures: none; }
 
 /* ---------- Header & tabs ---------- */
@@ -275,4 +275,82 @@
   margin-top: 12px; padding: 12px 14px; border-radius: 10px;
   font-size: 0.72rem; max-height: 140px; overflow: auto; white-space: pre-wrap; word-break: break-all;
   background: var(--md-code-bg-color); border: 1px solid var(--x-border);
+}
+
+/* ==============================================================================
+   Layered architecture diagram (docs/index.md)
+   ============================================================================== */
+.md-typeset .arch {
+  --up: #c9252b; --down: #148a50; --wss: #3b7fc4;
+  margin: 1rem 0 1.6rem; padding: 1rem;
+  border: 1px solid var(--x-border); border-radius: 14px; background: var(--x-surface-2);
+}
+[data-md-color-scheme="slate"] .md-typeset .arch { --up: #f0c35c; --down: #34c77b; --wss: #5aa9e6; }
+.md-typeset .arch-legend {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-bottom: 0.9rem;
+  font-size: 0.72rem; color: var(--md-default-fg-color--light);
+}
+.md-typeset .arch-legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+.md-typeset .arch-legend .lg { width: 18px; height: 0; border-top: 2px solid; }
+.md-typeset .lg.up { border-color: var(--up); }
+.md-typeset .lg.down { border-color: var(--down); }
+.md-typeset .lg.wss { border-color: var(--wss); border-top-style: dashed; }
+
+.md-typeset .arch-row {
+  display: flex; flex-direction: column; gap: 0.65rem;
+  padding: 0.75rem 0.8rem 0.8rem; border: 1px solid var(--x-border); border-radius: 12px; background: var(--x-surface);
+}
+.md-typeset .arch-lane { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.6rem; line-height: 1.35; }
+.md-typeset .arch-kicker {
+  font-family: var(--md-code-font-family); font-size: 0.62rem; letter-spacing: 0.08em;
+  color: var(--x-accent);
+}
+.md-typeset .arch-lane strong { font-size: 0.86rem; }
+.md-typeset .arch-sub { font-size: 0.7rem; color: var(--md-default-fg-color--light); }
+
+.md-typeset .arch-nodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); gap: 0.5rem; }
+.md-typeset .arch-node {
+  display: flex; flex-direction: column; gap: 0.15rem;
+  padding: 0.55rem 0.7rem; border-radius: 9px;
+  border: 1px solid var(--x-border); background: var(--x-surface-2);
+  font-size: 0.74rem; line-height: 1.45;
+}
+.md-typeset .arch-node b { font-size: 0.78rem; font-weight: 600; }
+.md-typeset .arch-node small { font-size: 0.68rem; color: var(--md-default-fg-color--light); }
+.md-typeset .arch-node code, .md-typeset .arch-sub code { font-size: 0.64rem; padding: 0 0.3em; }
+.md-typeset .arch-node .chips { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.md-typeset .arch-node.act { border-left: 3px solid var(--down); }
+.md-typeset .arch-node.ai { border-left: 3px solid var(--up); }
+.md-typeset .arch-node.guard { border: 1px dashed var(--x-crit); background: color-mix(in srgb, var(--x-crit) 6%, transparent); }
+.md-typeset .arch-node.wss { border-left: 3px dashed var(--wss); }
+.md-typeset .arch-node.offline { border-style: dashed; opacity: 0.85; }
+
+/* Connectors between layers: telemetry flows down the page, commands flow back up */
+.md-typeset .arch-link {
+  display: flex; justify-content: center; gap: 2.2rem; height: 2.6rem;
+}
+.md-typeset .arch-link .flow {
+  position: relative; display: flex; align-items: center;
+  padding-left: 0.9rem; font-family: var(--md-code-font-family); font-size: 0.62rem; letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.md-typeset .arch-link .flow::before {
+  content: ''; position: absolute; left: 0; top: 0.2rem; bottom: 0.2rem; border-left: 2px solid currentColor;
+}
+.md-typeset .arch-link .flow::after {
+  content: ''; position: absolute; left: -4px; width: 0; height: 0;
+  border-left: 5px solid transparent; border-right: 5px solid transparent;
+}
+.md-typeset .arch-link .flow.up { color: var(--up); }
+.md-typeset .arch-link .flow.up::after { bottom: 0.1rem; border-top: 6px solid currentColor; }
+.md-typeset .arch-link .flow.down { color: var(--down); }
+.md-typeset .arch-link .flow.down::after { top: 0.1rem; border-bottom: 6px solid currentColor; }
+.md-typeset .arch-link .flow.wss { color: var(--wss); }
+.md-typeset .arch-link .flow.wss::before { border-left-style: dashed; }
+.md-typeset .arch-link .flow.wss::after { bottom: 0.1rem; border-top: 6px solid currentColor; }
+
+@media (max-width: 44em) {
+  .md-typeset .arch { padding: 0.7rem; }
+  .md-typeset .arch-link { gap: 1.2rem; }
+  .md-typeset .arch-nodes { grid-template-columns: 1fr; }
 }

@@ -619,15 +619,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#42-ai-hybrid-ai-architecture" class="md-nav__link">
+  <a href="#42-triple-layer-hybrid-ai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)
+        4.2 สถาปัตยกรรม Triple-Layer Hybrid AI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)">
+    <nav class="md-nav" aria-label="4.2 สถาปัตยกรรม Triple-Layer Hybrid AI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -949,15 +949,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#42-ai-hybrid-ai-architecture" class="md-nav__link">
+  <a href="#42-triple-layer-hybrid-ai" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)
+        4.2 สถาปัตยกรรม Triple-Layer Hybrid AI
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)">
+    <nav class="md-nav" aria-label="4.2 สถาปัตยกรรม Triple-Layer Hybrid AI">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1053,45 +1053,45 @@
 <hr />
 <h2 id="41-rule-based-vs-aiot">4.1 ขีดจำกัดของระบบแจ้งเตือนแบบเดิม (Rule-Based vs AIoT)<a class="headerlink" href="#41-rule-based-vs-aiot" title="Permanent link">&para;</a></h2>
 <p>ในระบบเฝ้าระวังตู้แช่ยุคเก่า มักใช้กฎแบบพื้นฐาน (Hard Threshold):
-$$\text{IF } \text{Temp} &gt; 8.0^\circ\text{C} \implies \text{TRIGGER ALARM}$$</p>
+$<span class="arithmatex">\(\text{IF } \text{Temp} &gt; 8.0^\circ\text{C} \implies \text{TRIGGER ALARM}\)</span>$</p>
 <p><strong>ปัญหาของวิธีนี้คืออะไร?</strong>
 เมื่ออุณหภูมิแตะ 8.1°C นั่นแปลว่า <strong>ระบบทำความเย็นดับไปแล้วเป็นเวลา 20–30 นาที!</strong> ความเย็นเริ่มระเหย และยาปฏิชีวนะหรือวัคซีนอาจเสื่อมสภาพไปแล้วบางส่วน</p>
 <p><strong>แนวทางของระบบ AIoT ในโปรเจกต์นี้:</strong>
 เรานำ AI เข้ามาวิเคราะห์ <strong>"ความชันของการเปลี่ยนแปลง (Trend Slope)"</strong> ร่วมกับ <strong>"ค่าเบี่ยงเบนทางสถิติ (Z-Score)"</strong>:
-หากอุณหภูมิปัจจุบันยังอยู่ที่ 5.5°C (ยังไม่เกิน 8°C) แต่อุณหภูมิไต่ขึ้นเร็วต่อเนื่อง $0.3^\circ\text{C}$ ทุกๆ 2 วินาที <strong>AI จะส่งสัญญาณ PREDICTIVE WARNING ทันที</strong> พร้อมประเมินเวลาที่เหลือก่อนวิกฤต (ETTF)</p>
+หากอุณหภูมิปัจจุบันยังอยู่ที่ 5.5°C (ยังไม่เกิน 8°C) แต่อุณหภูมิไต่ขึ้นเร็วต่อเนื่อง <span class="arithmatex">\(0.3^\circ\text{C}\)</span> ทุกๆ 2 วินาที <strong>AI จะส่งสัญญาณ PREDICTIVE WARNING ทันที</strong> พร้อมประเมินเวลาที่เหลือก่อนวิกฤต (ETTF)</p>
 <hr />
-<h2 id="42-ai-hybrid-ai-architecture">4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)<a class="headerlink" href="#42-ai-hybrid-ai-architecture" title="Permanent link">&para;</a></h2>
-<p>ระบบประกอบด้วยโมเดล 2 ระดับ:</p>
+<h2 id="42-triple-layer-hybrid-ai">4.2 สถาปัตยกรรม Triple-Layer Hybrid AI<a class="headerlink" href="#42-triple-layer-hybrid-ai" title="Permanent link">&para;</a></h2>
+<p>ระบบประกอบด้วย AI 3 ชั้นทำงานร่วมกัน:</p>
 <pre class="mermaid"><code>flowchart LR
-    A["ข้อมูล Telemetry&lt;br&gt;(Temp, Humid)"] --&gt; B["Feature Engineering&lt;br&gt;(Rolling Mean, Z-Score, Slope)"]
-    B --&gt; C["1. Fast Edge Engine&lt;br&gt;(Z-Score &amp; Linear Slope)"]
-    B --&gt; D["2. ML Isolation Forest&lt;br&gt;(เทรนบน Google Colab)"]
-    C --&gt; E["ประเมิน Risk Level&lt;br&gt;(NORMAL / WARNING / CRITICAL)"]
+    A["ข้อมูล Multi-Sensor&lt;br&gt;(Temp, Humid, Pressure, Vib)"] --&gt; B["Feature Engineering&lt;br&gt;(Rolling Mean, Z-Score, Slope)"]
+    B --&gt; C["Layer 1: Fast Edge Engine&lt;br&gt;(Slope + Z-Score + Shock)"]
+    B --&gt; D["Layer 3: Google Colab ML&lt;br&gt;(Isolation Forest vs One-Class SVM)"]
+    C --&gt; E["ประเมิน Risk Level &amp; Health Score"]
     D --&gt; E
-    E --&gt; F["AI Incident Advisor&lt;br&gt;(สรุปสาเหตุ &amp; แนะนำ CAPA)"]</code></pre>
+    E --&gt; F["Layer 2: Local Ollama qwen2.5&lt;br&gt;Thai Copilot + Safety Guardrails"]</code></pre>
 <h3 id="1-rolling-linear-slope-formula">1. Rolling Linear Slope Formula<a class="headerlink" href="#1-rolling-linear-slope-formula" title="Permanent link">&para;</a></h3>
-<p>คำนวณความชันจากชุดข้อมูล $N$ จุดล่าสุด ($N=15$):</p>
-<p>$$\text{Slope} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}$$</p>
+<p>คำนวณความชันจากชุดข้อมูล <span class="arithmatex">\(N\)</span> จุดล่าสุด (<span class="arithmatex">\(N=15\)</span>):</p>
+<div class="arithmatex">\[\text{Slope} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})^2}\]</div>
 <ul>
-<li>$\text{Slope} \le 0.05$: สภาวะปกติ ความเย็นคงที่</li>
-<li>$\text{Slope} &gt; 0.15$: <strong>วิกฤตแฝง!</strong> คอมเพรสเซอร์หยุดทำงาน หรือประตูปิดไม่สนิท</li>
+<li><span class="arithmatex">\(\text{Slope} \le 0.05\)</span>: สภาวะปกติ ความเย็นคงที่</li>
+<li><span class="arithmatex">\(\text{Slope} &gt; 0.15\)</span>: <strong>วิกฤตแฝง!</strong> คอมเพรสเซอร์หยุดทำงาน หรือประตูปิดไม่สนิท</li>
 </ul>
 <h3 id="2-statistical-z-score">2. Statistical Z-Score<a class="headerlink" href="#2-statistical-z-score" title="Permanent link">&para;</a></h3>
-<p>$$Z = \frac{\text{Temp} - \mu}{\sigma}$$
+<p>$<span class="arithmatex">\(Z = \frac{\text{Temp} - \mu}{\sigma}\)</span>$
 ตรวจจับกรณีเซ็นเซอร์เสีย (Sensor Glitch) หรือมีคลื่นแม่เหล็กรบกวนกะทันหัน</p>
 <h3 id="3-estimated-time-to-failure-ettf">3. Estimated Time to Failure (ETTF)<a class="headerlink" href="#3-estimated-time-to-failure-ettf" title="Permanent link">&para;</a></h3>
 <p>พยากรณ์เวลาที่เหลือก่อนสินค้าจะเสียหาย:
-$$\text{ETTF} = \frac{T_{\text{max}} - T_{\text{current}}}{\text{Slope}} \times \Delta t$$</p>
+$<span class="arithmatex">\(\text{ETTF} = \frac{T_{\text{max}} - T_{\text{current}}}{\text{Slope}} \times \Delta t\)</span>$</p>
 <hr />
 <h2 id="43-google-colab-hands-on-notebook">4.3 การทดลองบน Google Colab (Hands-on Notebook)<a class="headerlink" href="#43-google-colab-hands-on-notebook" title="Permanent link">&para;</a></h2>
 <p>เราได้เตรียมสมุดงาน <strong>Jupyter Notebook</strong> อยู่ที่:
 <code>notebooks/colab_aiot_anomaly_training.ipynb</code></p>
 <h3 id="colab">สิ่งที่ผู้เรียนจะได้ทดลองใน Colab:<a class="headerlink" href="#colab" title="Permanent link">&para;</a></h3>
 <ol>
-<li>โหลดข้อมูลจำลอง 600 วินาทีที่มีทั้งช่วงปกติและช่วงตู้แช่ดับ</li>
-<li>เขียนโค้ดสกัด Features ด้วย Pandas</li>
-<li>เทรนโมเดล <strong>Isolation Forest</strong> ด้วย Scikit-learn</li>
-<li>พล็อตกราฟ Scatter Plot ไฮไลต์จุดที่ AI ชี้ว่าเป็นความผิดปกติ</li>
+<li>สร้างข้อมูล Multi-Sensor 600 สเต็ป (ช่วงปกติ + เหตุการณ์แรงกระแทก MPU6050 + คอมเพรสเซอร์ดับ)</li>
+<li>เขียนโค้ดสกัด Features (<code>temp_slope</code>, <code>z_score</code>, <code>vib_g</code>, <code>pressure</code>) ด้วย Pandas</li>
+<li>เทรนและเปรียบเทียบ <strong>Isolation Forest vs One-Class SVM</strong> พร้อมดู Precision / Recall / F1-Score</li>
+<li>พล็อตกราฟ Dual-Axis แสดงอุณหภูมิและแรงสั่นสะเทือนพร้อมจุดแจ้งเตือน AI</li>
 </ol>
 
 
@@ -1152,6 +1152,8 @@ $$\text{ETTF} = \frac{T_{\text{max}} - T_{\text{current}}}{\text{Slope}} \times 
     
     
       <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

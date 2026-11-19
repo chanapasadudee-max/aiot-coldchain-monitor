@@ -18,18 +18,18 @@ $$\text{IF } \text{Temp} > 8.0^\circ\text{C} \implies \text{TRIGGER ALARM}$$
 
 ---
 
-## 4.2 สถาปัตยกรรมโมเดล AI (Hybrid AI Architecture)
+## 4.2 สถาปัตยกรรม Triple-Layer Hybrid AI
 
-ระบบประกอบด้วยโมเดล 2 ระดับ:
+ระบบประกอบด้วย AI 3 ชั้นทำงานร่วมกัน:
 
 ```mermaid
 flowchart LR
-    A["ข้อมูล Telemetry<br>(Temp, Humid)"] --> B["Feature Engineering<br>(Rolling Mean, Z-Score, Slope)"]
-    B --> C["1. Fast Edge Engine<br>(Z-Score & Linear Slope)"]
-    B --> D["2. ML Isolation Forest<br>(เทรนบน Google Colab)"]
-    C --> E["ประเมิน Risk Level<br>(NORMAL / WARNING / CRITICAL)"]
+    A["ข้อมูล Multi-Sensor<br>(Temp, Humid, Pressure, Vib)"] --> B["Feature Engineering<br>(Rolling Mean, Z-Score, Slope)"]
+    B --> C["Layer 1: Fast Edge Engine<br>(Slope + Z-Score + Shock)"]
+    B --> D["Layer 3: Google Colab ML<br>(Isolation Forest vs One-Class SVM)"]
+    C --> E["ประเมิน Risk Level & Health Score"]
     D --> E
-    E --> F["AI Incident Advisor<br>(สรุปสาเหตุ & แนะนำ CAPA)"]
+    E --> F["Layer 2: Local Ollama qwen2.5<br>Thai Copilot + Safety Guardrails"]
 ```
 
 ### 1. Rolling Linear Slope Formula
@@ -56,7 +56,7 @@ $$\text{ETTF} = \frac{T_{\text{max}} - T_{\text{current}}}{\text{Slope}} \times 
 `notebooks/colab_aiot_anomaly_training.ipynb`
 
 ### สิ่งที่ผู้เรียนจะได้ทดลองใน Colab:
-1. โหลดข้อมูลจำลอง 600 วินาทีที่มีทั้งช่วงปกติและช่วงตู้แช่ดับ
-2. เขียนโค้ดสกัด Features ด้วย Pandas
-3. เทรนโมเดล **Isolation Forest** ด้วย Scikit-learn
-4. พล็อตกราฟ Scatter Plot ไฮไลต์จุดที่ AI ชี้ว่าเป็นความผิดปกติ
+1. สร้างข้อมูล Multi-Sensor 600 สเต็ป (ช่วงปกติ + เหตุการณ์แรงกระแทก MPU6050 + คอมเพรสเซอร์ดับ)
+2. เขียนโค้ดสกัด Features (`temp_slope`, `z_score`, `vib_g`, `pressure`) ด้วย Pandas
+3. เทรนและเปรียบเทียบ **Isolation Forest vs One-Class SVM** พร้อมดู Precision / Recall / F1-Score
+4. พล็อตกราฟ Dual-Axis แสดงอุณหภูมิและแรงสั่นสะเทือนพร้อมจุดแจ้งเตือน AI

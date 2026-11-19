@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#3-mqtt-broker-cloud-communication" class="md-skip">
+        <a href="#3-mqtt-bidirectional-mqtt-cloud-broker" class="md-skip">
           ข้ามไปที่เนื้อหา
         </a>
       
@@ -591,10 +591,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#32-mqtt-broker" class="md-nav__link">
+  <a href="#32-mqtt-broker-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 การตั้งค่า MQTT Broker ในโครงการ
+        3.2 การตั้งค่า MQTT Broker &amp; Topics ในโครงการ
       
     </span>
   </a>
@@ -602,30 +602,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#33-telemetry-json-schema" class="md-nav__link">
+  <a href="#33-json-telemetry-uplink" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.3 โครงสร้างข้อความ Telemetry (JSON Schema)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3.3 โครงสร้างข้อความ Telemetry (JSON Schema)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        คำอธิบายฟิลด์ข้อมูล:
+        3.3 โครงสร้าง JSON Telemetry (Uplink)
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#34-json-command-downlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 โครงสร้าง JSON Command (Downlink)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -910,10 +904,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#32-mqtt-broker" class="md-nav__link">
+  <a href="#32-mqtt-broker-topics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.2 การตั้งค่า MQTT Broker ในโครงการ
+        3.2 การตั้งค่า MQTT Broker &amp; Topics ในโครงการ
       
     </span>
   </a>
@@ -921,30 +915,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#33-telemetry-json-schema" class="md-nav__link">
+  <a href="#33-json-telemetry-uplink" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.3 โครงสร้างข้อความ Telemetry (JSON Schema)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3.3 โครงสร้างข้อความ Telemetry (JSON Schema)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        คำอธิบายฟิลด์ข้อมูล:
+        3.3 โครงสร้าง JSON Telemetry (Uplink)
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#34-json-command-downlink" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 โครงสร้าง JSON Command (Downlink)
+      
+    </span>
+  </a>
   
 </li>
       
@@ -968,47 +956,76 @@
   
 
 
-<h1 id="3-mqtt-broker-cloud-communication">บทที่ 3: การสื่อสารผ่าน MQTT Broker (Cloud Communication)<a class="headerlink" href="#3-mqtt-broker-cloud-communication" title="Permanent link">&para;</a></h1>
+<h1 id="3-mqtt-bidirectional-mqtt-cloud-broker">บทที่ 3: การสื่อสาร MQTT สองทาง (Bidirectional MQTT &amp; Cloud Broker)<a class="headerlink" href="#3-mqtt-bidirectional-mqtt-cloud-broker" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>ทำความเข้าใจโพรโทคอล MQTT และการจัดโครงสร้าง Payload JSON สำหรับส่งข้อมูล Telemetry สู่ Cloud</p>
+<p>ทำความเข้าใจโพรโทคอล MQTT แบบสื่อสารสองทาง: บอร์ดส่งข้อมูล Multi-Sensor ขึ้น Cloud และรับคำสั่งควบคุมไฟ RGB LED กลับจาก AI</p>
 </blockquote>
 <hr />
 <h2 id="31-iot-mqtt-http">3.1 ทำไมงาน IoT อุตสาหกรรมจึงเลือกใช้ MQTT แทน HTTP?<a class="headerlink" href="#31-iot-mqtt-http" title="Permanent link">&para;</a></h2>
-<p>แม้ว่า HTTP REST API จะเป็นที่นิยมในการพัฒนาเว็บทั่วไป แต่สำหรับงานอุปกรณ์ฝังตัว (Embedded IoT) โพรโทคอล <strong>MQTT (Message Queuing Telemetry Transport)</strong> มีข้อได้เปรียบที่สำคัญ:</p>
 <ol>
-<li><strong>Lightweight Header:</strong> ส่วนหัวของแพ็กเก็ต MQTT มีขนาดเล็กเพียง <strong>2 Bytes</strong> (เทียบกับ HTTP ที่มี Header ขนาดหลายร้อยไบต์) จึงประหยัดแบนด์วิดท์อย่างมาก</li>
-<li><strong>Publish / Subscribe Model:</strong> บอร์ด Cucumber ไม่จำเป็นต้องรู้ว่ามีใครกำลังดูหน้าจออยู่ แค่ส่งข้อมูล (Publish) ขึ้นไปยังหัวข้อ (Topic) ที่กำหนด จากนั้นระบบ Backend หรือ Dashboard จะมารับฟัง (Subscribe) เอง</li>
-<li><strong>Keep-Alive &amp; Fast Reconnect:</strong> มีกลไกตรวจสอบสถานะการเชื่อมต่อตลอดเวลา หากสายสัญญาณ Wi-Fi หลุด ระบบจะต่อให้อัตโนมัติทันทีที่สัญญาณกลับมา</li>
+<li><strong>Lightweight Header:</strong> ส่วนหัวของแพ็กเก็ต MQTT มีขนาดเล็กเพียง <strong>2 Bytes</strong> ประหยัดแบนด์วิดท์และพลังงาน</li>
+<li><strong>Publish / Subscribe Model:</strong> แยกผู้ส่ง (บอร์ด Cucumber RIS) ออกจากผู้รับ (Backend / Dashboard / Live Sandbox) ทำให้ขยายจำนวนอุปกรณ์ได้ง่าย</li>
+<li><strong>Bidirectional Control:</strong> บอร์ดสามารถ Subscribe หัวข้อคำสั่ง (<code>.../cmd</code>) เพื่อรับคำสั่งเปลี่ยนสีไฟหรือโหมดการทำงานได้ภายในไม่กี่มิลลิวินาที</li>
 </ol>
 <hr />
-<h2 id="32-mqtt-broker">3.2 การตั้งค่า MQTT Broker ในโครงการ<a class="headerlink" href="#32-mqtt-broker" title="Permanent link">&para;</a></h2>
-<p>โครงการนี้ใช้บริการ <strong>Public MQTT Broker</strong> ของ EMQX:</p>
+<h2 id="32-mqtt-broker-topics">3.2 การตั้งค่า MQTT Broker &amp; Topics ในโครงการ<a class="headerlink" href="#32-mqtt-broker-topics" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Broker Address:</strong> <code>broker.emqx.io</code></li>
-<li><strong>TCP Port (สำหรับบอร์ด IoT):</strong> <code>1883</code></li>
-<li><strong>WebSocket Port (WSS สำหรับเว็บ):</strong> <code>8084</code></li>
-<li><strong>หัวข้อหลัก (Topic):</strong> <code>tse/cn466/chanapa/telemetry</code></li>
+<li><strong>TCP Port (สำหรับบอร์ด Cucumber RIS &amp; Python):</strong> <code>1883</code></li>
+<li><strong>Secure WebSocket Port (WSS สำหรับเบราว์เซอร์ &amp; GitHub Pages):</strong> <code>8084</code> (<code>wss://broker.emqx.io:8084/mqtt</code>)</li>
 </ul>
+<table>
+<thead>
+<tr>
+<th>ทิศทาง</th>
+<th>MQTT Topic</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Uplink (Telemetry)</strong></td>
+<td><code>tse/cn466/chanapa/telemetry</code></td>
+<td>บอร์ด Cucumber RIS ส่งค่า HTS221 + BMP280 + MPU6050 ทุก 2 วินาที</td>
+</tr>
+<tr>
+<td><strong>Uplink (Legacy)</strong></td>
+<td><code>tse/cn466/chanapa</code></td>
+<td>รองรับเฟิร์มแวร์ Lab 7 เดิม (Temp/Humid) ย้อนหลังได้ 100%</td>
+</tr>
+<tr>
+<td><strong>Downlink (Command)</strong></td>
+<td><code>tse/cn466/chanapa/cmd</code></td>
+<td>Backend / AI Copilot ส่งคำสั่งควบคุมไฟ NeoPixel RGB LED กลับไปยังบอร์ด</td>
+</tr>
+</tbody>
+</table>
 <hr />
-<h2 id="33-telemetry-json-schema">3.3 โครงสร้างข้อความ Telemetry (JSON Schema)<a class="headerlink" href="#33-telemetry-json-schema" title="Permanent link">&para;</a></h2>
-<p>ข้อมูลที่ส่งขึ้น MQTT Broker ถูกจัดในรูปแบบ JSON มาตรฐาน เพื่อให้ง่ายต่อการแปลงและนำไปวิเคราะห์ต่อด้วย AI:</p>
+<h2 id="33-json-telemetry-uplink">3.3 โครงสร้าง JSON Telemetry (Uplink)<a class="headerlink" href="#33-json-telemetry-uplink" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">"node_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cucumber-coldchain-01"</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">"ts"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-11-14T08:15:30.123456Z"</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">"temp"</span><span class="p">:</span><span class="w"> </span><span class="mf">4.35</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">"humid"</span><span class="p">:</span><span class="w"> </span><span class="mf">61.2</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NORMAL"</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">"scenario"</span><span class="p">:</span><span class="w"> </span><span class="s2">"live"</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">"node_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cucumber-ris-01"</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">"temp"</span><span class="p">:</span><span class="w"> </span><span class="mf">30.51</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">"humid"</span><span class="p">:</span><span class="w"> </span><span class="mf">47.16</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">"pressure"</span><span class="p">:</span><span class="w"> </span><span class="mf">1013.46</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">"vib_g"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.109</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">"shock"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">"led_mode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"safe"</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">"uptime_sec"</span><span class="p">:</span><span class="w"> </span><span class="mi">124</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nt">"sensors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"HTS221"</span><span class="p">,</span><span class="w"> </span><span class="s2">"BMP280"</span><span class="p">,</span><span class="w"> </span><span class="s2">"MPU6050"</span><span class="p">],</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nt">"scenario"</span><span class="p">:</span><span class="w"> </span><span class="s2">"hardware_live"</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </code></pre></div>
-<h3 id="_1">คำอธิบายฟิลด์ข้อมูล:<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>node_id</code>: รหัสประจำจุดตรวจวัด (เช่น ตู้แช่ที่ 1, แร็คเซิร์ฟเวอร์แถว A)</li>
-<li><code>ts</code>: เวลาตามมาตรฐาน ISO 8601 UTC</li>
-<li><code>temp</code>: ค่าอุณหภูมิที่วัดได้ หน่วยเป็นองศาเซลเซียส (°C)</li>
-<li><code>humid</code>: ค่าความชื้นสัมพัทธ์ในอากาศ หน่วยเป็นเปอร์เซ็นต์ (%RH)</li>
-<li><code>scenario</code>: ป้ายกำกับสภาวะการทำงาน (เช่น live, normal, failure)</li>
-</ul>
+<h2 id="34-json-command-downlink">3.4 โครงสร้าง JSON Command (Downlink)<a class="headerlink" href="#34-json-command-downlink" title="Permanent link">&para;</a></h2>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">"cmd"</span><span class="p">:</span><span class="w"> </span><span class="s2">"set_led"</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">"mode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"critical"</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">"r"</span><span class="p">:</span><span class="w"> </span><span class="mi">255</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">"g"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">"b"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
+</code></pre></div>
+- <code>mode</code>: <code>"safe"</code> (เขียว), <code>"warning"</code> (เหลืองทอง), <code>"critical"</code> (แดงกระพริบ), <code>"off"</code> (ปิดไฟ), <code>"custom"</code> (ระบุค่า RGB เอง)
+- <code>{"cmd": "ping"}</code>: สั่งบอร์ดตอบกลับสถานะความพร้อม (<code>ack: "pong"</code>)</p>
 
 
 
@@ -1068,6 +1085,8 @@
     
     
       <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

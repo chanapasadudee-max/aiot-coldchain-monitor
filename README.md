@@ -1,6 +1,6 @@
 # 🏭 AIoT Industrial Cold Chain & Sensitive Facility Monitor
 
-[![CN466](https://img.shields.io/badge/Course-CN466_IoT_%26_AI-blue.svg)](https://github.com)
+[![CN466](https://img.shields.io/badge/Course-CN466_IoT_%26_AI-blue.svg)](https://github.com/chanapasadudee-max/aiot-coldchain-monitor)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-brightgreen.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-teal.svg)](https://fastapi.tiangolo.com/)
 [![MQTT](https://img.shields.io/badge/MQTT-EMQX%20Broker-orange.svg)](https://www.emqx.io/)

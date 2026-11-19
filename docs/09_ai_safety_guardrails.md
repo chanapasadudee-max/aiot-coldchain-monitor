@@ -1,10 +1,10 @@
-# บทที่ 9: ความปลอดภัยของ AI และ Guardrails (AI Safety & Guardrails)
+# บทที่ 8: ความปลอดภัยของ AI และ Guardrails (AI Safety & Guardrails)
 
 > แนวคิดสำคัญของระบบ AIoT ระดับอุตสาหกรรม: **"ให้ AI คิดและแปลความหมาย แต่ให้กฎที่ตรวจสอบได้ (Deterministic Guardrails) เป็นผู้ตัดสินใจขั้นสุดท้ายก่อนสั่งฮาร์ดแวร์จริง"**
 
 ---
 
-## 9.1 ทำไมไม่ควรให้ LLM สั่งฮาร์ดแวร์โดยตรง?
+## 8.1 ทำไมไม่ควรให้ LLM สั่งฮาร์ดแวร์โดยตรง?
 
 ในการนำโมเดลภาษาขนาดใหญ่ (เช่น Local Ollama `qwen2.5` หรือ Gemma) มาควบคุมบอร์ด IoT จริง มีความเสี่ยงสำคัญ 3 ประการ:
 
@@ -14,7 +14,7 @@
 
 ---
 
-## 9.2 สถาปัตยกรรม Guardrail Gateway ในโปรเจกต์นี้
+## 8.2 สถาปัตยกรรม Guardrail Gateway ในโปรเจกต์นี้
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
 
 ---
 
-## 9.3 ตัวอย่างกฎความปลอดภัยจริง (`backend/ai_copilot.py`)
+## 8.3 ตัวอย่างกฎความปลอดภัยจริง (`backend/ai_copilot.py`)
 
 ```python
 class SafetyGuardrails:

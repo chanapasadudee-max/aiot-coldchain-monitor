@@ -5,10 +5,14 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - PORT=5000
       - MQTT_HOST=broker.emqx.io
       - MQTT_PORT=1883
       - MQTT_TOPIC=tse/cn466/chanapa/telemetry
+      - DB_PATH=/app/data/coldchain.db
+      - OLLAMA_URL=http://host.docker.internal:11434/api/chat
     volumes:
-      - ./backend/coldchain.db:/app/backend/coldchain.db
+      - ./data:/app/data

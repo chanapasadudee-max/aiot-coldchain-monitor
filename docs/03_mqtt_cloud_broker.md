@@ -1,48 +1,58 @@
-# บทที่ 3: การสื่อสารผ่าน MQTT Broker (Cloud Communication)
+# บทที่ 3: การสื่อสาร MQTT สองทาง (Bidirectional MQTT & Cloud Broker)
 
-> ทำความเข้าใจโพรโทคอล MQTT และการจัดโครงสร้าง Payload JSON สำหรับส่งข้อมูล Telemetry สู่ Cloud
+> ทำความเข้าใจโพรโทคอล MQTT แบบสื่อสารสองทาง: บอร์ดส่งข้อมูล Multi-Sensor ขึ้น Cloud และรับคำสั่งควบคุมไฟ RGB LED กลับจาก AI
 
 ---
 
 ## 3.1 ทำไมงาน IoT อุตสาหกรรมจึงเลือกใช้ MQTT แทน HTTP?
 
-แม้ว่า HTTP REST API จะเป็นที่นิยมในการพัฒนาเว็บทั่วไป แต่สำหรับงานอุปกรณ์ฝังตัว (Embedded IoT) โพรโทคอล **MQTT (Message Queuing Telemetry Transport)** มีข้อได้เปรียบที่สำคัญ:
-
-1. **Lightweight Header:** ส่วนหัวของแพ็กเก็ต MQTT มีขนาดเล็กเพียง **2 Bytes** (เทียบกับ HTTP ที่มี Header ขนาดหลายร้อยไบต์) จึงประหยัดแบนด์วิดท์อย่างมาก
-2. **Publish / Subscribe Model:** บอร์ด Cucumber ไม่จำเป็นต้องรู้ว่ามีใครกำลังดูหน้าจออยู่ แค่ส่งข้อมูล (Publish) ขึ้นไปยังหัวข้อ (Topic) ที่กำหนด จากนั้นระบบ Backend หรือ Dashboard จะมารับฟัง (Subscribe) เอง
-3. **Keep-Alive & Fast Reconnect:** มีกลไกตรวจสอบสถานะการเชื่อมต่อตลอดเวลา หากสายสัญญาณ Wi-Fi หลุด ระบบจะต่อให้อัตโนมัติทันทีที่สัญญาณกลับมา
+1. **Lightweight Header:** ส่วนหัวของแพ็กเก็ต MQTT มีขนาดเล็กเพียง **2 Bytes** ประหยัดแบนด์วิดท์และพลังงาน
+2. **Publish / Subscribe Model:** แยกผู้ส่ง (บอร์ด Cucumber RIS) ออกจากผู้รับ (Backend / Dashboard / Live Sandbox) ทำให้ขยายจำนวนอุปกรณ์ได้ง่าย
+3. **Bidirectional Control:** บอร์ดสามารถ Subscribe หัวข้อคำสั่ง (`.../cmd`) เพื่อรับคำสั่งเปลี่ยนสีไฟหรือโหมดการทำงานได้ภายในไม่กี่มิลลิวินาที
 
 ---
 
-## 3.2 การตั้งค่า MQTT Broker ในโครงการ
-
-โครงการนี้ใช้บริการ **Public MQTT Broker** ของ EMQX:
+## 3.2 การตั้งค่า MQTT Broker & Topics ในโครงการ
 
 - **Broker Address:** `broker.emqx.io`
-- **TCP Port (สำหรับบอร์ด IoT):** `1883`
-- **WebSocket Port (WSS สำหรับเว็บ):** `8084`
-- **หัวข้อหลัก (Topic):** `tse/cn466/chanapa/telemetry`
+- **TCP Port (สำหรับบอร์ด Cucumber RIS & Python):** `1883`
+- **Secure WebSocket Port (WSS สำหรับเบราว์เซอร์ & GitHub Pages):** `8084` (`wss://broker.emqx.io:8084/mqtt`)
+
+| ทิศทาง | MQTT Topic | คำอธิบาย |
+|---|---|---|
+| **Uplink (Telemetry)** | `tse/cn466/chanapa/telemetry` | บอร์ด Cucumber RIS ส่งค่า HTS221 + BMP280 + MPU6050 ทุก 2 วินาที |
+| **Uplink (Legacy)** | `tse/cn466/chanapa` | รองรับเฟิร์มแวร์ Lab 7 เดิม (Temp/Humid) ย้อนหลังได้ 100% |
+| **Downlink (Command)** | `tse/cn466/chanapa/cmd` | Backend / AI Copilot ส่งคำสั่งควบคุมไฟ NeoPixel RGB LED กลับไปยังบอร์ด |
 
 ---
 
-## 3.3 โครงสร้างข้อความ Telemetry (JSON Schema)
-
-ข้อมูลที่ส่งขึ้น MQTT Broker ถูกจัดในรูปแบบ JSON มาตรฐาน เพื่อให้ง่ายต่อการแปลงและนำไปวิเคราะห์ต่อด้วย AI:
+## 3.3 โครงสร้าง JSON Telemetry (Uplink)
 
 ```json
 {
-  "node_id": "cucumber-coldchain-01",
-  "ts": "2026-11-14T08:15:30.123456Z",
-  "temp": 4.35,
-  "humid": 61.2,
-  "status": "NORMAL",
-  "scenario": "live"
+  "node_id": "cucumber-ris-01",
+  "temp": 30.51,
+  "humid": 47.16,
+  "pressure": 1013.46,
+  "vib_g": 0.109,
+  "shock": false,
+  "led_mode": "safe",
+  "uptime_sec": 124,
+  "sensors": ["HTS221", "BMP280", "MPU6050"],
+  "scenario": "hardware_live"
 }
 ```
 
-### คำอธิบายฟิลด์ข้อมูล:
-- `node_id`: รหัสประจำจุดตรวจวัด (เช่น ตู้แช่ที่ 1, แร็คเซิร์ฟเวอร์แถว A)
-- `ts`: เวลาตามมาตรฐาน ISO 8601 UTC
-- `temp`: ค่าอุณหภูมิที่วัดได้ หน่วยเป็นองศาเซลเซียส (°C)
-- `humid`: ค่าความชื้นสัมพัทธ์ในอากาศ หน่วยเป็นเปอร์เซ็นต์ (%RH)
-- `scenario`: ป้ายกำกับสภาวะการทำงาน (เช่น live, normal, failure)
+## 3.4 โครงสร้าง JSON Command (Downlink)
+
+```json
+{
+  "cmd": "set_led",
+  "mode": "critical",
+  "r": 255,
+  "g": 0,
+  "b": 20
+}
+```
+- `mode`: `"safe"` (เขียว), `"warning"` (เหลืองทอง), `"critical"` (แดงกระพริบ), `"off"` (ปิดไฟ), `"custom"` (ระบุค่า RGB เอง)
+- `{"cmd": "ping"}`: สั่งบอร์ดตอบกลับสถานะความพร้อม (`ack: "pong"`)

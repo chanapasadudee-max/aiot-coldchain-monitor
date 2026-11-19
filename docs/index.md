@@ -19,37 +19,75 @@
 
 ## 📐 แผนภาพสถาปัตยกรรมระบบ (System Architecture)
 
-```mermaid
-flowchart TD
-    subgraph IOT ["1. Cucumber RIS (ESP32-S2) — Multi-Sensor + Actuator"]
-        S["HTS221 (Temp/Humid)<br>BMP280 (Pressure)<br>MPU6050 (Vibration/Shock)"] --> MCU["ESP32-S2<br>PlatformIO C++"]
-        MCU --> LED["NeoPixel RGB LED<br>(GPIO 18)"]
-    end
-
-    subgraph CLOUD ["2. Cloud MQTT Broker & FastAPI Gateway"]
-        BROKER["broker.emqx.io<br>TX: telemetry | RX: cmd"]
-        API["FastAPI + SQLite + GMP CSV"]
-    end
-
-    subgraph AI ["3. Triple-Layer Hybrid AI"]
-        L1["Layer 1: Anomaly Engine<br>(Slope, Z-Score, ETTF, Shock)"]
-        L2["Layer 2: Local Ollama qwen2.5<br>Thai Copilot + 🛡️ Safety Guardrails"]
-        L3["Layer 3: Google Colab<br>(Isolation Forest vs One-Class SVM)"]
-    end
-
-    subgraph UI ["4. User Interface & Learning Platform"]
-        WEB["Web Command Center /<br>Telegram Mini App"]
-        BOT["Telegram Bot (@Chanaps_Bot)"]
-        GHP["GitHub Pages Docs +<br>Live WSS Sandbox"]
-    end
-
-    MCU -- "Publish JSON" --> BROKER --> API
-    API --> L1 --> L2
-    L2 -- "Validated CMD" --> BROKER -- "Subscribe" --> MCU
-    API <--> WEB
-    API <--> BOT
-    BROKER -. "WSS :8084" .-> GHP
-```
+<div class="arch">
+  <div class="arch-legend">
+    <span><i class="lg up"></i>Telemetry (บอร์ด → AI)</span>
+    <span><i class="lg down"></i>Command (AI → บอร์ด) ผ่าน Guardrails</span>
+    <span><i class="lg wss"></i>WSS ตรงจากเบราว์เซอร์</span>
+  </div>
+  <div class="arch-row">
+    <div class="arch-lane">
+      <span class="arch-kicker">01 · EDGE</span>
+      <strong>Cucumber RIS</strong>
+      <span class="arch-sub">ESP32-S2 · PlatformIO C++</span>
+    </div>
+    <div class="arch-nodes">
+      <div class="arch-node"><b>เซ็นเซอร์ 3 ชนิด</b><span class="chips"><code>HTS221</code><code>BMP280</code><code>MPU6050</code></span><small>อุณหภูมิ/ความชื้น · ความดัน · แรงสั่น</small></div>
+      <div class="arch-node"><b>ESP32-S2 MCU</b><small>อ่าน I2C → แพ็ก JSON → Publish</small></div>
+      <div class="arch-node act"><b>NeoPixel RGB LED</b><small>Actuator · GPIO 18</small></div>
+    </div>
+  </div>
+  <div class="arch-link">
+    <span class="flow up">Publish JSON</span>
+    <span class="flow down">Subscribe CMD</span>
+  </div>
+  <div class="arch-row">
+    <div class="arch-lane">
+      <span class="arch-kicker">02 · TRANSPORT</span>
+      <strong>MQTT Broker</strong>
+      <span class="arch-sub">broker.emqx.io · <code>tse/cn466/chanapa/</code></span>
+    </div>
+    <div class="arch-nodes">
+      <div class="arch-node"><b>TX · Telemetry</b><small><code>…/telemetry</code> บอร์ด → คลาวด์</small></div>
+      <div class="arch-node"><b>RX · Command</b><small><code>…/cmd</code> คลาวด์ → บอร์ด</small></div>
+      <div class="arch-node wss"><b>WebSocket</b><small>พอร์ต <code>8084</code> สำหรับเบราว์เซอร์</small></div>
+    </div>
+  </div>
+  <div class="arch-link">
+    <span class="flow up">Telemetry</span>
+    <span class="flow down">Validated CMD</span>
+  </div>
+  <div class="arch-row">
+    <div class="arch-lane">
+      <span class="arch-kicker">03 · INTELLIGENCE</span>
+      <strong>Triple-Layer Hybrid AI</strong>
+      <span class="arch-sub">FastAPI + SQLite + GMP CSV</span>
+    </div>
+    <div class="arch-nodes">
+      <div class="arch-node"><b>L1 · Anomaly Engine</b><small>Slope · Z-Score · ETTF · Shock</small></div>
+      <div class="arch-node ai"><b>L2 · Ollama <code>qwen2.5</code></b><small>Thai Copilot สั่งงานด้วยภาษาไทย</small></div>
+      <div class="arch-node guard"><b>🛡️ Safety Guardrails</b><small>Deterministic · บล็อกคำสั่งอันตราย</small></div>
+      <div class="arch-node offline"><b>L3 · Google Colab</b><small>Isolation Forest vs One-Class SVM (เทรนออฟไลน์)</small></div>
+    </div>
+  </div>
+  <div class="arch-link">
+    <span class="flow up">REST API</span>
+    <span class="flow down">คำสั่งจากผู้ใช้</span>
+    <span class="flow wss">WSS :8084</span>
+  </div>
+  <div class="arch-row">
+    <div class="arch-lane">
+      <span class="arch-kicker">04 · INTERFACE</span>
+      <strong>ผู้ใช้ &amp; ผู้เรียน</strong>
+      <span class="arch-sub">เว็บ · มือถือ · เอกสาร</span>
+    </div>
+    <div class="arch-nodes">
+      <div class="arch-node"><b>Web Command Center</b><small>+ Telegram Mini App</small></div>
+      <div class="arch-node"><b>Telegram Bot</b><small>@Chanaps_Bot · แจ้งเตือน CAPA</small></div>
+      <div class="arch-node wss"><b>GitHub Pages</b><small>เว็บสอน + Live MQTT Sandbox</small></div>
+    </div>
+  </div>
+</div>
 
 ---
 

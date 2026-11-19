@@ -820,7 +820,7 @@
 
 <h1 id="live-mqtt-sandbox-github-pages">🧪 Live MQTT Sandbox (ทดลองเล่นสดบน GitHub Pages)<a class="headerlink" href="#live-mqtt-sandbox-github-pages" title="Permanent link">&para;</a></h1>
 <blockquote>
-<p>หน้านี้เชื่อมต่อกับ <strong>MQTT Broker สาธารณะ (<code>wss://broker.emqx.io:8084/mqtt</code>)</strong> โดยตรงจากเบราว์เซอร์ของคุณ!<br />
+<p>หน้านี้เชื่อมต่อกับ <strong>MQTT Broker สาธารณะ (<code>wss://broker.emqx.io:8084/mqtt</code>)</strong> โดยตรงจากเบราว์เซอร์ของคุณ (และรองรับ <strong>Telegram Mini App</strong> ตลอด 24 ชม.)!<br />
 สามารถดูข้อมูลสดจากบอร์ด <strong>Cucumber RIS (HTS221 + BMP280 + MPU6050)</strong> หรือกดปุ่ม <strong>จำลองวิกฤต (Virtual Simulator)</strong> ได้ทันทีโดยไม่ต้องเปิดเซิร์ฟเวอร์ในเครื่อง</p>
 </blockquote>
 <div id="sandbox-root">
@@ -861,18 +861,25 @@
   <pre id="sb-raw" class="sb-raw">กำลังรอรับข้อความ JSON จากบอร์ด Cucumber...</pre>
 </div>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
 (function() {
+  // Telegram Mini App SDK (works 24/7 directly from GitHub Pages HTTPS!)
+  const tg = window.Telegram?.WebApp;
+  if (tg) { tg.ready(); tg.expand(); }
+  const haptic = (t = 'medium') => tg?.HapticFeedback?.impactOccurred?.(t);
+
   const ctx = document.getElementById('sbChart').getContext('2d');
   const v = (n) => getComputedStyle(document.body).getPropertyValue(n).trim();
+  const areaFill = () => document.body.getAttribute('data-md-color-scheme') === 'default' ? 'rgba(140,24,28,0.12)' : 'rgba(233,185,73,0.14)';
   const sbChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
       datasets: [
-        { label: 'Temperature (°C)', data: [], borderColor: v('--x-accent'), backgroundColor: 'rgba(233,185,73,0.14)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 0 }
+        { label: 'Temperature (°C)', data: [], borderColor: v('--x-accent'), backgroundColor: areaFill(), fill: true, tension: 0.35, borderWidth: 2, pointRadius: 0 }
       ]
     },
     options: {
@@ -886,11 +893,16 @@
   });
   new MutationObserver(() => {
     sbChart.data.datasets[0].borderColor = v('--x-accent');
+    sbChart.data.datasets[0].backgroundColor = areaFill();
     sbChart.options.scales.x.ticks.color = v('--md-default-fg-color--light');
     sbChart.options.scales.y.ticks.color = v('--md-default-fg-color--light');
     sbChart.options.scales.y.grid.color = v('--x-border');
     sbChart.update('none');
   }).observe(document.body, { attributes: true, attributeFilter: ['data-md-color-scheme'] });
+
+  let simTimer = null;
+  let simTemp = 4.2;
+  let simStep = 0;
 
   function pushPoint(d) {
     const temp = Number(d.temp ?? 0);
@@ -913,34 +925,57 @@
   }
 
   let client = null;
+  const setConn = (txt, color) => {
+    const el = document.getElementById('sb-conn');
+    if (el) { el.innerText = txt; if (color) el.style.color = color; }
+  };
   try {
-    client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'ghp-sandbox-' + Math.random().toString(16).slice(2, 8) });
+    client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'ghp-sandbox-' + Math.random().toString(16).slice(2, 8), connectTimeout: 8000 });
     client.on('connect', () => {
-      document.getElementById('sb-conn').innerText = '🟢 เชื่อมต่อ WSS สำเร็จ! (รับข้อมูลสดจากบอร์ด Cucumber)';
-      document.getElementById('sb-conn').style.color = 'var(--x-ok)';
+      setConn('🟢 เชื่อมต่อ WSS สำเร็จ! (รับข้อมูลสดจากบอร์ด Cucumber)', 'var(--x-ok)');
       client.subscribe('tse/cn466/chanapa/telemetry');
       client.subscribe('tse/cn466/chanapa');
     });
+    client.on('error', () => setConn('⚠️ เชื่อมต่อ WSS ไม่สำเร็จ — กดปุ่มโหมดจำลองแทนได้', '#f59e0b'));
+    client.on('offline', () => setConn('🟠 ขาดการเชื่อมต่อ WSS ชั่วคราว (กำลังลองใหม่...)', '#f59e0b'));
     client.on('message', (topic, message) => {
+      if (simTimer) return;
       try {
         const data = JSON.parse(message.toString());
         if (data.temp !== undefined) pushPoint(data);
       } catch (e) {}
     });
   } catch (e) {
-    document.getElementById('sb-conn').innerText = '⚠️ ไม่สามารถต่อ WSS ได้ (กดปุ่มโหมดจำลองแทนได้)';
+    setConn('⚠️ ไม่สามารถต่อ WSS ได้ (กดปุ่มโหมดจำลองแทนได้)', '#f59e0b');
   }
 
   window.sbSendLed = function(mode) {
+    haptic('medium');
     if (client && client.connected) {
       client.publish('tse/cn466/chanapa/cmd', JSON.stringify({ cmd: 'set_led', mode }));
       document.getElementById('sb-raw').innerText = `[TX CMD -> tse/cn466/chanapa/cmd] {"cmd":"set_led","mode":"${mode}"}`;
+    } else {
+      document.getElementById('sb-raw').innerText = `[OFFLINE] ยังไม่ได้เชื่อมต่อ MQTT Broker (ไม่สามารถส่งคำสั่ง LED '${mode}' ไปบอร์ดได้)`;
     }
   };
 
-  let simTimer = null;
-  let simTemp = 4.2;
+  function emitSim() {
+    simStep++;
+    simTemp += (Math.random() * 0.45);
+    if (simTemp > 11.0) simTemp = 4.0;
+    const isShock = (simStep % 5 === 0);
+    pushPoint({
+      node_id: 'ghp-virtual',
+      temp: +simTemp.toFixed(2),
+      humid: +(60 + Math.random()*8).toFixed(1),
+      pressure: +(1012 + Math.random()).toFixed(1),
+      vib_g: isShock ? +(0.65 + Math.random()*0.4).toFixed(3) : +(Math.random()*0.06).toFixed(3),
+      shock: isShock
+    });
+  }
+
   window.sbToggleSim = function() {
+    haptic('light');
     const btn = document.getElementById('sb-sim-btn');
     if (simTimer) {
       clearInterval(simTimer); simTimer = null;
@@ -948,11 +983,8 @@
       return;
     }
     btn.innerText = '⏹️ หยุดโหมดจำลอง';
-    simTimer = setInterval(() => {
-      simTemp += (Math.random() * 0.45);
-      if (simTemp > 11.0) simTemp = 4.0;
-      pushPoint({ node_id: 'ghp-virtual', temp: +simTemp.toFixed(2), humid: +(60 + Math.random()*8).toFixed(1), pressure: +(1012 + Math.random()).toFixed(1), vib_g: +(Math.random()*0.08).toFixed(3), shock: false });
-    }, 1500);
+    emitSim();
+    simTimer = setInterval(emitSim, 1500);
   };
 })();
 </script>
@@ -1015,6 +1047,8 @@
     
     
       <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

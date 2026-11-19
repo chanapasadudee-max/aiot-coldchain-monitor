@@ -12,7 +12,7 @@
   <!-- Fonts (Thai + Latin in one family) & Chart.js -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
   <style>
@@ -78,7 +78,7 @@
     }
 
     body {
-      font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+      font-family: 'Sarabun', system-ui, sans-serif;
       background: var(--bg);
       background-image: radial-gradient(1200px 380px at 50% -160px, rgba(214, 52, 58, 0.10), transparent 70%);
       background-repeat: no-repeat;
@@ -86,7 +86,7 @@
       min-height: 100vh;
       padding: 18px 16px 40px;
       overflow-x: hidden;
-      font-size: 15px;
+      font-size: 16px;
       line-height: 1.5;
       transition: background-color .25s ease, color .25s ease;
     }
@@ -503,12 +503,26 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
+    function syncTelegramChrome(theme) {
+      if (!tg) return;
+      const bg = theme === 'light' ? '#f6f5f2' : '#0b0d11';
+      if (tg.setHeaderColor) tg.setHeaderColor(bg);
+      if (tg.setBackgroundColor) tg.setBackgroundColor(bg);
+    }
     if (tg) {
       tg.ready(); tg.expand();
-      if (tg.setHeaderColor) tg.setHeaderColor('#0b0d11');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0d11');
+      if (tg.colorScheme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        const logo = document.getElementById('brand-logo-img');
+        if (logo) logo.src = 'logo_light.png';
+      }
+      syncTelegramChrome(document.documentElement.getAttribute('data-theme'));
     }
     function haptic(type = 'medium') { tg?.HapticFeedback?.impactOccurred?.(type); }
+    function hapticNotify(type = 'error') { tg?.HapticFeedback?.notificationOccurred?.(type); }
+    function escHtml(str) {
+      return String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
 
     const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
@@ -518,6 +532,7 @@
       html.setAttribute('data-theme', next);
       const logo = document.getElementById('brand-logo-img');
       if (logo) logo.src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+      syncTelegramChrome(next);
       applyChartTheme();
     }
 
@@ -595,9 +610,15 @@
           document.getElementById(`prof-${p}`)?.classList.toggle('active', ai.profile === p);
         });
 
-        // Sensor chips
+        // MQTT connection pill
+        const mqttPill = document.getElementById('mqtt-status-pill');
+        if (mqttPill && data.mqtt_connected !== undefined) {
+          mqttPill.innerText = data.mqtt_connected ? 'MQTT LIVE' : 'MQTT OFFLINE';
+        }
+
+        // Sensor chips (HTML-escaped)
         if (ai.sensors && ai.sensors.length) {
-          document.getElementById('sensor-chips').innerHTML = ai.sensors.map(s => `<span class="sensor-chip">${s}</span>`).join('');
+          document.getElementById('sensor-chips').innerHTML = ai.sensors.map(s => `<span class="sensor-chip">${escHtml(s)}</span>`).join('');
         }
 
         const temp = ai.current_temp;
@@ -631,7 +652,7 @@
         healthEl.innerText = `${hs} / 100`;
         healthEl.style.color = hs >= 80 ? 'var(--ok)' : (hs >= 50 ? 'var(--warn)' : 'var(--crit)');
 
-        document.getElementById('m-ettf').innerText = ai.ettf_seconds ? `~${ai.ettf_seconds.toFixed(0)}s` : 'ปลอดภัย (∞)';
+        document.getElementById('m-ettf').innerText = ai.ettf_seconds != null ? `~${ai.ettf_seconds.toFixed(0)}s` : 'ปลอดภัย (∞)';
         document.getElementById('m-zscore').innerText = ai.z_score.toFixed(2);
         const ledMode = (data.led_mode || 'safe').toUpperCase();
         const ledEl = document.getElementById('m-led');
@@ -685,14 +706,14 @@
           const data = await res.json();
           if (!data.packets?.length) { box.innerHTML = '<div class="log-line">ยังไม่มีแพ็กเก็ต MQTT...</div>'; return; }
           box.innerHTML = data.packets.slice(0, 15).map(p =>
-            `<div class="log-line"><b>[${p.dir}]</b> ${p.ts.substring(11,19)} <i>${p.topic}</i> → ${JSON.stringify(p.payload)}</div>`
+            `<div class="log-line"><b>[${escHtml(p.dir)}]</b> ${escHtml((p.ts || '').substring(11,19))} <i>${escHtml(p.topic)}</i> → ${escHtml(JSON.stringify(p.payload))}</div>`
           ).join('');
         } else {
           const res = await fetch('/api/audit');
           const data = await res.json();
           if (!data.audit_log?.length) { box.innerHTML = '<div class="log-line">ยังไม่มีประวัติคำสั่ง AI Copilot — ลองแชตด้านบนดูครับ</div>'; return; }
           box.innerHTML = data.audit_log.slice(0, 15).map(a =>
-            `<div class="log-line"><b style="color:${a.allowed?'var(--ok)':'var(--crit)'}">[${a.allowed?'ALLOWED':'BLOCKED'}]</b> ${a.ts.substring(11,19)} (${a.engine}) action=${a.action} — ${a.guardrail_note}</div>`
+            `<div class="log-line"><b style="color:${a.allowed?'var(--ok)':'var(--crit)'}">[${a.allowed?'ALLOWED':'BLOCKED'}]</b> ${escHtml((a.ts || '').substring(11,19))} (${escHtml(a.engine)}) action=${escHtml(a.action)} — ${escHtml(a.guardrail_note)}</div>`
           ).join('');
         }
       } catch (e) {}
@@ -700,26 +721,36 @@
 
     async function switchProfile(profile) {
       haptic('light');
-      await fetch('/api/profile', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({profile}) });
-      fetchLatest(); fetchHistory();
+      try {
+        await fetch('/api/profile', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({profile}) });
+        await fetchLatest();
+        await fetchHistory();
+      } catch (e) { console.error(e); }
     }
 
     async function sendLed(mode) {
       haptic('medium');
-      const res = await fetch('/api/command/led', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({mode}) });
-      if (!res.ok) {
-        const err = await res.json();
-        appendChat('ai', `🛡️ ${err.detail}`, 'Guardrail', false);
-      } else {
-        appendChat('ai', `💡 ส่งคำสั่งเปลี่ยนไฟ RGB LED บนบอร์ด Cucumber -> ${mode.toUpperCase()} เรียบร้อยครับ`, 'Direct Hardware CMD', true);
+      try {
+        const res = await fetch('/api/command/led', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({mode}) });
+        if (!res.ok) {
+          hapticNotify('error');
+          const err = await res.json();
+          appendChat('ai', `🛡️ ${err.detail}`, 'Guardrail', false);
+        } else {
+          appendChat('ai', `💡 ส่งคำสั่งเปลี่ยนไฟ RGB LED บนบอร์ด Cucumber -> ${mode.toUpperCase()} เรียบร้อยครับ`, 'Direct Hardware CMD', true);
+        }
+        fetchLatest(); fetchLogs();
+      } catch (e) {
+        appendChat('ai', '❌ ไม่สามารถส่งคำสั่ง LED ได้ (ตรวจสอบ Backend)', 'Network Error', false);
       }
-      fetchLatest(); fetchLogs();
     }
 
     async function triggerScenario(scenario) {
       haptic(scenario === 'normal' ? 'light' : 'heavy');
-      await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
-      setTimeout(() => { fetchLatest(); fetchHistory(); fetchLogs(); }, 350);
+      try {
+        await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
+        setTimeout(() => { fetchLatest(); fetchHistory(); fetchLogs(); }, 350);
+      } catch (e) { console.error(e); }
     }
 
     function appendChat(role, text, meta = '', allowed = true) {
@@ -752,7 +783,9 @@
       btn.disabled = true;
       try {
         const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({message: msg}) });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        if (!data.guardrail_allowed) hapticNotify('error');
         const badge = `${data.engine} | action:${data.action} | ${data.guardrail_allowed ? 'GUARDRAIL OK' : 'GUARDRAIL BLOCKED'}`;
         appendChat('ai', data.reply, badge, data.guardrail_allowed);
         fetchLatest(); fetchHistory(); fetchLogs();

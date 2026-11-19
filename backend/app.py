@@ -126,10 +126,12 @@ def get_history_records(limit: int = 40):
 
 # ---------------- MQTT State & Bidirectional Control ----------------
 mqtt_connected = threading.Event()
+ai_lock = threading.Lock()
 mqtt_client = None
 mqtt_log = deque(maxlen=40)
 auto_sync_led = True
 last_synced_led_mode = "safe"
+manual_led_until = 0.0  # epoch timestamp until manual LED override expires
 
 latest_ai_result = {
     "profile": "coldchain",
@@ -153,12 +155,15 @@ latest_ai_result = {
 }
 
 
-def publish_led_command(mode: str, r: int = 0, g: int = 0, b: int = 0) -> dict:
-    global last_synced_led_mode
+def publish_led_command(mode: str, r: int = 0, g: int = 0, b: int = 0, manual: bool = False) -> dict:
+    global last_synced_led_mode, manual_led_until
     payload = {"cmd": "set_led", "mode": mode, "r": r, "g": g, "b": b}
     if mqtt_client and mqtt_connected.is_set():
         mqtt_client.publish(MQTT_TOPIC_CMD, json.dumps(payload))
     last_synced_led_mode = mode
+    if manual:
+        # Hold manual LED override for 60s so auto_sync_led doesn't immediately overwrite it
+        manual_led_until = datetime.now(timezone.utc).timestamp() + 60.0
     mqtt_log.appendleft({
         "ts": datetime.now(timezone.utc).isoformat(),
         "dir": "TX_CMD",
@@ -170,9 +175,15 @@ def publish_led_command(mode: str, r: int = 0, g: int = 0, b: int = 0) -> dict:
 
 def on_connect(client, userdata, flags, reason_code, properties=None):
     print(f"[MQTT] Connected (rc={reason_code}). Subscribing to {MQTT_TOPIC_TELEMETRY} & {MQTT_TOPIC_LEGACY}")
-    client.subscribe(MQTT_TOPIC_TELEMETRY)
-    client.subscribe(MQTT_TOPIC_LEGACY)
-    mqtt_connected.set()
+    if reason_code == 0:
+        client.subscribe(MQTT_TOPIC_TELEMETRY)
+        client.subscribe(MQTT_TOPIC_LEGACY)
+        mqtt_connected.set()
+
+
+def on_disconnect(client, userdata, disconnect_flags, reason_code, properties=None):
+    print(f"[MQTT] Disconnected (rc={reason_code})")
+    mqtt_connected.clear()
 
 
 def on_message(client, userdata, msg):
@@ -209,22 +220,25 @@ def on_message(client, userdata, msg):
         "payload": data,
     })
 
-    ai_res = ai_engine.feed(temp, humid, pressure=pressure, vib_g=vib_g, shock=shock, sensors=sensors)
-    latest_ai_result = ai_res
+    with ai_lock:
+        ai_res = ai_engine.feed(temp, humid, pressure=pressure, vib_g=vib_g, shock=shock, sensors=sensors)
+        latest_ai_result = ai_res
     save_telemetry(node_id, temp, humid, pressure, vib_g, shock, ai_res, scenario)
 
-    # Auto-sync physical NeoPixel RGB LED on Cucumber board when risk changes
-    if auto_sync_led:
+    # Auto-sync physical NeoPixel RGB LED on Cucumber board when risk changes (unless manual override active)
+    now_ts = datetime.now(timezone.utc).timestamp()
+    if auto_sync_led and now_ts >= manual_led_until:
         target_led = "safe" if ai_res["risk_level"] == "NORMAL" else (
             "warning" if ai_res["risk_level"] == "WARNING" else "critical"
         )
         if target_led != last_synced_led_mode:
-            publish_led_command(target_led)
+            publish_led_command(target_led, manual=False)
 
 
 def start_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
     client.on_message = on_message
     client.reconnect_delay_set(min_delay=1, max_delay=20)
     try:
@@ -394,6 +408,7 @@ def api_latest():
     return {
         "telemetry": tele,
         "ai_evaluation": latest_ai_result,
+        "mqtt_connected": mqtt_connected.is_set(),
         "led_mode": last_synced_led_mode,
         "profiles": FACILITY_PROFILES,
     }
@@ -453,7 +468,7 @@ def api_command_led(req: LedCommandRequest):
     )
     if not allowed:
         raise HTTPException(status_code=403, detail=note)
-    cmd = publish_led_command(req.mode, req.r, req.g, req.b)
+    cmd = publish_led_command(req.mode, req.r, req.g, req.b, manual=True)
     return {"allowed": True, "note": note, "command": cmd}
 
 
@@ -463,7 +478,7 @@ def api_chat(req: ChatRequest):
         "get_status": lambda p: latest_ai_result,
         "get_capa_report": lambda p: advisor.generate_report(latest_ai_result),
         "set_led": lambda p: publish_led_command(
-            p.get("mode", "safe"), p.get("r", 0), p.get("g", 0), p.get("b", 0)
+            p.get("mode", "safe"), p.get("r", 0), p.get("g", 0), p.get("b", 0), manual=True
         ),
         "switch_profile": lambda p: api_set_profile(ProfileRequest(profile=p.get("profile", "coldchain"))),
         "simulate_crisis": lambda p: _execute_simulate(p.get("scenario", "normal")),
@@ -483,7 +498,7 @@ def api_mqtt_log():
 
 @app.get("/api/export.csv")
 def api_export_csv(limit: int = 500):
-    rows = get_history_records(min(limit, 5000))
+    rows = get_history_records(max(1, min(limit, 5000)))
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow(["id", "timestamp_utc", "node_id", "temp_c", "humid_pct", "pressure_hpa", "vib_g", "shock", "risk_level", "health_score", "slope", "z_score", "scenario"])

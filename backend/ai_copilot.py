@@ -183,11 +183,25 @@ class AICopilot:
                     "reply": "จำลองเหตุการณ์คอมเพรสเซอร์ดับ (Cooling Failure) ส่งเข้าสู่ระบบแล้วครับ",
                     "_engine": "Local Rule/Intent Engine",
                 }
+            if any(k in t for k in ["แผ่ว", "เตือน", "warning", "warn"]):
+                return {
+                    "action": "simulate_crisis",
+                    "params": {"scenario": "warning"},
+                    "reply": "จำลองเหตุการณ์แอร์เริ่มแผ่ว (Predictive Warning) ส่งเข้าสู่ระบบแล้วครับ",
+                    "_engine": "Local Rule/Intent Engine",
+                }
             if any(k in t for k in ["กระแทก", "เขย่า", "slam", "shock"]):
                 return {
                     "action": "simulate_crisis",
                     "params": {"scenario": "door_slam"},
                     "reply": "จำลองเหตุการณ์แรงกระแทก/เปิดประตูแรง (MPU6050 Shock) แล้วครับ",
+                    "_engine": "Local Rule/Intent Engine",
+                }
+            if any(k in t for k in ["รบกวน", "glitch", "สไปก์", "spike"]):
+                return {
+                    "action": "simulate_crisis",
+                    "params": {"scenario": "glitch"},
+                    "reply": "จำลองเหตุการณ์สัญญาณรบกวน (Sensor Glitch) ส่งเข้าสู่ระบบแล้วครับ",
                     "_engine": "Local Rule/Intent Engine",
                 }
             return {
@@ -225,9 +239,11 @@ class AICopilot:
         if not intent:
             intent = self._fallback_parse(user_message, ai_state)
 
-        action = intent.get("action", "get_status")
-        params = intent.get("params") or {}
-        reply = intent.get("reply", "")
+        action = str(intent.get("action", "get_status"))
+        params = intent.get("params")
+        if not isinstance(params, dict):
+            params = {}
+        reply = str(intent.get("reply", ""))
         engine_used = intent.get("_engine", "Local Engine")
 
         # Validate through Deterministic Safety Guardrails
