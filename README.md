@@ -15,7 +15,7 @@
 ## 📖 เว็บไซต์คู่มือและบทเรียน (GitHub Pages)
 
 สามารถเข้าชมเว็บไซต์บทเรียนออนไลน์ฉบับสมบูรณ์ได้ที่:  
-👉 **[เปิดดูเว็บไซต์สอน AIoT บน GitHub Pages](https://github.com)**
+👉 **[เปิดดูเว็บไซต์สอน AIoT บน GitHub Pages](https://chanapasadudee-max.github.io/aiot-coldchain-monitor/)**
 
 ---
 

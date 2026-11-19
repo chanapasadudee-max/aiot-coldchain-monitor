@@ -1,8 +1,9 @@
 site_name: AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
 site_description: คู่มือและบทเรียนการพัฒนา AIoT ระดับอุตสาหกรรมด้วยบอร์ด Cucumber RIS + Local Ollama AI Copilot + Guardrails + Telegram Mini App
 site_author: Chanapa Sadudee (6610680214)
-repo_name: aiot-coldchain-monitor
-repo_url: https://github.com/
+site_url: https://chanapasadudee-max.github.io/aiot-coldchain-monitor/
+repo_name: chanapasadudee-max/aiot-coldchain-monitor
+repo_url: https://github.com/chanapasadudee-max/aiot-coldchain-monitor
 
 theme:
   name: material
@@ -12,15 +13,15 @@ theme:
   palette:
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: black
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: สลับเป็นธีมสว่าง
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: red
-      accent: amber
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: สลับเป็นธีมมืด

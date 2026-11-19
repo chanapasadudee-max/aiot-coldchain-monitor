@@ -9,250 +9,316 @@
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-  <!-- Google Fonts & Chart.js -->
+  <!-- Fonts (Thai + Latin in one family) & Chart.js -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=Sarabun:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
+    /* ---------- Design tokens ---------- */
     :root {
-      --tse-red: #8c181c;
-      --tse-red-light: #dc2626;
-      --tse-gold: #ffd04f;
-      --tse-gold-dark: #eab308;
-      --tse-graphite: #58585a;
+      --brand: #d6343a;          /* TSE red, lifted for dark backgrounds */
+      --brand-strong: #8c181c;   /* official TSE crimson */
+      --gold: #e9b949;           /* TU gold, softened */
 
-      --bg: #0c0e12;
-      --card-bg: rgba(22, 25, 33, 0.80);
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
-      --text-dim: #94a3b8;
-      --track: rgba(255, 255, 255, 0.07);
-      --input-bg: rgba(12, 14, 18, 0.8);
+      --bg: #0b0d11;
+      --surface: #12151b;
+      --surface-2: #181c23;
+      --border: #232833;
+      --border-strong: #2f3542;
+      --text: #e8ebf0;
+      --text-dim: #9099a8;
+      --text-faint: #5e6675;
+      --track: #222731;
 
-      --temp-good: #10b981;
-      --temp-warn: #ffd04f;
-      --temp-crit: #ef4444;
-      --red-glow: rgba(140, 24, 28, 0.45);
-      --shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
-      --orb-opacity: 0.16;
+      --ok: #34c77b;
+      --warn: #e9b949;
+      --crit: #ef4d52;
+      --ok-soft: rgba(52, 199, 123, 0.12);
+      --warn-soft: rgba(233, 185, 73, 0.14);
+      --crit-soft: rgba(239, 77, 82, 0.14);
+
+      --chart-line: #e9b949;
+      --chart-grid: rgba(255, 255, 255, 0.06);
+      --chart-tick: #6b7381;
+
+      --radius: 14px;
+      --radius-sm: 10px;
+      --shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 8px 24px -12px rgba(0,0,0,0.6);
+      --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
     }
 
     html[data-theme="light"] {
-      --bg: #f8f9fb;
-      --card-bg: rgba(255, 255, 255, 0.94);
-      --card-border: rgba(140, 24, 28, 0.14);
-      --text: #1a1d24;
-      --text-dim: #526071;
-      --track: rgba(140, 24, 28, 0.08);
-      --input-bg: #f1f5f9;
-      --shadow: 0 12px 30px -8px rgba(140, 24, 28, 0.10);
-      --orb-opacity: 0.07;
+      --brand: #8c181c;
+      --gold: #b7830f;
+      --bg: #f3f4f7;
+      --surface: #ffffff;
+      --surface-2: #f7f8fa;
+      --border: #e2e5ea;
+      --border-strong: #cfd4dc;
+      --text: #161a21;
+      --text-dim: #5a6372;
+      --text-faint: #8a92a0;
+      --track: #eceef2;
+
+      --ok: #148a50;
+      --warn: #b7830f;
+      --crit: #c9252b;
+      --ok-soft: rgba(20, 138, 80, 0.10);
+      --warn-soft: rgba(183, 131, 15, 0.12);
+      --crit-soft: rgba(201, 37, 43, 0.10);
+
+      --chart-line: #8c181c;
+      --chart-grid: rgba(0, 0, 0, 0.06);
+      --chart-tick: #8a92a0;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 18px -10px rgba(16, 24, 40, 0.12);
     }
 
     body {
-      font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
+      font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(1200px 380px at 50% -160px, rgba(214, 52, 58, 0.10), transparent 70%);
+      background-repeat: no-repeat;
       color: var(--text);
       min-height: 100vh;
-      padding: 20px 16px 48px;
+      padding: 18px 16px 40px;
       overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: background-color 0.35s ease, color 0.35s ease;
+      font-size: 15px;
+      line-height: 1.5;
+      transition: background-color .25s ease, color .25s ease;
+    }
+    html[data-theme="light"] body { background-image: radial-gradient(1200px 380px at 50% -160px, rgba(140, 24, 28, 0.06), transparent 70%); }
+
+    .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+    .app-container { width: 100%; max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; box-shadow: var(--shadow);
     }
 
-    .orb { position: fixed; border-radius: 50%; filter: blur(110px); opacity: var(--orb-opacity); pointer-events: none; z-index: 0; }
-    .orb-1 { width: 460px; height: 460px; background: #8c181c; top: -140px; left: -100px; animation: float1 26s ease-in-out infinite alternate; }
-    .orb-2 { width: 400px; height: 400px; background: #ffd04f; bottom: -120px; right: -80px; animation: float2 30s ease-in-out infinite alternate; }
-    @keyframes float1 { from { transform: translate(0,0); } to { transform: translate(45px, 30px); } }
-    @keyframes float2 { from { transform: translate(0,0); } to { transform: translate(-50px, -40px); } }
-
-    .app-container {
-      position: relative; z-index: 1; width: 100%; max-width: 1080px;
-      display: flex; flex-direction: column; gap: 16px;
-    }
-
-    /* Header */
+    /* ---------- Header ---------- */
     header {
       display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-      padding: 14px 20px; background: var(--card-bg); border: 1px solid var(--card-border);
-      border-left: 4px solid var(--tse-red); border-radius: 18px; backdrop-filter: blur(16px); box-shadow: var(--shadow);
+      padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-logo-img { width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4)); transition: transform 0.3s ease; }
-    .brand-logo-img:hover { transform: scale(1.08) rotate(5deg); }
-    .brand-text h1 { font-family: 'Space Grotesk', sans-serif; font-size: 1.12rem; font-weight: 700; }
-    .brand-text p { font-size: 0.78rem; color: var(--text-dim); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .tu-tag { color: var(--tse-gold); font-weight: 700; }
-    html[data-theme="light"] .tu-tag { color: var(--tse-red); }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-logo-img { width: 40px; height: 40px; object-fit: contain; flex-shrink: 0; }
+    .brand-text h1 { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
+    .brand-text p { font-size: 0.78rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .tu-tag { color: var(--brand); font-weight: 600; }
+    .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--text-faint); }
 
     .nav-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .status-pill {
-      display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700;
-      padding: 6px 12px; border-radius: 999px; background: rgba(16,185,129,0.12);
-      border: 1px solid rgba(16,185,129,0.3); color: var(--temp-good);
+      display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+      font-family: var(--mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
+      border-radius: 999px; background: var(--ok-soft); color: var(--ok);
     }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--temp-good); box-shadow: 0 0 8px var(--temp-good); animation: pulseDot 1.8s infinite; }
-    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: pulseDot 1.8s infinite; }
+    @keyframes pulseDot { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
 
     .icon-btn {
-      height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--card-border);
-      background: var(--card-bg); color: var(--text); cursor: pointer; font-family: inherit; font-size: 0.78rem; font-weight: 600;
-      display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; text-decoration: none;
+      height: 34px; padding: 0 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); cursor: pointer; font-family: inherit; font-size: 0.8rem; font-weight: 500;
+      display: inline-flex; align-items: center; gap: 7px; transition: border-color .15s, background .15s; text-decoration: none;
     }
-    .icon-btn:hover { border-color: var(--tse-gold); transform: translateY(-1px); }
+    .icon-btn:hover { border-color: var(--border-strong); background: var(--surface); }
+    .icon-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Profile Switcher Bar */
-    .profile-bar {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-      padding: 10px 16px; background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 14px; backdrop-filter: blur(12px);
+    /* ---------- Profile bar ---------- */
+    .profile-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .profile-btns {
+      display: inline-flex; gap: 4px; padding: 4px; flex-wrap: wrap;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     }
-    .profile-btns { display: flex; gap: 8px; flex-wrap: wrap; }
     .profile-btn {
-      padding: 7px 14px; border-radius: 10px; border: 1px solid var(--card-border);
-      background: transparent; color: var(--text-dim); font-family: inherit; font-size: 0.8rem; font-weight: 700;
-      cursor: pointer; transition: all 0.2s ease;
+      padding: 7px 14px; border-radius: 8px; border: none; background: transparent; color: var(--text-dim);
+      font-family: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background .15s, color .15s;
+      display: inline-flex; align-items: center; gap: 7px;
     }
-    .profile-btn.active {
-      background: linear-gradient(135deg, var(--tse-red), #b91c1c); color: #fff; border-color: var(--tse-gold);
-      box-shadow: 0 4px 14px var(--red-glow);
-    }
-    .sensor-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .profile-btn:hover { color: var(--text); }
+    .profile-btn .range { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; opacity: .75; }
+    .profile-btn.active { background: var(--brand); color: #fff; }
+    .profile-btn.active .range { opacity: .9; }
+
+    .sensor-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .sensor-chips::before { content: 'SENSORS'; font-family: var(--mono); font-size: 0.66rem; letter-spacing: .08em; color: var(--text-faint); margin-right: 2px; }
     .sensor-chip {
-      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 3px 9px; border-radius: 6px;
-      background: rgba(255,208,79,0.12); color: var(--tse-gold); border: 1px solid rgba(255,208,79,0.28);
+      font-family: var(--mono); font-size: 0.72rem; padding: 4px 9px; border-radius: 6px;
+      background: var(--surface); color: var(--text-dim); border: 1px solid var(--border);
     }
-    html[data-theme="light"] .sensor-chip { color: var(--tse-red); background: rgba(140,24,28,0.08); border-color: rgba(140,24,28,0.2); }
 
-    /* Hero Banner */
+    /* ---------- Status banner ---------- */
     .hero-banner {
-      padding: 16px 22px; border-radius: 18px;
-      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(6,78,59,0.2));
-      border: 1px solid rgba(16,185,129,0.35); backdrop-filter: blur(14px);
-      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-      transition: all 0.35s ease; box-shadow: var(--shadow);
+      --state: var(--ok); --state-soft: var(--ok-soft);
+      position: relative; overflow: hidden;
+      padding: 16px 20px 16px 24px; border-radius: var(--radius);
+      background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+      display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+      transition: border-color .3s ease, background .3s ease;
     }
-    .hero-banner.warning { background: linear-gradient(135deg, rgba(255,208,79,0.16), rgba(140,24,28,0.22)); border-color: var(--tse-gold); }
-    .hero-banner.critical { background: linear-gradient(135deg, rgba(140,24,28,0.38), rgba(90,10,15,0.62)); border-color: var(--tse-red-light); animation: alertPulse 1.5s infinite; }
-    @keyframes alertPulse { 0%,100% { box-shadow: 0 0 24px var(--red-glow); } 50% { box-shadow: 0 0 8px rgba(185,28,28,0.15); } }
-    .hero-content h2 { font-family: 'Space Grotesk', sans-serif; font-size: 1.08rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .hero-content p { font-size: 0.84rem; color: var(--text-dim); margin-top: 3px; }
-    .hero-right { display: flex; align-items: center; gap: 10px; }
-    .hero-badge { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.78rem; font-weight: 800; padding: 6px 14px; border-radius: 10px; letter-spacing: 0.5px; }
+    .hero-banner::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--state); }
+    .hero-banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--state-soft), transparent 55%); pointer-events: none; }
+    .hero-banner.warning { --state: var(--warn); --state-soft: var(--warn-soft); border-color: color-mix(in srgb, var(--warn) 35%, var(--border)); }
+    .hero-banner.critical { --state: var(--crit); --state-soft: var(--crit-soft); border-color: color-mix(in srgb, var(--crit) 45%, var(--border)); animation: alertPulse 1.6s ease-in-out infinite; }
+    @keyframes alertPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,77,82,0.0), var(--shadow); } 50% { box-shadow: 0 0 0 4px rgba(239,77,82,0.14), var(--shadow); } }
+    .hero-content, .hero-right { position: relative; z-index: 1; }
+    .hero-content { display: flex; align-items: flex-start; gap: 14px; min-width: 0; }
+    .hero-dot { width: 12px; height: 12px; margin-top: 7px; border-radius: 50%; background: var(--state); box-shadow: 0 0 0 5px var(--state-soft); flex-shrink: 0; }
+    #hero-icon { display: none; }
+    .hero-content h2 { font-size: 1.08rem; font-weight: 700; line-height: 1.4; }
+    .hero-content p { font-size: 0.86rem; color: var(--text-dim); margin-top: 2px; }
+    .hero-badge {
+      font-family: var(--mono); font-size: 0.78rem; font-weight: 600; letter-spacing: .08em;
+      padding: 7px 14px; border-radius: 8px;
+    }
 
-    /* Gauges Grid */
+    /* ---------- Gauges ---------- */
     .gauges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     @media (max-width: 768px) { .gauges-grid { grid-template-columns: 1fr; } }
-    .card {
-      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px;
-      padding: 18px; backdrop-filter: blur(14px); box-shadow: var(--shadow);
-    }
-    .gauge-card { display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.25s ease, border-color 0.25s ease; }
-    .gauge-card:hover { transform: translateY(-2px); border-color: rgba(255,208,79,0.4); }
-    .gauge-header { width: 100%; display: flex; justify-content: space-between; font-size: 0.74rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
-    .gauge-svg-wrap { position: relative; width: 162px; height: 162px; display: flex; align-items: center; justify-content: center; }
+    .gauge-card { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .gauge-header { width: 100%; display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .gauge-header .g-title { font-size: 0.86rem; font-weight: 600; }
+    .gauge-header .g-sub { font-family: var(--mono); font-size: 0.68rem; letter-spacing: .06em; color: var(--text-faint); }
+    .gauge-svg-wrap { position: relative; width: 156px; height: 156px; }
     .gauge-svg-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-    .circle-bg { fill: none; stroke: var(--track); stroke-width: 13; }
-    .circle-bar { fill: none; stroke-width: 13; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1s cubic-bezier(0.2,0.8,0.2,1); }
+    .circle-bg { fill: none; stroke: var(--track); stroke-width: 10; }
+    .circle-bar { fill: none; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 1s cubic-bezier(0.2,0.8,0.2,1), stroke .3s ease; }
+    #temp-bar { stroke: var(--ok); }
+    #humid-bar { stroke: #4aa3df; }
+    #slope-bar { stroke: var(--gold); }
     .gauge-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
-    .big-number { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
-    .unit-label { font-size: 0.76rem; color: var(--text-dim); margin-top: 4px; }
-    .gauge-footer-tag { margin-top: 10px; font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--text-dim); }
+    .big-number { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 2rem; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+    .unit-label { font-family: var(--mono); font-size: 0.74rem; color: var(--text-dim); margin-top: 6px; }
+    .gauge-footer-tag { margin-top: 12px; font-size: 0.76rem; font-weight: 500; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); }
 
-    /* Multi-Sensor & AI Strip */
-    .metrics-strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    /* ---------- Metrics strip ---------- */
+    .metrics-strip {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden;
+    }
     @media (max-width: 900px) { .metrics-strip { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 520px) { .metrics-strip { grid-template-columns: repeat(2, 1fr); } }
-    .mini-metric {
-      background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 12px 14px;
+    .mini-metric { padding: 14px 16px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 -1px -1px 0; }
+    .mini-label { font-size: 0.76rem; color: var(--text-dim); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-label small { font-family: var(--mono); font-size: 0.64rem; color: var(--text-faint); letter-spacing: .04em; margin-left: 4px; }
+    .mini-val { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 1.08rem; font-weight: 600; margin-top: 4px; }
+
+    /* ---------- Split: chart + chat ---------- */
+    .split-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 14px; }
+    @media (max-width: 900px) { .split-grid { grid-template-columns: 1fr; } }
+
+    .section-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .section-title > span:first-child { font-size: 0.95rem; font-weight: 600; }
+    .section-title small { display: block; font-size: 0.76rem; font-weight: 400; color: var(--text-dim); margin-top: 1px; }
+    .badge-gold {
+      flex-shrink: 0; font-family: var(--mono); font-size: 0.68rem; font-weight: 600; letter-spacing: .05em;
+      padding: 4px 8px; border-radius: 6px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim);
     }
-    .mini-label { font-size: 0.7rem; color: var(--text-dim); font-weight: 600; }
-    .mini-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
-    /* Main Split: Chart + AI Copilot Chat */
-    .split-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; }
-    @media (max-width: 880px) { .split-grid { grid-template-columns: 1fr; } }
+    .chart-wrap { position: relative; height: 300px; width: 100%; }
 
-    .section-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 0.92rem; font-weight: 700;
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;
-    }
-    .badge-gold { font-size: 0.68rem; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: rgba(255,208,79,0.14); color: var(--tse-gold); }
-    html[data-theme="light"] .badge-gold { color: var(--tse-red); background: rgba(140,24,28,0.1); }
-
-    /* AI Copilot Chat */
-    .chat-box { display: flex; flex-direction: column; height: 340px; }
+    /* AI Copilot chat */
+    .chat-box { display: flex; flex-direction: column; height: 420px; }
     .chat-messages {
       flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
-      padding: 10px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 10px;
+      padding: 12px; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 10px;
     }
-    .msg { max-width: 90%; padding: 9px 12px; border-radius: 12px; font-size: 0.82rem; line-height: 1.5; white-space: pre-wrap; }
-    .msg.user { align-self: flex-end; background: var(--tse-red); color: #fff; border-bottom-right-radius: 3px; }
-    .msg.ai { align-self: flex-start; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border); border-bottom-left-radius: 3px; }
-    html[data-theme="light"] .msg.ai { background: #ffffff; }
-    .msg-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; margin-top: 5px; opacity: 0.8; display: flex; gap: 6px; flex-wrap: wrap; }
-    .guard-ok { color: var(--temp-good); }
-    .guard-block { color: var(--temp-crit); font-weight: 700; }
+    .msg { max-width: 88%; padding: 9px 13px; border-radius: 12px; font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .msg.user { align-self: flex-end; background: var(--brand); color: #fff; border-bottom-right-radius: 4px; }
+    .msg.ai { align-self: flex-start; background: var(--surface); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+    .msg-meta { font-family: var(--mono); font-size: 0.66rem; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); display: flex; gap: 6px; flex-wrap: wrap; }
+    .msg.user .msg-meta { border-top-color: rgba(255,255,255,.25); }
+    .guard-ok { color: var(--ok); }
+    .guard-block { color: var(--crit); font-weight: 600; }
 
-    .quick-prompts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .quick-prompts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
     .qp-btn {
-      font-family: inherit; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px;
-      border: 1px solid var(--card-border); background: transparent; color: var(--text-dim); cursor: pointer;
+      font-family: inherit; font-size: 0.76rem; padding: 5px 11px; border-radius: 999px;
+      border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all .15s;
     }
-    .qp-btn:hover { border-color: var(--tse-gold); color: var(--tse-gold); }
+    .qp-btn:hover { border-color: var(--brand); color: var(--text); }
+    .qp-btn.qp-guard { border-style: dashed; }
 
     .chat-input-row { display: flex; gap: 8px; }
     .chat-input {
-      flex: 1; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border);
-      background: var(--input-bg); color: var(--text); font-family: inherit; font-size: 0.84rem; outline: none;
+      flex: 1; min-width: 0; height: 42px; padding: 0 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); font-family: inherit; font-size: 0.86rem; outline: none; transition: border-color .15s, box-shadow .15s;
     }
-    .chat-input:focus { border-color: var(--tse-gold); }
+    .chat-input::placeholder { color: var(--text-faint); }
+    .chat-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 18%, transparent); }
     .send-btn {
-      padding: 0 18px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--tse-red), #b91c1c);
-      color: #fff; font-family: inherit; font-weight: 700; font-size: 0.84rem; cursor: pointer;
+      height: 42px; padding: 0 20px; border-radius: var(--radius-sm); border: none; background: var(--brand);
+      color: #fff; font-family: inherit; font-weight: 600; font-size: 0.86rem; cursor: pointer; transition: filter .15s;
     }
-    .send-btn:disabled { opacity: 0.5; cursor: wait; }
+    .send-btn:hover { filter: brightness(1.08); }
+    .send-btn:disabled { opacity: .5; cursor: wait; }
 
-    /* Hardware LED & Crisis Controls */
-    .controls-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; }
+    /* ---------- Controls ---------- */
+    .controls-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; }
     @media (max-width: 820px) { .controls-grid { grid-template-columns: 1fr; } }
     .btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     @media (max-width: 560px) { .btn-row { grid-template-columns: repeat(2, 1fr); } }
     button.ctrl-btn {
-      border: 1px solid var(--card-border); background: rgba(255,255,255,0.04); color: var(--text);
-      padding: 10px 8px; border-radius: 12px; font-family: inherit; font-size: 0.78rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;
+      border: 1px solid var(--border); background: var(--surface-2); color: var(--text);
+      height: 42px; padding: 0 8px; border-radius: var(--radius-sm); font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color .15s, background .15s, transform .1s;
     }
-    button.ctrl-btn:hover { transform: translateY(-2px); border-color: var(--tse-gold); }
-    button.ctrl-btn.active-led { border-color: var(--tse-gold); background: rgba(255,208,79,0.16); }
+    button.ctrl-btn:hover { border-color: var(--border-strong); background: var(--surface); }
+    button.ctrl-btn:active { transform: scale(.98); }
+    button.ctrl-btn.active-led { border-color: var(--gold); }
+    .led { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .led.g { background: #34c77b; box-shadow: 0 0 8px rgba(52,199,123,.6); }
+    .led.y { background: #e9b949; box-shadow: 0 0 8px rgba(233,185,73,.6); }
+    .led.r { background: #ef4d52; box-shadow: 0 0 8px rgba(239,77,82,.6); }
+    .led.o { background: transparent; border: 2px solid var(--text-faint); }
+    button.ctrl-btn.danger { color: var(--crit); }
+    button.ctrl-btn.danger:hover { border-color: var(--crit); background: var(--crit-soft); }
+    button.ctrl-btn.caution:hover { border-color: var(--warn); background: var(--warn-soft); }
+    button.ctrl-btn.okay:hover { border-color: var(--ok); background: var(--ok-soft); }
 
-    /* Inspector Tabs */
-    .tab-header { display: flex; gap: 8px; margin-bottom: 10px; }
+    /* ---------- Logs ---------- */
+    .tab-header { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; flex-wrap: wrap; }
     .tab-btn {
-      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--card-border); background: transparent;
-      color: var(--text-dim); font-family: inherit; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+      padding: 6px 12px; border-radius: 7px; border: none; background: transparent;
+      color: var(--text-dim); font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
     }
-    .tab-btn.active { background: rgba(255,208,79,0.15); color: var(--tse-gold); border-color: var(--tse-gold); }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.25); }
     .log-box {
-      font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; max-height: 150px; overflow-y: auto;
-      background: var(--input-bg); border-radius: 10px; padding: 10px; border: 1px solid var(--card-border);
-      display: flex; flex-direction: column; gap: 5px;
+      font-family: var(--mono); font-size: 0.74rem; line-height: 1.55; max-height: 200px; overflow-y: auto;
+      background: var(--surface-2); border-radius: var(--radius-sm); padding: 4px 12px; border: 1px solid var(--border);
+      display: flex; flex-direction: column;
     }
-    .log-line { color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px; }
-    .log-line b { color: var(--tse-gold); }
+    .log-line { color: var(--text-dim); border-bottom: 1px solid var(--border); padding: 6px 0; word-break: break-all; }
+    .log-line:last-child { border-bottom: none; }
+    .log-line b { color: var(--gold); font-weight: 600; }
+    .log-line i { color: var(--text); font-style: normal; }
 
-    footer { text-align: center; font-size: 0.76rem; color: var(--text-dim); padding-top: 8px; }
+    footer { text-align: center; font-size: 0.76rem; color: var(--text-faint); padding-top: 6px; }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+
+    @media (max-width: 560px) {
+      body { padding: 12px 12px 32px; }
+      .brand-text h1 { font-size: 0.94rem; }
+      .sep { display: none; }
+      .profile-btns { width: 100%; }
+      .profile-btn { flex: 1; justify-content: center; padding: 7px 8px; }
+      .profile-btn .range { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   </style>
 </head>
 <body>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-
   <div class="app-container">
     <!-- Header -->
     <header>
@@ -261,24 +327,30 @@
         <div class="brand-text">
           <h1>AIoT Industrial Cold Chain Command Center</h1>
           <p>
-            <span class="tu-tag">Cucumber RIS (ESP32-S2)</span> •
+            <span class="tu-tag">Cucumber RIS (ESP32-S2)</span><span class="sep"></span>
             <span>Triple-Layer Hybrid AI + Guardrails</span>
           </p>
         </div>
       </div>
       <div class="nav-actions">
         <div class="status-pill"><div class="status-dot"></div><span id="mqtt-status-pill">MQTT LIVE</span></div>
-        <a class="icon-btn" href="/api/export.csv" download>📥 Export GMP CSV</a>
-        <button class="icon-btn" onclick="toggleTheme()" title="สลับธีม สว่าง/มืด">🌓 ธีม</button>
+        <a class="icon-btn" href="/api/export.csv" download>
+          <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Export GMP CSV
+        </a>
+        <button class="icon-btn" onclick="toggleTheme()" title="สลับธีม สว่าง/มืด" aria-label="สลับธีม">
+          <svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          ธีม
+        </button>
       </div>
     </header>
 
-    <!-- Facility Profile Switcher + Hardware Sensor Discovery Chips -->
+    <!-- Facility profile switcher + sensor discovery chips -->
     <div class="profile-bar">
       <div class="profile-btns">
-        <button id="prof-coldchain" class="profile-btn active" onclick="switchProfile('coldchain')">❄️ Cold Chain (2–8°C)</button>
-        <button id="prof-server" class="profile-btn" onclick="switchProfile('server')">🖥️ Server Room (18–24°C)</button>
-        <button id="prof-room" class="profile-btn" onclick="switchProfile('room')">🧪 Live Room (20–36.5°C)</button>
+        <button id="prof-coldchain" class="profile-btn active" onclick="switchProfile('coldchain')">Cold Chain <span class="range">2–8°C</span></button>
+        <button id="prof-server" class="profile-btn" onclick="switchProfile('server')">Server Room <span class="range">18–24°C</span></button>
+        <button id="prof-room" class="profile-btn" onclick="switchProfile('room')">Live Room <span class="range">20–36.5°C</span></button>
       </div>
       <div id="sensor-chips" class="sensor-chips">
         <span class="sensor-chip">HTS221</span>
@@ -287,29 +359,31 @@
       </div>
     </div>
 
-    <!-- Hero Status Banner -->
+    <!-- Status banner -->
     <div id="hero-banner" class="hero-banner">
       <div class="hero-content">
-        <h2><span id="hero-icon">🟢</span> <span id="hero-heading">สภาวะความเย็นปกติ (Normal Operation)</span></h2>
-        <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัยมาตรฐาน GMP / FDA (2.0°C – 8.0°C)</p>
+        <span class="hero-dot"></span>
+        <div>
+          <h2><span id="hero-icon">🟢</span><span id="hero-heading">สภาวะความเย็นปกติ (Normal Operation)</span></h2>
+          <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัยมาตรฐาน GMP / FDA (2.0°C – 8.0°C)</p>
+        </div>
       </div>
       <div class="hero-right">
-        <div id="hero-badge" class="hero-badge" style="background: rgba(16,185,129,0.25); color: var(--temp-good);">OPTIMAL</div>
+        <div id="hero-badge" class="hero-badge" style="background: var(--ok-soft); color: var(--ok);">OPTIMAL</div>
       </div>
     </div>
 
-    <!-- 3 Circular Gauges -->
+    <!-- 3 circular gauges -->
     <div class="gauges-grid">
       <div class="card gauge-card">
-        <div class="gauge-header"><span>อุณหภูมิ (HTS221)</span><span>🌡️ TEMP</span></div>
+        <div class="gauge-header"><span class="g-title">อุณหภูมิ</span><span class="g-sub">HTS221 · TEMP</span></div>
         <div class="gauge-svg-wrap">
           <svg viewBox="0 0 160 160">
-            <defs><linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd04f"/><stop offset="100%" stop-color="#8c181c"/></linearGradient></defs>
             <circle class="circle-bg" cx="80" cy="80" r="70"/>
-            <circle id="temp-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#tempGrad)"/>
+            <circle id="temp-bar" class="circle-bar" cx="80" cy="80" r="70"/>
           </svg>
           <div class="gauge-center">
-            <div id="temp-val" class="big-number" style="color: var(--temp-good);">4.2</div>
+            <div id="temp-val" class="big-number" style="color: var(--ok);">4.2</div>
             <div class="unit-label">°C</div>
           </div>
         </div>
@@ -317,15 +391,14 @@
       </div>
 
       <div class="card gauge-card">
-        <div class="gauge-header"><span>ความชื้น (HTS221)</span><span>💧 HUMID</span></div>
+        <div class="gauge-header"><span class="g-title">ความชื้นสัมพัทธ์</span><span class="g-sub">HTS221 · HUMID</span></div>
         <div class="gauge-svg-wrap">
           <svg viewBox="0 0 160 160">
-            <defs><linearGradient id="humidGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd04f"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs>
             <circle class="circle-bg" cx="80" cy="80" r="70"/>
-            <circle id="humid-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#humidGrad)"/>
+            <circle id="humid-bar" class="circle-bar" cx="80" cy="80" r="70"/>
           </svg>
           <div class="gauge-center">
-            <div id="humid-val" class="big-number" style="color: var(--tse-gold);">60.0</div>
+            <div id="humid-val" class="big-number" style="color: #4aa3df;">60.0</div>
             <div class="unit-label">%RH</div>
           </div>
         </div>
@@ -333,15 +406,14 @@
       </div>
 
       <div class="card gauge-card">
-        <div class="gauge-header"><span>ความชัน AI (Slope)</span><span>📈 PREDICTIVE</span></div>
+        <div class="gauge-header"><span class="g-title">ความชันอุณหภูมิ (AI)</span><span class="g-sub">PREDICTIVE</span></div>
         <div class="gauge-svg-wrap">
           <svg viewBox="0 0 160 160">
-            <defs><linearGradient id="slopeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffd04f"/><stop offset="100%" stop-color="#dc2626"/></linearGradient></defs>
             <circle class="circle-bg" cx="80" cy="80" r="70"/>
-            <circle id="slope-bar" class="circle-bar" cx="80" cy="80" r="70" stroke="url(#slopeGrad)"/>
+            <circle id="slope-bar" class="circle-bar" cx="80" cy="80" r="70"/>
           </svg>
           <div class="gauge-center">
-            <div id="slope-val" class="big-number" style="color: var(--tse-red-light);">+0.00</div>
+            <div id="slope-val" class="big-number" style="color: var(--gold);">+0.00</div>
             <div class="unit-label">°C / step</div>
           </div>
         </div>
@@ -349,41 +421,41 @@
       </div>
     </div>
 
-    <!-- 6 Multi-Sensor & AI Metrics Strip -->
+    <!-- 6 multi-sensor & AI metrics -->
     <div class="metrics-strip">
-      <div class="mini-metric"><div class="mini-label">🧭 ความดัน (BMP280)</div><div id="m-press" class="mini-val">1013.2 hPa</div></div>
-      <div class="mini-metric"><div class="mini-label">📳 แรงสั่น (MPU6050)</div><div id="m-vib" class="mini-val">0.020 g</div></div>
-      <div class="mini-metric"><div class="mini-label">❤️ Health Score</div><div id="m-health" class="mini-val" style="color: var(--temp-good);">100 / 100</div></div>
-      <div class="mini-metric"><div class="mini-label">⏳ พยากรณ์ ETTF</div><div id="m-ettf" class="mini-val">ปลอดภัย (∞)</div></div>
-      <div class="mini-metric"><div class="mini-label">📊 Z-Score</div><div id="m-zscore" class="mini-val">0.00</div></div>
-      <div class="mini-metric"><div class="mini-label">💡 RGB LED บอร์ด</div><div id="m-led" class="mini-val" style="color: var(--temp-good);">SAFE</div></div>
+      <div class="mini-metric"><div class="mini-label">ความดัน<small>BMP280</small></div><div id="m-press" class="mini-val">1013.2 hPa</div></div>
+      <div class="mini-metric"><div class="mini-label">แรงสั่น<small>MPU6050</small></div><div id="m-vib" class="mini-val">0.020 g</div></div>
+      <div class="mini-metric"><div class="mini-label">Health Score</div><div id="m-health" class="mini-val" style="color: var(--ok);">100 / 100</div></div>
+      <div class="mini-metric"><div class="mini-label">พยากรณ์<small>ETTF</small></div><div id="m-ettf" class="mini-val">ปลอดภัย (∞)</div></div>
+      <div class="mini-metric"><div class="mini-label">Z-Score</div><div id="m-zscore" class="mini-val">0.00</div></div>
+      <div class="mini-metric"><div class="mini-label">ไฟ RGB บนบอร์ด</div><div id="m-led" class="mini-val" style="color: var(--ok);">SAFE</div></div>
     </div>
 
-    <!-- Split Grid: Live Chart + AI Copilot Chat -->
+    <!-- Live chart + AI Copilot chat -->
     <div class="split-grid">
       <div class="card">
         <div class="section-title">
-          <span>📈 กราฟอุณหภูมิย้อนหลัง (Real-Time Telemetry)</span>
+          <span>กราฟอุณหภูมิย้อนหลัง<small>Real-time telemetry · 25 จุดล่าสุด</small></span>
           <span class="badge-gold" id="chart-band-tag">Safe: 2–8°C</span>
         </div>
-        <div style="position: relative; height: 295px; width: 100%;">
+        <div class="chart-wrap">
           <canvas id="liveChart"></canvas>
         </div>
       </div>
 
       <div class="card chat-box">
         <div class="section-title">
-          <span>🤖 AI Plant Engineer Copilot (Ollama + Guardrails)</span>
+          <span>AI Plant Engineer Copilot<small>Local Ollama + Safety Guardrails</small></span>
           <span class="badge-gold">THAI CHAT</span>
         </div>
         <div id="chat-messages" class="chat-messages">
           <div class="msg ai">สวัสดีครับ! ผมคือ AI Copilot ที่เชื่อมต่อกับบอร์ด Cucumber RIS จริง ลองพิมพ์ถามสถานะ ขอรายงาน CAPA หรือสั่งเปลี่ยนสีไฟ RGB บนบอร์ดได้เลยครับ</div>
         </div>
         <div class="quick-prompts">
-          <button class="qp-btn" onclick="sendQuick('สรุปสถานะตอนนี้')">📊 สถานะตอนนี้</button>
-          <button class="qp-btn" onclick="sendQuick('ขอรายงาน CAPA')">🛠️ รายงาน CAPA</button>
-          <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">🔴 ไฟแดง</button>
-          <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">🛡️ ทดสอบ Guardrail ปิดไฟ</button>
+          <button class="qp-btn" onclick="sendQuick('สรุปสถานะตอนนี้')">สถานะตอนนี้</button>
+          <button class="qp-btn" onclick="sendQuick('ขอรายงาน CAPA')">รายงาน CAPA</button>
+          <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">เปิดไฟแดง</button>
+          <button class="qp-btn qp-guard" onclick="sendQuick('ปิดไฟ')">🛡️ ทดสอบ Guardrail: ปิดไฟ</button>
         </div>
         <div class="chat-input-row">
           <input id="chat-input" class="chat-input" type="text" placeholder="พิมพ์สั่งงานภาษาไทย เช่น 'เปลี่ยนเป็นโหมดห้องเซิร์ฟเวอร์'..." onkeydown="if(event.key==='Enter') sendChat()">
@@ -392,51 +464,53 @@
       </div>
     </div>
 
-    <!-- Hardware RGB LED Actuator + Crisis Simulator -->
+    <!-- Hardware RGB LED actuator + crisis simulator -->
     <div class="controls-grid">
       <div class="card">
-        <div class="section-title"><span>💡 คุมไฟ NeoPixel RGB บนบอร์ด Cucumber จริง</span><span class="badge-gold">MQTT CMD</span></div>
+        <div class="section-title"><span>คุมไฟ NeoPixel RGB<small>ส่งคำสั่งไปยังบอร์ด Cucumber จริง</small></span><span class="badge-gold">MQTT CMD</span></div>
         <div class="btn-row">
-          <button class="ctrl-btn" onclick="sendLed('safe')">🟢 เขียว</button>
-          <button class="ctrl-btn" onclick="sendLed('warning')">🟡 เหลือง</button>
-          <button class="ctrl-btn" onclick="sendLed('critical')">🔴 แดง</button>
-          <button class="ctrl-btn" onclick="sendLed('off')">⚫ ปิดไฟ</button>
+          <button class="ctrl-btn" onclick="sendLed('safe')"><span class="led g"></span>เขียว</button>
+          <button class="ctrl-btn" onclick="sendLed('warning')"><span class="led y"></span>เหลือง</button>
+          <button class="ctrl-btn" onclick="sendLed('critical')"><span class="led r"></span>แดง</button>
+          <button class="ctrl-btn" onclick="sendLed('off')"><span class="led o"></span>ปิดไฟ</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="section-title"><span>⚡ จำลองวิกฤตทดสอบ AI (Crisis Simulator)</span><span class="badge-gold">MULTI-SENSOR</span></div>
+        <div class="section-title"><span>จำลองวิกฤตทดสอบ AI<small>Crisis Simulator · ป้อนข้อมูลผิดปกติเข้า AI Engine</small></span><span class="badge-gold">MULTI-SENSOR</span></div>
         <div class="btn-row">
-          <button class="ctrl-btn" onclick="triggerScenario('normal')">🟢 ปกติ</button>
-          <button class="ctrl-btn" onclick="triggerScenario('warning')">⚠️ แอร์แผ่ว</button>
-          <button class="ctrl-btn" onclick="triggerScenario('failure')">🚨 คอมฯ ดับ</button>
-          <button class="ctrl-btn" onclick="triggerScenario('door_slam')">📳 กระแทก</button>
+          <button class="ctrl-btn okay" onclick="triggerScenario('normal')">ปกติ</button>
+          <button class="ctrl-btn caution" onclick="triggerScenario('warning')">แอร์แผ่ว</button>
+          <button class="ctrl-btn danger" onclick="triggerScenario('failure')">คอมฯ ดับ</button>
+          <button class="ctrl-btn caution" onclick="triggerScenario('door_slam')">กระแทก</button>
         </div>
       </div>
     </div>
 
-    <!-- Live MQTT Inspector & Guardrail Audit Log -->
+    <!-- Live MQTT inspector & guardrail audit log -->
     <div class="card">
       <div class="tab-header">
-        <button id="tab-mqtt" class="tab-btn active" onclick="switchLogTab('mqtt')">📡 Live MQTT Packets</button>
-        <button id="tab-audit" class="tab-btn" onclick="switchLogTab('audit')">🛡️ AI Safety Guardrail Audit Log</button>
+        <button id="tab-mqtt" class="tab-btn active" onclick="switchLogTab('mqtt')">Live MQTT Packets</button>
+        <button id="tab-audit" class="tab-btn" onclick="switchLogTab('audit')">AI Safety Guardrail Audit Log</button>
       </div>
       <div id="log-box" class="log-box">
         <div class="log-line">กำลังรอรับข้อมูล MQTT จากบอร์ด Cucumber RIS...</div>
       </div>
     </div>
 
-    <footer>CN466 Final Project • AIoT Industrial Cold Chain & Multi-Sensor Guard • Chanapa Sadudee (6610680214)</footer>
+    <footer>CN466 Final Project · AIoT Industrial Cold Chain &amp; Multi-Sensor Guard · Chanapa Sadudee (6610680214)</footer>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready(); tg.expand();
-      if (tg.setHeaderColor) tg.setHeaderColor('#0c0e12');
-      if (tg.setBackgroundColor) tg.setBackgroundColor('#0c0e12');
+      if (tg.setHeaderColor) tg.setHeaderColor('#0b0d11');
+      if (tg.setBackgroundColor) tg.setBackgroundColor('#0b0d11');
     }
     function haptic(type = 'medium') { tg?.HapticFeedback?.impactOccurred?.(type); }
+
+    const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
     function toggleTheme() {
       const html = document.documentElement;
@@ -444,6 +518,7 @@
       html.setAttribute('data-theme', next);
       const logo = document.getElementById('brand-logo-img');
       if (logo) logo.src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+      applyChartTheme();
     }
 
     const CIRCUMFERENCE = 440;
@@ -455,30 +530,49 @@
 
     // Chart.js
     const ctx = document.getElementById('liveChart').getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 0, 260);
-    grad.addColorStop(0, 'rgba(255, 208, 79, 0.38)');
-    grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
     let currentSafeRange = [2.0, 8.0];
 
+    function lineFill() {
+      const g = ctx.createLinearGradient(0, 0, 0, 280);
+      const c = cssVar('--chart-line');
+      g.addColorStop(0, c + '40');
+      g.addColorStop(1, c + '00');
+      return g;
+    }
+
+    Chart.defaults.font.family = "'IBM Plex Mono', monospace";
     const liveChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels: [],
         datasets: [
-          { label: 'อุณหภูมิ (°C)', data: [], borderColor: '#ffd04f', borderWidth: 2.5, backgroundColor: grad, fill: true, tension: 0.35, pointRadius: 2.5 },
-          { label: 'Max Limit', data: [], borderColor: 'rgba(239, 68, 68, 0.75)', borderDash: [5,5], borderWidth: 1.5, pointRadius: 0, fill: false },
-          { label: 'Min Limit', data: [], borderColor: 'rgba(255, 208, 79, 0.45)', borderDash: [5,5], borderWidth: 1.5, pointRadius: 0, fill: false }
+          { label: 'อุณหภูมิ (°C)', data: [], borderColor: cssVar('--chart-line'), borderWidth: 2, backgroundColor: lineFill(), fill: true, tension: 0.35, pointRadius: 0, pointHoverRadius: 4 },
+          { label: 'Max Limit', data: [], borderColor: cssVar('--crit'), borderDash: [5,5], borderWidth: 1.25, pointRadius: 0, fill: false },
+          { label: 'Min Limit', data: [], borderColor: cssVar('--text-faint'), borderDash: [5,5], borderWidth: 1.25, pointRadius: 0, fill: false }
         ]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
-          y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
+          x: { grid: { display: false }, border: { display: false }, ticks: { color: cssVar('--chart-tick'), font: { size: 10 }, maxRotation: 0, autoSkipPadding: 16 } },
+          y: { grid: { color: cssVar('--chart-grid') }, border: { display: false }, ticks: { color: cssVar('--chart-tick'), font: { size: 10 } } }
         }
       }
     });
+
+    function applyChartTheme() {
+      const ds = liveChart.data.datasets;
+      ds[0].borderColor = cssVar('--chart-line');
+      ds[0].backgroundColor = lineFill();
+      ds[1].borderColor = cssVar('--crit');
+      ds[2].borderColor = cssVar('--text-faint');
+      liveChart.options.scales.x.ticks.color = cssVar('--chart-tick');
+      liveChart.options.scales.y.ticks.color = cssVar('--chart-tick');
+      liveChart.options.scales.y.grid.color = cssVar('--chart-grid');
+      liveChart.update('none');
+    }
 
     let activeLogTab = 'mqtt';
     function switchLogTab(tab) {
@@ -510,12 +604,14 @@
         const humid = ai.current_humid;
         const slope = ai.slope_per_step;
         const risk = ai.risk_level;
+        const riskColor = risk === 'CRITICAL' ? 'var(--crit)' : (risk === 'WARNING' ? 'var(--warn)' : 'var(--ok)');
 
         document.getElementById('temp-val').innerText = temp.toFixed(1);
         setGauge('temp-bar', (temp / 45) * 100);
+        document.getElementById('temp-bar').style.stroke = riskColor;
         document.getElementById('temp-tag').innerText = `ช่วงปลอดภัย: ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
         document.getElementById('chart-band-tag').innerText = `Safe: ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
-        document.getElementById('temp-val').style.color = risk === 'CRITICAL' ? 'var(--temp-crit)' : (risk === 'WARNING' ? 'var(--tse-gold)' : 'var(--temp-good)');
+        document.getElementById('temp-val').style.color = riskColor;
 
         document.getElementById('humid-val').innerText = humid.toFixed(1);
         setGauge('humid-bar', humid);
@@ -528,18 +624,21 @@
         document.getElementById('m-press').innerText = `${(ai.current_pressure ?? 1013.25).toFixed(1)} hPa`;
         const vibEl = document.getElementById('m-vib');
         vibEl.innerText = `${(ai.current_vib_g ?? 0).toFixed(3)} g${ai.shock_detected ? ' ⚡' : ''}`;
-        vibEl.style.color = ai.shock_detected ? 'var(--temp-crit)' : 'var(--text)';
+        vibEl.style.color = ai.shock_detected ? 'var(--crit)' : 'var(--text)';
 
         const healthEl = document.getElementById('m-health');
         const hs = ai.health_score ?? 100;
         healthEl.innerText = `${hs} / 100`;
-        healthEl.style.color = hs >= 80 ? 'var(--temp-good)' : (hs >= 50 ? 'var(--tse-gold)' : 'var(--temp-crit)');
+        healthEl.style.color = hs >= 80 ? 'var(--ok)' : (hs >= 50 ? 'var(--warn)' : 'var(--crit)');
 
         document.getElementById('m-ettf').innerText = ai.ettf_seconds ? `~${ai.ettf_seconds.toFixed(0)}s` : 'ปลอดภัย (∞)';
         document.getElementById('m-zscore').innerText = ai.z_score.toFixed(2);
-        document.getElementById('m-led').innerText = (data.led_mode || 'safe').toUpperCase();
+        const ledMode = (data.led_mode || 'safe').toUpperCase();
+        const ledEl = document.getElementById('m-led');
+        ledEl.innerText = ledMode;
+        ledEl.style.color = ledMode === 'CRITICAL' ? 'var(--crit)' : (ledMode === 'WARNING' ? 'var(--warn)' : (ledMode === 'OFF' ? 'var(--text-dim)' : 'var(--ok)'));
 
-        // Hero Banner
+        // Status banner
         const hero = document.getElementById('hero-banner');
         const badge = document.getElementById('hero-badge');
         hero.className = 'hero-banner';
@@ -548,18 +647,18 @@
           document.getElementById('hero-icon').innerText = '🚨';
           document.getElementById('hero-heading').innerText = `วิกฤต (CRITICAL) — ${ai.profile_name}`;
           document.getElementById('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'อุณหภูมิเกินเกณฑ์ปลอดภัย!';
-          badge.innerText = 'CRITICAL'; badge.style.color = '#fff'; badge.style.background = '#b91c1c';
+          badge.innerText = 'CRITICAL'; badge.style.color = '#fff'; badge.style.background = 'var(--crit)';
         } else if (risk === 'WARNING') {
           hero.classList.add('warning');
           document.getElementById('hero-icon').innerText = '⚠️';
           document.getElementById('hero-heading').innerText = `เฝ้าระวังล่วงหน้า (PREDICTIVE WARNING)`;
           document.getElementById('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'ตรวจพบแนวโน้มผิดปกติ';
-          badge.innerText = 'WARNING'; badge.style.color = '#111'; badge.style.background = '#ffd04f';
+          badge.innerText = 'WARNING'; badge.style.color = '#1a1300'; badge.style.background = 'var(--warn)';
         } else {
           document.getElementById('hero-icon').innerText = '🟢';
           document.getElementById('hero-heading').innerText = `ระบบปกติ (OPTIMAL) — ${ai.profile_name}`;
           document.getElementById('hero-desc').innerText = `เซ็นเซอร์ทั้งหมดทำงานเสถียร อยู่ในเกณฑ์ ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
-          badge.innerText = 'OPTIMAL'; badge.style.color = 'var(--temp-good)'; badge.style.background = 'rgba(16,185,129,0.22)';
+          badge.innerText = 'OPTIMAL'; badge.style.color = 'var(--ok)'; badge.style.background = 'var(--ok-soft)';
         }
       } catch (e) { console.error(e); }
     }
@@ -593,7 +692,7 @@
           const data = await res.json();
           if (!data.audit_log?.length) { box.innerHTML = '<div class="log-line">ยังไม่มีประวัติคำสั่ง AI Copilot — ลองแชตด้านบนดูครับ</div>'; return; }
           box.innerHTML = data.audit_log.slice(0, 15).map(a =>
-            `<div class="log-line"><b style="color:${a.allowed?'#10b981':'#ef4444'}">[${a.allowed?'ALLOWED':'BLOCKED'}]</b> ${a.ts.substring(11,19)} (${a.engine}) action=${a.action} — ${a.guardrail_note}</div>`
+            `<div class="log-line"><b style="color:${a.allowed?'var(--ok)':'var(--crit)'}">[${a.allowed?'ALLOWED':'BLOCKED'}]</b> ${a.ts.substring(11,19)} (${a.engine}) action=${a.action} — ${a.guardrail_note}</div>`
           ).join('');
         }
       } catch (e) {}

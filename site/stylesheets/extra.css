@@ -1,229 +1,278 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Sarabun:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 /* ==============================================================================
-   TSE Thammasat School of Engineering Identity Palette (แดง-ทอง ธรรมศาสตร์)
-   - TSE Crimson Red : #8c181c
-   - TU Gold / Amber : #ffd04f
-   - Charcoal Slate  : #58585a / #0c0e12
+   TSE Thammasat identity (แดง-ทอง ธรรมศาสตร์), restrained
+   - TSE Crimson : #8c181c   - TU Gold : #e9b949 (dark) / #b7830f (light)
+   One family (IBM Plex Sans Thai) covers Thai + Latin, so text no longer
+   falls back between fonts mid-sentence.
    ============================================================================== */
 
 :root {
-  --md-text-font: "Sarabun", -apple-system, BlinkMacSystemFont, sans-serif;
-  --md-code-font: "JetBrains Mono", Consolas, monospace;
+  --md-text-font: "IBM Plex Sans Thai";
+  --md-code-font: "IBM Plex Mono";
   --tse-red: #8c181c;
-  --tse-red-bright: #b91c1c;
-  --tse-gold: #ffd04f;
-  --tse-dark: #0c0e12;
+  --tse-gold: #e9b949;
 }
 
-/* Dark Mode (Slate) — Deep Charcoal Slate with TSE Crimson & Gold */
-[data-md-color-scheme="slate"] {
-  --md-default-bg-color: #0c0e12;
-  --md-default-bg-color--light: #151821;
-  --md-default-bg-color--lighter: #1e222e;
-  --md-default-fg-color: #f8fafc;
-  --md-default-fg-color--light: #94a3b8;
-  --md-default-fg-color--lighter: #64748b;
-  --md-primary-fg-color: #8c181c;          /* Header Bar is TSE Crimson */
-  --md-primary-fg-color--light: #b91c1c;
-  --md-primary-fg-color--dark: #660f12;
-  --md-primary-bg-color: #ffd04f;
-  --md-accent-fg-color: #ffd04f;           /* Accents in TSE Gold */
-  --md-typeset-a-color: #ffd04f;
-}
-
-/* Light Mode (Default) — Crisp White with TSE Red & Gold */
+/* ---------- Light (default) ---------- */
 [data-md-color-scheme="default"] {
-  --md-default-bg-color: #f8f9fb;
-  --md-default-bg-color--light: #ffffff;
-  --md-default-fg-color: #1a1d24;
-  --md-default-fg-color--light: #475569;
-  --md-primary-fg-color: #8c181c;          /* Header Bar in TSE Crimson */
-  --md-primary-fg-color--light: #b91c1c;
+  --md-default-bg-color: #ffffff;
+  --md-default-fg-color: #161a21;
+  --md-default-fg-color--light: #5a6372;
+  --md-default-fg-color--lighter: #8a92a0;
+  --md-default-fg-color--lightest: #e2e5ea;
+  --md-primary-fg-color: #8c181c;
+  --md-primary-fg-color--light: #a8242a;
+  --md-primary-fg-color--dark: #6d1215;
   --md-primary-bg-color: #ffffff;
-  --md-accent-fg-color: #8c181c;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.72);
+  --md-accent-fg-color: #b4232a;
+  --md-accent-fg-color--transparent: rgba(180, 35, 42, 0.08);
   --md-typeset-a-color: #8c181c;
+  --md-code-bg-color: #f5f6f8;
+
+  --x-surface: #ffffff;
+  --x-surface-2: #f6f7f9;
+  --x-border: #e2e5ea;
+  --x-accent: #8c181c;
+  --x-accent-soft: rgba(140, 24, 28, 0.06);
+  --x-ok: #148a50;
+  --x-warn: #b7830f;
+  --x-crit: #c9252b;
+  --x-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 20px -12px rgba(16, 24, 40, 0.14);
 }
 
-body, .md-typeset {
-  font-family: var(--md-text-font);
-  font-size: 0.9rem;
-  line-height: 1.75;
+/* ---------- Dark (slate) ---------- */
+[data-md-color-scheme="slate"] {
+  --md-hue: 222;
+  --md-default-bg-color: #0f1216;
+  --md-default-bg-color--light: #151920;
+  --md-default-fg-color: #e8ebf0;
+  --md-default-fg-color--light: #9099a8;
+  --md-default-fg-color--lighter: #5e6675;
+  --md-default-fg-color--lightest: #232833;
+  --md-primary-fg-color: #12161c;          /* calm graphite header in dark mode */
+  --md-primary-fg-color--light: #1a1f27;
+  --md-primary-fg-color--dark: #0b0e12;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-accent-fg-color: #f0c35c;
+  --md-accent-fg-color--transparent: rgba(240, 195, 92, 0.1);
+  --md-typeset-a-color: #f0c35c;
+  --md-code-bg-color: #161a21;
+
+  --x-surface: #151920;
+  --x-surface-2: #1a1f27;
+  --x-border: #262c37;
+  --x-accent: #e9b949;
+  --x-accent-soft: rgba(233, 185, 73, 0.08);
+  --x-ok: #34c77b;
+  --x-warn: #e9b949;
+  --x-crit: #ef4d52;
+  --x-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.7);
 }
 
-/* Top Header Bar */
-.md-header {
-  background: var(--tse-red) !important;
-  border-bottom: 2px solid var(--tse-gold);
-  box-shadow: 0 4px 25px rgba(140, 24, 28, 0.4);
-}
+.md-typeset { font-size: 0.86rem; line-height: 1.8; }
+.md-typeset code, .md-typeset kbd, .md-typeset pre { font-variant-ligatures: none; }
 
-.md-header__title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #ffffff !important;
-}
+/* ---------- Header & tabs ---------- */
+.md-header { box-shadow: none; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+[data-md-color-scheme="slate"] .md-header { border-bottom: 2px solid #8c181c; }
+[data-md-color-scheme="slate"] .md-tabs { border-bottom: 1px solid var(--x-border); }
+.md-header__title { font-weight: 600; }
+.md-tabs { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+.md-tabs__link { font-weight: 500; opacity: 0.78; }
+.md-tabs__link--active, .md-tabs__link:hover { opacity: 1; }
+.md-header__button.md-logo img, .md-logo img { height: 30px; width: auto; }
 
-.md-logo img {
-  height: 38px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
-}
-
-/* Headings */
+/* ---------- Headings ---------- */
 .md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
-  font-family: "Space Grotesk", "Sarabun", sans-serif;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  color: var(--md-default-fg-color);
 }
-
-.md-typeset h1 {
-  background: linear-gradient(135deg, #ffd04f 20%, #8c181c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  display: inline-block;
-  font-size: 2.1rem;
-  margin-bottom: 1.2rem;
-}
-
-[data-md-color-scheme="default"] .md-typeset h1 {
-  background: linear-gradient(135deg, #8c181c 40%, #eab308 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
+.md-typeset h1 { font-size: 1.85rem; line-height: 1.3; margin-bottom: 1rem; }
 .md-typeset h2 {
-  border-bottom: 2px solid rgba(255, 208, 79, 0.3);
-  padding-bottom: 6px;
-  margin-top: 2rem;
-  color: var(--tse-gold);
+  font-size: 1.3rem;
+  margin-top: 2.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--x-border);
 }
-
-[data-md-color-scheme="default"] .md-typeset h2 {
-  color: var(--tse-red);
-  border-bottom-color: rgba(140, 24, 28, 0.2);
+.md-typeset h2::before {
+  content: '';
+  display: block;
+  width: 28px; height: 3px;
+  margin-bottom: 0.9rem;
+  border-radius: 2px;
+  background: var(--tse-red);
 }
+[data-md-color-scheme="slate"] .md-typeset h2::before { background: var(--tse-gold); }
+.md-typeset h3 { font-size: 1.05rem; margin-top: 1.8rem; }
+.md-typeset hr { border-bottom-color: var(--x-border); margin: 2rem 0; }
 
-/* Hero Box Container */
-.hero-box {
-  background: linear-gradient(135deg, rgba(140, 24, 28, 0.25), rgba(255, 208, 79, 0.08));
-  border: 1px solid rgba(255, 208, 79, 0.35);
-  border-radius: 20px;
-  padding: 26px 30px;
-  margin: 20px 0 32px;
-  backdrop-filter: blur(14px);
-  box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
-  border-left: 6px solid var(--tse-red);
-}
-
-[data-md-color-scheme="default"] .hero-box {
-  background: linear-gradient(135deg, rgba(140, 24, 28, 0.06), rgba(255, 208, 79, 0.12));
-  border-color: rgba(140, 24, 28, 0.25);
-}
-
-.hero-box h3 {
-  margin-top: 0;
-  font-size: 1.25rem;
-  color: var(--tse-gold);
-  font-family: 'Space Grotesk', sans-serif;
-}
-
-[data-md-color-scheme="default"] .hero-box h3 {
-  color: var(--tse-red);
-}
-
-/* Grid Cards */
-.grid-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
-}
-
-.course-card {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* ---------- Hero ---------- */
+.md-typeset .hero-box {
+  position: relative;
+  overflow: hidden;
+  background: var(--x-surface);
+  border: 1px solid var(--x-border);
   border-radius: 16px;
-  padding: 20px 22px;
-  background: rgba(22, 25, 33, 0.75);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-  border-left: 3px solid var(--tse-red);
+  padding: 1.4rem 1.6rem 1.3rem;
+  margin: 1.2rem 0 2rem;
+  box-shadow: var(--x-shadow);
 }
-
-[data-md-color-scheme="default"] .course-card {
-  background: #ffffff;
-  border-color: rgba(140, 24, 28, 0.12);
-  box-shadow: 0 10px 25px rgba(140, 24, 28, 0.06);
+.md-typeset .hero-box::before {
+  content: '';
+  position: absolute; inset: 0 0 auto 0; height: 4px;
+  background: linear-gradient(90deg, #8c181c, #b4232a 55%, #e9b949);
 }
-
-.course-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--tse-gold);
-  box-shadow: 0 15px 30px rgba(255, 208, 79, 0.25);
+.md-typeset .hero-box h3 { margin-top: 0.2rem; font-size: 1.12rem; line-height: 1.5; }
+.md-typeset .hero-box p { color: var(--md-default-fg-color--light); }
+.md-typeset .hero-box strong { color: var(--md-default-fg-color); }
+.md-typeset .hero-meta {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.2rem; align-items: center;
+  margin: 1rem 0 0; padding-top: 0.9rem; border-top: 1px dashed var(--x-border);
+  font-size: 0.78rem;
 }
-
-.course-card h4 {
-  margin: 0 0 8px;
-  font-size: 1rem;
+.md-typeset .hero-cta {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  margin-left: auto;
+  padding: 0.45rem 0.95rem; border-radius: 8px;
+  background: var(--tse-red); color: #fff !important;
+  font-weight: 600; text-decoration: none;
+  transition: filter 0.15s;
 }
+.md-typeset .hero-cta:hover { filter: brightness(1.12); }
 
-.course-card h4 a {
-  color: var(--tse-gold) !important;
+/* ---------- Course cards ---------- */
+.md-typeset .grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  margin: 1rem 0 1.6rem;
+}
+.md-typeset a.course-card, .md-typeset .course-card {
+  display: block;
+  border: 1px solid var(--x-border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  background: var(--x-surface);
+  color: inherit;
   text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
-
-[data-md-color-scheme="default"] .course-card h4 a {
-  color: var(--tse-red) !important;
+.md-typeset a.course-card:hover {
+  border-color: var(--x-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--x-shadow);
 }
+.md-typeset .course-card .kicker {
+  display: block;
+  font-family: var(--md-code-font-family);
+  font-size: 0.68rem; letter-spacing: 0.06em;
+  color: var(--x-accent);
+  margin-bottom: 0.2rem;
+}
+.md-typeset .course-card h4 { margin: 0 0 0.35rem; font-size: 0.92rem; line-height: 1.45; }
+.md-typeset .course-card h4 a { color: var(--md-default-fg-color); text-decoration: none; }
+.md-typeset .course-card p { margin: 0; font-size: 0.8rem; line-height: 1.6; color: var(--md-default-fg-color--light); }
+.md-typeset .course-card.featured { background: var(--x-accent-soft); border-style: dashed; }
 
-.course-card p {
-  margin: 0;
-  font-size: 0.84rem;
+/* ---------- Tables ---------- */
+.md-typeset table:not([class]) {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--x-border);
+  box-shadow: none;
+  font-size: 0.8rem;
+}
+.md-typeset table:not([class]) th {
+  background: var(--x-surface-2);
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+  border-bottom: 1px solid var(--x-border);
+}
+.md-typeset table:not([class]) td { border-top-color: var(--x-border); }
+
+/* ---------- Code & admonitions ---------- */
+.md-typeset .highlight, .md-typeset pre > code { border-radius: 10px; }
+.md-typeset .highlight { border: 1px solid var(--x-border); }
+.md-typeset .admonition, .md-typeset details {
+  border-radius: 10px;
+  border-width: 1px;
+  border-left-width: 4px;
+  box-shadow: none;
+  font-size: 0.82rem;
+}
+.md-typeset blockquote {
+  border-left: 3px solid var(--tse-red);
+  background: var(--x-surface-2);
+  border-radius: 0 10px 10px 0;
+  padding: 0.6rem 1rem;
   color: var(--md-default-fg-color--light);
 }
+[data-md-color-scheme="slate"] .md-typeset blockquote { border-left-color: var(--tse-gold); }
 
-/* Tables */
-.md-typeset table:not([class]) {
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+/* Mermaid diagrams sit on a card so they read on both themes */
+.md-typeset .mermaid {
+  background: var(--x-surface);
+  border: 1px solid var(--x-border);
+  border-radius: 12px;
+  padding: 1rem;
 }
 
-.md-typeset table:not([class]) th {
-  background: var(--tse-red);
-  color: #ffffff;
-  font-weight: 700;
-  padding: 10px 16px;
-}
+/* Sidebar */
+.md-nav__link--active { font-weight: 600; }
+.md-nav__title { font-weight: 600; }
 
-.md-typeset table:not([class]) td {
-  padding: 10px 16px;
+/* ==============================================================================
+   Live MQTT Sandbox (docs/live_sandbox.md)
+   ============================================================================== */
+.md-typeset .sb-bar {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  margin: 1rem 0 12px; padding: 12px 14px;
+  border-radius: 12px; border: 1px solid var(--x-border); background: var(--x-surface);
 }
-
-/* Code Blocks */
-.highlight {
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+.md-typeset .sb-conn { font-weight: 600; font-size: 0.82rem; color: var(--x-warn); }
+.md-typeset .sb-topic { font-size: 0.76rem; color: var(--md-default-fg-color--light); }
+.md-typeset .sb-actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.md-typeset .sb-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 12px; border-radius: 8px;
+  border: 1px solid var(--x-border); background: var(--x-surface-2); color: var(--md-default-fg-color);
+  font: inherit; font-size: 0.76rem; font-weight: 600; cursor: pointer;
+  transition: border-color 0.15s, filter 0.15s;
 }
+.md-typeset .sb-btn:hover { border-color: var(--md-default-fg-color--lighter); }
+.md-typeset .sb-btn.primary { background: var(--tse-red); border-color: transparent; color: #fff; }
+.md-typeset .sb-btn.primary:hover { filter: brightness(1.12); }
+.md-typeset .sb-led { width: 9px; height: 9px; border-radius: 50%; }
+.md-typeset .sb-led.g { background: #34c77b; }
+.md-typeset .sb-led.y { background: #e9b949; }
+.md-typeset .sb-led.r { background: #ef4d52; }
 
-/* Admonitions (Callout boxes) */
-.md-typeset .admonition {
-  border-radius: 14px;
-  border-left-width: 5px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.md-typeset .sb-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0; margin-bottom: 12px;
+  border: 1px solid var(--x-border); border-radius: 12px; overflow: hidden; background: var(--x-surface);
 }
-
-/* Sidebar navigation active link */
-.md-nav__link--active {
-  color: var(--tse-gold) !important;
-  font-weight: 700;
+.md-typeset .sb-tile { padding: 14px 16px; border-right: 1px solid var(--x-border); border-bottom: 1px solid var(--x-border); margin: 0 -1px -1px 0; }
+.md-typeset .sb-label { font-size: 0.74rem; color: var(--md-default-fg-color--light); }
+.md-typeset .sb-label small { font-family: var(--md-code-font-family); font-size: 0.64rem; opacity: 0.75; margin-left: 4px; }
+.md-typeset .sb-val {
+  font-family: var(--md-code-font-family); font-variant-numeric: tabular-nums;
+  font-size: 1.3rem; font-weight: 600; line-height: 1.3; margin-top: 2px; white-space: nowrap; color: var(--md-default-fg-color);
 }
+.md-typeset .sb-val.temp { color: var(--x-accent); }
+.md-typeset .sb-val.humid { color: #3b93d0; }
+.md-typeset .sb-val.vib { color: var(--x-ok); }
 
-[data-md-color-scheme="default"] .md-nav__link--active {
-  color: var(--tse-red) !important;
+.md-typeset .sb-chart {
+  height: 280px; padding: 14px; border-radius: 12px;
+  border: 1px solid var(--x-border); background: var(--x-surface);
+}
+.md-typeset pre.sb-raw {
+  margin-top: 12px; padding: 12px 14px; border-radius: 10px;
+  font-size: 0.72rem; max-height: 140px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+  background: var(--md-code-bg-color); border: 1px solid var(--x-border);
 }

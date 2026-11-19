@@ -3,42 +3,42 @@
 > หน้านี้เชื่อมต่อกับ **MQTT Broker สาธารณะ (`wss://broker.emqx.io:8084/mqtt`)** โดยตรงจากเบราว์เซอร์ของคุณ!  
 > สามารถดูข้อมูลสดจากบอร์ด **Cucumber RIS (HTS221 + BMP280 + MPU6050)** หรือกดปุ่ม **จำลองวิกฤต (Virtual Simulator)** ได้ทันทีโดยไม่ต้องเปิดเซิร์ฟเวอร์ในเครื่อง
 
-<div id="sandbox-root" style="margin-top: 16px;">
-  <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; padding:12px 16px; border-radius:14px; border:1px solid rgba(255,208,79,0.3); background:rgba(140,24,28,0.14);">
-    <span id="sb-conn" style="font-weight:700; color:#ffd04f;">⏳ กำลังเชื่อมต่อ WSS broker.emqx.io:8084...</span>
-    <span style="font-size:0.8rem; opacity:0.85;">Topic: <code>tse/cn466/chanapa/telemetry</code></span>
-    <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap;">
-      <button onclick="sbToggleSim()" id="sb-sim-btn" style="padding:6px 12px; border-radius:8px; border:1px solid #ffd04f; background:#8c181c; color:#fff; font-weight:700; cursor:pointer;">▶️ เริ่มโหมดจำลอง (Offline Demo)</button>
-      <button onclick="sbSendLed('safe')" style="padding:6px 10px; border-radius:8px; border:1px solid #10b981; background:transparent; color:inherit; font-weight:700; cursor:pointer;">🟢 ไฟเขียว</button>
-      <button onclick="sbSendLed('warning')" style="padding:6px 10px; border-radius:8px; border:1px solid #ffd04f; background:transparent; color:inherit; font-weight:700; cursor:pointer;">🟡 ไฟเหลือง</button>
-      <button onclick="sbSendLed('critical')" style="padding:6px 10px; border-radius:8px; border:1px solid #ef4444; background:transparent; color:inherit; font-weight:700; cursor:pointer;">🔴 ไฟแดง</button>
+<div id="sandbox-root">
+  <div class="sb-bar">
+    <span id="sb-conn" class="sb-conn">⏳ กำลังเชื่อมต่อ WSS broker.emqx.io:8084...</span>
+    <span class="sb-topic">Topic: <code>tse/cn466/chanapa/telemetry</code></span>
+    <div class="sb-actions">
+      <button onclick="sbToggleSim()" id="sb-sim-btn" class="sb-btn primary">▶️ เริ่มโหมดจำลอง (Offline Demo)</button>
+      <button onclick="sbSendLed('safe')" class="sb-btn"><span class="sb-led g"></span>ไฟเขียว</button>
+      <button onclick="sbSendLed('warning')" class="sb-btn"><span class="sb-led y"></span>ไฟเหลือง</button>
+      <button onclick="sbSendLed('critical')" class="sb-btn"><span class="sb-led r"></span>ไฟแดง</button>
     </div>
   </div>
 
-  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-bottom:16px;">
-    <div style="padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.12); background:rgba(22,25,33,0.75); color:#f8fafc;">
-      <div style="font-size:0.75rem; color:#94a3b8;">🌡️ อุณหภูมิ (HTS221)</div>
-      <div id="sb-temp" style="font-size:1.7rem; font-weight:800; color:#ffd04f;">-- °C</div>
+  <div class="sb-grid">
+    <div class="sb-tile">
+      <div class="sb-label">อุณหภูมิ<small>HTS221</small></div>
+      <div id="sb-temp" class="sb-val temp">-- °C</div>
     </div>
-    <div style="padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.12); background:rgba(22,25,33,0.75); color:#f8fafc;">
-      <div style="font-size:0.75rem; color:#94a3b8;">💧 ความชื้น (HTS221)</div>
-      <div id="sb-humid" style="font-size:1.7rem; font-weight:800; color:#38bdf8;">-- %</div>
+    <div class="sb-tile">
+      <div class="sb-label">ความชื้น<small>HTS221</small></div>
+      <div id="sb-humid" class="sb-val humid">-- %</div>
     </div>
-    <div style="padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.12); background:rgba(22,25,33,0.75); color:#f8fafc;">
-      <div style="font-size:0.75rem; color:#94a3b8;">🧭 ความดัน (BMP280)</div>
-      <div id="sb-press" style="font-size:1.7rem; font-weight:800; color:#f8fafc;">-- hPa</div>
+    <div class="sb-tile">
+      <div class="sb-label">ความดัน<small>BMP280</small></div>
+      <div id="sb-press" class="sb-val">-- hPa</div>
     </div>
-    <div style="padding:14px; border-radius:14px; border:1px solid rgba(255,255,255,0.12); background:rgba(22,25,33,0.75); color:#f8fafc;">
-      <div style="font-size:0.75rem; color:#94a3b8;">📳 แรงสั่น (MPU6050)</div>
-      <div id="sb-vib" style="font-size:1.7rem; font-weight:800; color:#10b981;">-- g</div>
+    <div class="sb-tile">
+      <div class="sb-label">แรงสั่น<small>MPU6050</small></div>
+      <div id="sb-vib" class="sb-val vib">-- g</div>
     </div>
   </div>
 
-  <div style="padding:16px; border-radius:16px; border:1px solid rgba(255,255,255,0.12); background:rgba(22,25,33,0.75); height:260px;">
+  <div class="sb-chart">
     <canvas id="sbChart"></canvas>
   </div>
 
-  <pre id="sb-raw" style="margin-top:12px; padding:12px; border-radius:12px; font-size:0.75rem; max-height:140px; overflow:auto;">กำลังรอรับข้อความ JSON จากบอร์ด Cucumber...</pre>
+  <pre id="sb-raw" class="sb-raw">กำลังรอรับข้อความ JSON จากบอร์ด Cucumber...</pre>
 </div>
 
 <script src="https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js"></script>
@@ -46,23 +46,31 @@
 <script>
 (function() {
   const ctx = document.getElementById('sbChart').getContext('2d');
+  const v = (n) => getComputedStyle(document.body).getPropertyValue(n).trim();
   const sbChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: [],
       datasets: [
-        { label: 'Temperature (°C)', data: [], borderColor: '#ffd04f', backgroundColor: 'rgba(255,208,79,0.18)', fill: true, tension: 0.35, borderWidth: 2.5 }
+        { label: 'Temperature (°C)', data: [], borderColor: v('--x-accent'), backgroundColor: 'rgba(233,185,73,0.14)', fill: true, tension: 0.35, borderWidth: 2, pointRadius: 0 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       scales: {
-        x: { ticks: { color: '#94a3b8', font: { size: 10 } } },
-        y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.08)' } }
+        x: { grid: { display: false }, ticks: { color: v('--md-default-fg-color--light'), font: { size: 10 }, maxRotation: 0 } },
+        y: { ticks: { color: v('--md-default-fg-color--light'), font: { size: 10 } }, grid: { color: v('--x-border') } }
       },
-      plugins: { legend: { labels: { color: '#f8fafc' } } }
+      plugins: { legend: { display: false } }
     }
   });
+  new MutationObserver(() => {
+    sbChart.data.datasets[0].borderColor = v('--x-accent');
+    sbChart.options.scales.x.ticks.color = v('--md-default-fg-color--light');
+    sbChart.options.scales.y.ticks.color = v('--md-default-fg-color--light');
+    sbChart.options.scales.y.grid.color = v('--x-border');
+    sbChart.update('none');
+  }).observe(document.body, { attributes: true, attributeFilter: ['data-md-color-scheme'] });
 
   function pushPoint(d) {
     const temp = Number(d.temp ?? 0);
@@ -89,7 +97,7 @@
     client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'ghp-sandbox-' + Math.random().toString(16).slice(2, 8) });
     client.on('connect', () => {
       document.getElementById('sb-conn').innerText = '🟢 เชื่อมต่อ WSS สำเร็จ! (รับข้อมูลสดจากบอร์ด Cucumber)';
-      document.getElementById('sb-conn').style.color = '#10b981';
+      document.getElementById('sb-conn').style.color = 'var(--x-ok)';
       client.subscribe('tse/cn466/chanapa/telemetry');
       client.subscribe('tse/cn466/chanapa');
     });

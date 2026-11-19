@@ -1,17 +1,18 @@
 # 🏭 AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
 
 <div class="hero-box">
-  <h3>🌟 แพลตฟอร์มการเรียนรู้และระบบ AIoT แบบสองทางระดับอุตสาหกรรม (Full-Stack Bidirectional AIoT)</h3>
+  <h3>แพลตฟอร์มการเรียนรู้และระบบ AIoT แบบสองทางระดับอุตสาหกรรม (Full-Stack Bidirectional AIoT)</h3>
   <p>
     ผสานฮาร์ดแวร์จริง <strong>บอร์ด Cucumber RIS (ESP32-S2)</strong> อ่านเซ็นเซอร์พร้อมกัน 3 ชนิด (<strong>HTS221 + BMP280 + MPU6050</strong>) 
     ควบคุมไฟ <strong>NeoPixel RGB LED</strong> ผ่าน MQTT สองทาง ขับเคลื่อนด้วย <strong>Triple-Layer Hybrid AI</strong> 
     (Predictive Slope/Shock Engine + Local Ollama <code>qwen2.5</code> Copilot + Deterministic Safety Guardrails + Google Colab) 
     พร้อม UI ผ่าน <strong>Web Command Center & Telegram Mini App</strong>
   </p>
-  <p style="margin-bottom: 0; font-size: 0.85rem; opacity: 0.88;">
-    <strong>วิชา:</strong> CN466 Project - Internet of Things & AI | <strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (6610680214)<br>
-    👉 <a href="live_sandbox/"><strong>คลิกทดลองเล่น Live MQTT Sandbox สดบนหน้าเว็บได้เลย!</strong></a>
-  </p>
+  <div class="hero-meta">
+    <span><strong>วิชา:</strong> CN466 Internet of Things &amp; AI</span>
+    <span><strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (6610680214)</span>
+    <a class="hero-cta" href="live_sandbox/">ทดลอง Live MQTT Sandbox →</a>
+  </div>
 </div>
 
 ---
@@ -56,48 +57,58 @@ flowchart TD
 
 ### 🎓 สำหรับผู้เรียน (Learner Track)
 <div class="grid-cards">
-  <div class="course-card">
-    <h4><a href="01_system_architecture/">บทที่ 1: สถาปัตยกรรมระบบ AIoT</a></h4>
+  <a class="course-card" href="01_system_architecture/">
+    <span class="kicker">บทที่ 01</span>
+    <h4>สถาปัตยกรรมระบบ AIoT</h4>
     <p>Data Pipeline ระดับอุตสาหกรรมตั้งแต่เซ็นเซอร์ถึง AI และแอคชูเอเตอร์</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="02_cucumber_hardware/">บทที่ 2: บอร์ด Cucumber RIS & Multi-Sensor</a></h4>
+  </a>
+  <a class="course-card" href="02_cucumber_hardware/">
+    <span class="kicker">บทที่ 02</span>
+    <h4>บอร์ด Cucumber RIS & Multi-Sensor</h4>
     <p>สแกน I2C (HTS221 + BMP280 + MPU6050) และคุมไฟ NeoPixel RGB LED</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="03_mqtt_cloud_broker/">บทที่ 3: การสื่อสาร MQTT สองทาง</a></h4>
+  </a>
+  <a class="course-card" href="03_mqtt_cloud_broker/">
+    <span class="kicker">บทที่ 03</span>
+    <h4>การสื่อสาร MQTT สองทาง</h4>
     <p>การ Publish Telemetry และ Subscribe Command บน Public Broker EMQX</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="04_ai_anomaly_detection/">บทที่ 4: AI Anomaly & Google Colab</a></h4>
+  </a>
+  <a class="course-card" href="04_ai_anomaly_detection/">
+    <span class="kicker">บทที่ 04</span>
+    <h4>AI Anomaly & Google Colab</h4>
     <p>Predictive Slope, Z-Score, ETTF และ Workshop เทรน Isolation Forest vs OC-SVM</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="05_telegram_mini_app/">บทที่ 5: UI, AI Copilot & Telegram Mini App</a></h4>
+  </a>
+  <a class="course-card" href="05_telegram_mini_app/">
+    <span class="kicker">บทที่ 05</span>
+    <h4>UI, AI Copilot & Telegram Mini App</h4>
     <p>แดชบอร์ด Command Center, แชตภาษาไทยคุมบอร์ดจริง และ Telegram Bot</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="live_sandbox/">🧪 Live MQTT Sandbox (เล่นสดทันที)</a></h4>
+  </a>
+  <a class="course-card featured" href="live_sandbox/">
+    <span class="kicker">เล่นสด · ไม่ต้องติดตั้ง</span>
+    <h4>Live MQTT Sandbox (เล่นสดทันที)</h4>
     <p>ต่อ WSS ดูค่าสดจากบอร์ด Cucumber หรือทดลองจำลองวิกฤตบน GitHub Pages</p>
-  </div>
+  </a>
 </div>
 
 ### 🧑‍🏫 สำหรับผู้สอนและวิศวกร (Instructor & Engineer Track)
 <div class="grid-cards">
-  <div class="course-card">
-    <h4><a href="06_docker_deployment/">บทที่ 6: การติดตั้ง Docker & Dev Tunnels</a></h4>
+  <a class="course-card" href="06_docker_deployment/">
+    <span class="kicker">บทที่ 06</span>
+    <h4>การติดตั้ง Docker & Dev Tunnels</h4>
     <p>รันระบบด้วย Docker Compose และเปิด HTTPS Port Forwarding</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="07_business_case/">บทที่ 7: โมเดลธุรกิจ & ความคุ้มค่า (ROI)</a></h4>
+  </a>
+  <a class="course-card" href="07_business_case/">
+    <span class="kicker">บทที่ 07</span>
+    <h4>โมเดลธุรกิจ & ความคุ้มค่า (ROI)</h4>
     <p>B2B SaaS Cold Chain, มาตรฐาน GMP/GDP/FDA และการคำนวณจุดคุ้มทุน</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="09_ai_safety_guardrails/">บทที่ 8: ความปลอดภัย AI & Guardrails</a></h4>
+  </a>
+  <a class="course-card" href="09_ai_safety_guardrails/">
+    <span class="kicker">บทที่ 08</span>
+    <h4>ความปลอดภัย AI & Guardrails</h4>
     <p>การออกแบบ Deterministic Guardrails ป้องกัน AI สั่งงานอันตรายต่อฮาร์ดแวร์</p>
-  </div>
-  <div class="course-card">
-    <h4><a href="08_video_walkthrough/">บทที่ 9: สคริปต์คลิปนำเสนอ AI Flow</a></h4>
+  </a>
+  <a class="course-card" href="08_video_walkthrough/">
+    <span class="kicker">บทที่ 09</span>
+    <h4>สคริปต์คลิปนำเสนอ AI Flow</h4>
     <p>แนวทางอัดคลิปส่งงาน 3–5 นาที อธิบายการสั่งงานและตรวจงานกับ AI</p>
-  </div>
+  </a>
 </div>
