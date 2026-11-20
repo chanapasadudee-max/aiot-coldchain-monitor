@@ -181,31 +181,49 @@
     .card-title { font-size: 0.96rem; font-weight: 700; }
     .card-sub { font-size: 0.76rem; color: var(--text-dim); margin-top: 2px; }
 
-    /* Hero Status Banner */
+    /* Hero Status Banner (Calm & clean on OPTIMAL; Amber on WARNING; Red only on CRITICAL) */
     .hero-banner {
-      background: linear-gradient(125deg, #5e0d10 0%, #8c181c 60%, #a52429 100%);
-      color: #fff; border: 0;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid rgba(5, 150, 105, 0.28);
+      border-left: 6px solid var(--ok);
       display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
       padding: 18px 24px;
     }
-    .hero-banner.status-warn { background: linear-gradient(125deg, #78350f 0%, #b45309 100%); }
-    .hero-banner.status-crit { background: linear-gradient(125deg, #7f1d1d 0%, #dc2626 100%); }
+    .hero-banner.status-warn {
+      background: linear-gradient(125deg, #78350f 0%, #b45309 100%);
+      color: #fff; border: 0;
+    }
+    .hero-banner.status-crit {
+      background: linear-gradient(125deg, #7f1d1d 0%, #dc2626 100%);
+      color: #fff; border: 0;
+    }
     .hero-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .hero-tag {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 12px; border-radius: 999px;
-      background: rgba(255, 255, 255, 0.16);
+      background: rgba(5, 150, 105, 0.12); color: var(--ok);
       font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
     }
-    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
-    .hero-banner h1 { font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
-    .hero-banner p { font-size: 0.82rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
+    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+    .hero-banner.status-warn .hero-tag,
+    .hero-banner.status-crit .hero-tag { background: rgba(255, 255, 255, 0.18); color: #fff; }
+    .hero-banner.status-warn .hero-tag i,
+    .hero-banner.status-crit .hero-tag i { background: var(--gold); }
+    .hero-banner h1 { font-size: 1.18rem; font-weight: 700; line-height: 1.2; }
+    .hero-banner p { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+    .hero-banner.status-warn p,
+    .hero-banner.status-crit p { color: rgba(255,255,255,0.88); }
     .btn-ghost {
-      padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.32);
-      background: rgba(255,255,255,0.12); color: #fff;
+      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card-2); color: var(--text);
       font-family: inherit; font-size: 0.84rem; font-weight: 600; cursor: pointer;
     }
-    .btn-ghost:hover { background: rgba(255,255,255,0.22); }
+    .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
+    .hero-banner.status-warn .btn-ghost,
+    .hero-banner.status-crit .btn-ghost {
+      border-color: rgba(255,255,255,0.32); background: rgba(255,255,255,0.14); color: #fff;
+    }
 
     /* ================= 5 Circular Donut Gauges Row ================= */
     .gauges-row {
@@ -773,9 +791,9 @@
   <script>
     const CIRC = 289;
     const PROFILES = {
-      coldchain: { title: 'Cold Chain — ห้องเย็นวัคซีนและยา', rangeMin: 0, rangeMax: 16, label: 'เกณฑ์ 2.0 – 8.0 °C' },
-      server:    { title: 'Server Room — ห้องเซิร์ฟเวอร์', rangeMin: 10, rangeMax: 40, label: 'เกณฑ์ 18.0 – 24.0 °C' },
-      room:      { title: 'Live Room — ห้องปฏิบัติการจริง', rangeMin: 15, rangeMax: 45, label: 'เกณฑ์ 20.0 – 36.5 °C' }
+      coldchain: { title: 'Cold Chain — ห้องเย็นวัคซีนและยา', safeMin: 2, safeMax: 8, rangeMin: 0, rangeMax: 16, label: 'เกณฑ์ 2.0 – 8.0 °C' },
+      server:    { title: 'Server Room — ห้องเซิร์ฟเวอร์', safeMin: 18, safeMax: 24, rangeMin: 10, rangeMax: 40, label: 'เกณฑ์ 18.0 – 24.0 °C' },
+      room:      { title: 'Live Room — ห้องปฏิบัติการจริง', safeMin: 20, safeMax: 36.5, rangeMin: 15, rangeMax: 45, label: 'เกณฑ์ 20.0 – 36.5 °C' }
     };
 
     let currentProfile = 'coldchain';
@@ -805,27 +823,59 @@
       if (color) el.style.stroke = color;
     }
 
+    const safeBandPlugin = {
+      id: 'safeBand',
+      beforeDatasetsDraw(chart) {
+        if (currentMetric !== 'temp') return;
+        const prof = PROFILES[currentProfile] || PROFILES.coldchain;
+        const { ctx, chartArea, scales: { y } } = chart;
+        if (!chartArea || !y) return;
+        const yTop = y.getPixelForValue(prof.safeMax);
+        const yBot = y.getPixelForValue(prof.safeMin);
+        const top = Math.max(chartArea.top, Math.min(chartArea.bottom, yTop));
+        const bot = Math.max(chartArea.top, Math.min(chartArea.bottom, yBot));
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.09)';
+        ctx.fillRect(chartArea.left, top, chartArea.right - chartArea.left, Math.max(0, bot - top));
+
+        ctx.strokeStyle = 'rgba(5, 150, 105, 0.72)';
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([5, 4]);
+        [yTop, yBot].forEach(py => {
+          if (py >= chartArea.top && py <= chartArea.bottom) {
+            ctx.beginPath();
+            ctx.moveTo(chartArea.left, py);
+            ctx.lineTo(chartArea.right, py);
+            ctx.stroke();
+          }
+        });
+        ctx.restore();
+      }
+    };
+
     function initChart() {
       const ctx = document.getElementById('mainChart').getContext('2d');
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, 'rgba(140, 24, 28, 0.24)');
-      grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
+      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
+      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
 
       mainChart = new Chart(ctx, {
         type: 'line',
+        plugins: [safeBandPlugin],
         data: {
           labels: [],
           datasets: [{
             label: 'อุณหภูมิ (°C)',
             data: [],
-            borderColor: '#8c181c',
+            borderColor: '#2563eb',
             backgroundColor: grad,
             borderWidth: 2.5,
             tension: 0.36,
             fill: true,
             pointRadius: 0,
             pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#8c181c',
+            pointHoverBackgroundColor: '#2563eb',
             pointHoverBorderColor: '#ffffff',
             pointHoverBorderWidth: 2
           }]
@@ -871,8 +921,8 @@
       if (!mainChart) return;
       const labels = historyData.map(d => (d.ts || d.timestamp || '').slice(11, 19));
       const map = {
-        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#8c181c' },
-        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#2563eb' },
+        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#2563eb' },
+        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#0284c7' },
         pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)', color: '#b47b00' },
         vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)', color: '#059669' }
       }[currentMetric];
