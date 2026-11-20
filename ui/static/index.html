@@ -181,44 +181,35 @@
     .card-title { font-size: 0.96rem; font-weight: 700; }
     .card-sub { font-size: 0.76rem; color: var(--text-dim); margin-top: 2px; }
 
-    /* Hero Status Banner (uiuxcenter clean white card + subtle pastel status pill) */
+    /* Hero Status Banner (Full gradient like reference: deep teal-green for OPTIMAL, amber for WARNING, red for CRITICAL) */
     .hero-banner {
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: linear-gradient(125deg, #063b38 0%, #0a6b65 65%, #0e827a 100%);
+      color: #fff; border: 0;
       display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-      padding: 16px 22px;
+      padding: 18px 24px;
     }
     .hero-banner.status-warn {
-      background: #fffbeb;
-      border-color: rgba(245, 158, 11, 0.35);
+      background: linear-gradient(125deg, #78350f 0%, #d97706 100%);
     }
     .hero-banner.status-crit {
-      background: #fef2f2;
-      border-color: rgba(239, 68, 68, 0.35);
+      background: linear-gradient(125deg, #7f1d1d 0%, #dc2626 100%);
     }
-    [data-theme="dark"] .hero-banner.status-warn { background: rgba(245, 158, 11, 0.12); }
-    [data-theme="dark"] .hero-banner.status-crit { background: rgba(239, 68, 68, 0.12); }
-    .hero-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .hero-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .hero-tag {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 12px; border-radius: 999px;
-      background: rgba(16, 185, 129, 0.12); color: #059669;
+      background: rgba(255, 255, 255, 0.16); color: #fff;
       font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
     }
-    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: #10b981; }
-    .hero-banner.status-warn .hero-tag { background: rgba(245, 158, 11, 0.16); color: #b45309; }
-    .hero-banner.status-warn .hero-tag i { background: #f59e0b; }
-    .hero-banner.status-crit .hero-tag { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
-    .hero-banner.status-crit .hero-tag i { background: #ef4444; }
-    .hero-banner h1 { font-size: 1.08rem; font-weight: 700; line-height: 1.25; }
-    .hero-banner p { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
+    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    .hero-banner h1 { font-size: 1.18rem; font-weight: 700; line-height: 1.25; }
+    .hero-banner p { font-size: 0.82rem; color: rgba(255,255,255,0.86); margin-top: 2px; }
     .btn-ghost {
-      padding: 8px 16px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--card-2); color: var(--text);
-      font-family: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.32);
+      background: rgba(255,255,255,0.14); color: #fff;
+      font-family: inherit; font-size: 0.84rem; font-weight: 600; cursor: pointer;
     }
-    .btn-ghost:hover { background: var(--ink-btn); color: #fff; border-color: var(--ink-btn); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.24); }
 
     /* ================= 5 Circular Donut Gauges Row ================= */
     .gauges-row {
@@ -986,12 +977,12 @@
           const score = Math.round(ai.health_score ?? latest.health_score ?? 100);
 
           const status = ai.risk_level || latest.risk_level || 'OPTIMAL';
-          const tempColor = status === 'CRITICAL' ? '#dc2626' : (status === 'WARNING' ? '#f59e0b' : rangeColor(t, prof.safeMin, prof.safeMax, 1.0));
-          const humColor  = rangeColor(h, prof.humMin, prof.humMax, 5.0);
-          const presColor = rangeColor(p, 1000, 1025, 5.0);
           const shock = Boolean(ai.shock_detected ?? latest.shock);
-          const vibColor  = (shock || v >= prof.vibWarn) ? '#dc2626' : (v >= prof.vibWarn * 0.65 ? '#f59e0b' : '#059669');
-          const healthColor = score >= 80 ? '#059669' : (score >= 50 ? '#f59e0b' : '#dc2626');
+          const tempColor = '#8c181c'; // อุณหภูมิ: แดงคณะ TSE
+          const humColor  = '#2563eb'; // ความชื้น: น้ำเงิน
+          const presColor = '#d97706'; // ความกดอากาศ: เหลืองอำพัน
+          const vibColor  = '#7c3aed'; // แรงสั่น: ม่วง
+          const healthColor = score >= 80 ? '#10b981' : (score >= 50 ? '#f59e0b' : '#ef4444');
           metricColors = { temp: tempColor, hum: humColor, pres: presColor, vib: vibColor };
           const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)
             ? ai.anomaly_reasons.join(' · ')
