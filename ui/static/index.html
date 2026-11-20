@@ -181,49 +181,37 @@
     .card-title { font-size: 0.96rem; font-weight: 700; }
     .card-sub { font-size: 0.76rem; color: var(--text-dim); margin-top: 2px; }
 
-    /* Hero Status Banner (Calm & clean on OPTIMAL; Amber on WARNING; Red only on CRITICAL) */
+    /* Hero Status Banner (Same full-gradient rounded style for Green/Yellow/Red) */
     .hero-banner {
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid rgba(5, 150, 105, 0.28);
-      border-left: 6px solid var(--ok);
+      background: linear-gradient(125deg, #064e3b 0%, #059669 60%, #10b981 100%);
+      color: #fff; border: 0;
       display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
       padding: 18px 24px;
     }
     .hero-banner.status-warn {
-      background: linear-gradient(125deg, #78350f 0%, #b45309 100%);
-      color: #fff; border: 0;
+      background: linear-gradient(125deg, #78350f 0%, #d97706 100%);
     }
     .hero-banner.status-crit {
       background: linear-gradient(125deg, #7f1d1d 0%, #dc2626 100%);
-      color: #fff; border: 0;
     }
     .hero-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .hero-tag {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 5px 12px; border-radius: 999px;
-      background: rgba(5, 150, 105, 0.12); color: var(--ok);
+      background: rgba(255, 255, 255, 0.18); color: #fff;
       font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
     }
-    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
-    .hero-banner.status-warn .hero-tag,
-    .hero-banner.status-crit .hero-tag { background: rgba(255, 255, 255, 0.18); color: #fff; }
+    .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: #a7f3d0; }
     .hero-banner.status-warn .hero-tag i,
     .hero-banner.status-crit .hero-tag i { background: var(--gold); }
     .hero-banner h1 { font-size: 1.18rem; font-weight: 700; line-height: 1.2; }
-    .hero-banner p { font-size: 0.82rem; color: var(--text-dim); margin-top: 2px; }
-    .hero-banner.status-warn p,
-    .hero-banner.status-crit p { color: rgba(255,255,255,0.88); }
+    .hero-banner p { font-size: 0.82rem; color: rgba(255,255,255,0.88); margin-top: 2px; }
     .btn-ghost {
-      padding: 9px 18px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--card-2); color: var(--text);
+      padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.34);
+      background: rgba(255,255,255,0.14); color: #fff;
       font-family: inherit; font-size: 0.84rem; font-weight: 600; cursor: pointer;
     }
-    .btn-ghost:hover { border-color: var(--brand); color: var(--brand); }
-    .hero-banner.status-warn .btn-ghost,
-    .hero-banner.status-crit .btn-ghost {
-      border-color: rgba(255,255,255,0.32); background: rgba(255,255,255,0.14); color: #fff;
-    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.24); }
 
     /* ================= 5 Circular Donut Gauges Row ================= */
     .gauges-row {
@@ -805,6 +793,7 @@
     let currentProfile = 'coldchain';
     let currentMetric = 'temp';
     let historyData = [];
+    let metricColors = { temp: '#059669', hum: '#059669', pres: '#059669', vib: '#059669' };
     let mainChart = null;
     let chatOpen = false;
 
@@ -927,16 +916,28 @@
       if (!mainChart) return;
       const labels = historyData.map(d => (d.ts || d.timestamp || '').slice(11, 19));
       const map = {
-        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#2563eb' },
-        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#0284c7' },
-        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)', color: '#b47b00' },
-        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)', color: '#059669' }
+        temp: { key: 'temp', label: 'อุณหภูมิ (°C)' },
+        hum:  { key: 'humid', label: 'ความชื้น (%RH)' },
+        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)' },
+        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)' }
       }[currentMetric];
+
+      const lineColor = metricColors[currentMetric] || '#059669';
+      const fillMap = {
+        '#059669': 'rgba(5, 150, 105, 0.16)',
+        '#f59e0b': 'rgba(245, 158, 11, 0.18)',
+        '#dc2626': 'rgba(220, 38, 38, 0.16)'
+      };
+      const ctx = mainChart.ctx;
+      const grad = ctx.createLinearGradient(0, 0, 0, 290);
+      grad.addColorStop(0, fillMap[lineColor] || 'rgba(5, 150, 105, 0.16)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       mainChart.data.labels = labels;
       mainChart.data.datasets[0].label = map.label;
-      mainChart.data.datasets[0].borderColor = map.color;
-      mainChart.data.datasets[0].pointHoverBackgroundColor = map.color;
+      mainChart.data.datasets[0].borderColor = lineColor;
+      mainChart.data.datasets[0].backgroundColor = grad;
+      mainChart.data.datasets[0].pointHoverBackgroundColor = lineColor;
       mainChart.data.datasets[0].data = historyData.map(d => d[map.key]);
       mainChart.update('none');
     }
@@ -983,6 +984,7 @@
           const shock = Boolean(ai.shock_detected ?? latest.shock);
           const vibColor  = (shock || v >= prof.vibWarn) ? '#dc2626' : (v >= prof.vibWarn * 0.65 ? '#f59e0b' : '#059669');
           const healthColor = score >= 80 ? '#059669' : (score >= 50 ? '#f59e0b' : '#dc2626');
+          metricColors = { temp: tempColor, hum: humColor, pres: presColor, vib: vibColor };
           const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)
             ? ai.anomaly_reasons.join(' · ')
             : `ระบบทำงานปกติ (${prof.label})`;
