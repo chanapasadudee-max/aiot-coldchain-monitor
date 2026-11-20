@@ -221,7 +221,11 @@
       display: flex; flex-direction: column; align-items: center; text-align: center;
       padding: 16px 12px 14px;
     }
-    .gauge-label { font-size: 0.84rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; }
+    .gauge-label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.84rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px;
+    }
+    .gauge-label svg { width: 15px; height: 15px; flex-shrink: 0; }
     .donut-box {
       position: relative; width: 108px; height: 108px; display: grid; place-items: center;
     }
@@ -255,9 +259,11 @@
     }
     .tab-pills { display: inline-flex; gap: 4px; background: var(--card-2); padding: 4px; border-radius: 999px; }
     .tab-pill {
+      display: inline-flex; align-items: center; gap: 5px;
       padding: 5px 12px; border-radius: 999px; border: 0; background: transparent;
       color: var(--text-dim); font-family: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
     }
+    .tab-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
     .tab-pill.active { background: var(--brand); color: #fff; }
     .chart-wrap { position: relative; height: 295px; }
 
@@ -541,11 +547,14 @@
       <!-- 5 Circular Donut Gauges FIRST -->
       <section class="gauges-row">
         <div class="card gauge-card">
-          <span class="gauge-label">อุณหภูมิ</span>
+          <span class="gauge-label" style="color:#ec4899;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+            อุณหภูมิ
+          </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-temp" class="donut-fill" cx="56" cy="56" r="46" stroke="#8c181c" stroke-dasharray="289" stroke-dashoffset="160"></circle>
+              <circle id="ring-temp" class="donut-fill" cx="56" cy="56" r="46" stroke="#ec4899" stroke-dasharray="289" stroke-dashoffset="160"></circle>
             </svg>
             <div class="donut-center">
               <span id="temp-val" class="donut-val">--</span>
@@ -556,11 +565,14 @@
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label">ความชื้นสัมพัทธ์</span>
+          <span class="gauge-label" style="color:#0ea5e9;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            ความชื้นสัมพัทธ์
+          </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-hum" class="donut-fill" cx="56" cy="56" r="46" stroke="#2563eb" stroke-dasharray="289" stroke-dashoffset="140"></circle>
+              <circle id="ring-hum" class="donut-fill" cx="56" cy="56" r="46" stroke="#0ea5e9" stroke-dasharray="289" stroke-dashoffset="140"></circle>
             </svg>
             <div class="donut-center">
               <span id="hum-val" class="donut-val">--</span>
@@ -571,11 +583,14 @@
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label">ความกดอากาศ</span>
+          <span class="gauge-label" style="color:#8b5cf6;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-3"/><circle cx="12" cy="12" r="1"/></svg>
+            ความกดอากาศ
+          </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-pres" class="donut-fill" cx="56" cy="56" r="46" stroke="#b47b00" stroke-dasharray="289" stroke-dashoffset="80"></circle>
+              <circle id="ring-pres" class="donut-fill" cx="56" cy="56" r="46" stroke="#8b5cf6" stroke-dasharray="289" stroke-dashoffset="80"></circle>
             </svg>
             <div class="donut-center">
               <span id="pres-val" class="donut-val">--</span>
@@ -586,11 +601,14 @@
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label">แรงสั่นสะเทือน</span>
+          <span class="gauge-label" style="color:#f97316;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            แรงสั่นสะเทือน
+          </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-vib" class="donut-fill" cx="56" cy="56" r="46" stroke="#059669" stroke-dasharray="289" stroke-dashoffset="250"></circle>
+              <circle id="ring-vib" class="donut-fill" cx="56" cy="56" r="46" stroke="#f97316" stroke-dasharray="289" stroke-dashoffset="250"></circle>
             </svg>
             <div class="donut-center">
               <span id="vib-val" class="donut-val">--</span>
@@ -601,7 +619,10 @@
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label">คะแนนสุขภาพระบบ</span>
+          <span class="gauge-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            คะแนนสุขภาพระบบ
+          </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
@@ -625,10 +646,22 @@
               <div class="card-sub">เลื่อนเมาส์บนเส้นกราฟเพื่อดูค่าแต่ละช่วงเวลา</div>
             </div>
             <div class="tab-pills">
-              <button class="tab-pill active" onclick="setChartMetric('temp', this)">อุณหภูมิ</button>
-              <button class="tab-pill" onclick="setChartMetric('hum', this)">ความชื้น</button>
-              <button class="tab-pill" onclick="setChartMetric('pres', this)">ความกดอากาศ</button>
-              <button class="tab-pill" onclick="setChartMetric('vib', this)">แรงสั่น</button>
+              <button class="tab-pill active" onclick="setChartMetric('temp', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+                อุณหภูมิ
+              </button>
+              <button class="tab-pill" onclick="setChartMetric('hum', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+                ความชื้น
+              </button>
+              <button class="tab-pill" onclick="setChartMetric('pres', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-3"/></svg>
+                ความกดอากาศ
+              </button>
+              <button class="tab-pill" onclick="setChartMetric('vib', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                แรงสั่น
+              </button>
             </div>
           </div>
           <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
@@ -920,17 +953,17 @@
       if (!mainChart) return;
       const labels = historyData.map(d => (d.ts || d.timestamp || '').slice(11, 19));
       const map = {
-        temp: { key: 'temp', label: 'อุณหภูมิ (°C)' },
-        hum:  { key: 'humid', label: 'ความชื้น (%RH)' },
-        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)' },
-        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)' }
+        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#ec4899', fill: 'rgba(236, 72, 153, 0.16)' },
+        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#0ea5e9', fill: 'rgba(14, 165, 233, 0.16)' },
+        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)', color: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.16)' },
+        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)', color: '#f97316', fill: 'rgba(249, 115, 22, 0.16)' }
       }[currentMetric];
 
-      const lineColor = '#2563eb';
+      const lineColor = map.color;
       const ctx = mainChart.ctx;
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
-      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+      grad.addColorStop(0, map.fill);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       mainChart.data.labels = labels;
       mainChart.data.datasets[0].label = map.label;
@@ -978,10 +1011,10 @@
 
           const status = ai.risk_level || latest.risk_level || 'OPTIMAL';
           const shock = Boolean(ai.shock_detected ?? latest.shock);
-          const tempColor = '#8c181c'; // อุณหภูมิ: แดงคณะ TSE
-          const humColor  = '#2563eb'; // ความชื้น: น้ำเงิน
-          const presColor = '#d97706'; // ความกดอากาศ: เหลืองอำพัน
-          const vibColor  = '#7c3aed'; // แรงสั่น: ม่วง
+          const tempColor = '#ec4899'; // อุณหภูมิ: ชมพู
+          const humColor  = '#0ea5e9'; // ความชื้น: ฟ้า
+          const presColor = '#8b5cf6'; // ความกดอากาศ: ม่วง
+          const vibColor  = '#f97316'; // แรงสั่น: ส้ม
           const healthColor = score >= 80 ? '#10b981' : (score >= 50 ? '#f59e0b' : '#ef4444');
           metricColors = { temp: tempColor, hum: humColor, pres: presColor, vib: vibColor };
           const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)
