@@ -791,10 +791,16 @@
   <script>
     const CIRC = 289;
     const PROFILES = {
-      coldchain: { title: 'Cold Chain — ห้องเย็นวัคซีนและยา', safeMin: 2, safeMax: 8, rangeMin: 0, rangeMax: 16, label: 'เกณฑ์ 2.0 – 8.0 °C' },
-      server:    { title: 'Server Room — ห้องเซิร์ฟเวอร์', safeMin: 18, safeMax: 24, rangeMin: 10, rangeMax: 40, label: 'เกณฑ์ 18.0 – 24.0 °C' },
-      room:      { title: 'Live Room — ห้องปฏิบัติการจริง', safeMin: 20, safeMax: 36.5, rangeMin: 15, rangeMax: 45, label: 'เกณฑ์ 20.0 – 36.5 °C' }
+      coldchain: { title: 'Cold Chain — ห้องเย็นวัคซีนและยา', safeMin: 2, safeMax: 8, humMin: 45, humMax: 75, vibWarn: 0.35, rangeMin: 0, rangeMax: 16, label: 'เกณฑ์ 2.0 – 8.0 °C' },
+      server:    { title: 'Server Room — ห้องเซิร์ฟเวอร์', safeMin: 18, safeMax: 24, humMin: 35, humMax: 60, vibWarn: 0.30, rangeMin: 10, rangeMax: 40, label: 'เกณฑ์ 18.0 – 24.0 °C' },
+      room:      { title: 'Live Room — ห้องปฏิบัติการจริง', safeMin: 20, safeMax: 36.5, humMin: 30, humMax: 80, vibWarn: 0.35, rangeMin: 15, rangeMax: 45, label: 'เกณฑ์ 20.0 – 36.5 °C' }
     };
+
+    function rangeColor(val, min, max, warnMargin) {
+      if (val < min || val > max) return '#dc2626'; // แย่: แดง
+      if (val <= min + warnMargin || val >= max - warnMargin) return '#f59e0b'; // กลาง: เหลือง
+      return '#059669'; // ดี: เขียว
+    }
 
     let currentProfile = 'coldchain';
     let currentMetric = 'temp';
@@ -971,28 +977,33 @@
           const score = Math.round(ai.health_score ?? latest.health_score ?? 100);
 
           const status = ai.risk_level || latest.risk_level || 'OPTIMAL';
-          const statusColor = status === 'CRITICAL' ? '#dc2626' : (status === 'WARNING' ? '#d97706' : '#8c181c');
+          const tempColor = status === 'CRITICAL' ? '#dc2626' : (status === 'WARNING' ? '#f59e0b' : rangeColor(t, prof.safeMin, prof.safeMax, 1.0));
+          const humColor  = rangeColor(h, prof.humMin, prof.humMax, 5.0);
+          const presColor = rangeColor(p, 1000, 1025, 5.0);
+          const shock = Boolean(ai.shock_detected ?? latest.shock);
+          const vibColor  = (shock || v >= prof.vibWarn) ? '#dc2626' : (v >= prof.vibWarn * 0.65 ? '#f59e0b' : '#059669');
+          const healthColor = score >= 80 ? '#059669' : (score >= 50 ? '#f59e0b' : '#dc2626');
           const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)
             ? ai.anomaly_reasons.join(' · ')
             : `ระบบทำงานปกติ (${prof.label})`;
 
           document.getElementById('temp-val').textContent = t.toFixed(1);
           document.getElementById('temp-tag').textContent = prof.label;
-          setRing('ring-temp', (t - prof.rangeMin) / (prof.rangeMax - prof.rangeMin), statusColor);
+          setRing('ring-temp', (t - prof.rangeMin) / (prof.rangeMax - prof.rangeMin), tempColor);
 
           document.getElementById('hum-val').textContent = h.toFixed(0);
-          setRing('ring-hum', h / 100, '#2563eb');
+          setRing('ring-hum', h / 100, humColor);
 
           document.getElementById('pres-val').textContent = p.toFixed(0);
-          setRing('ring-pres', (p - 950) / 100, '#b47b00');
+          setRing('ring-pres', (p - 950) / 100, presColor);
 
           document.getElementById('vib-val').textContent = v.toFixed(2);
-          document.getElementById('vib-tag').textContent = v > 0.35 ? 'สั่นผิดปกติ' : 'ปกติ';
-          setRing('ring-vib', Math.min(1, v / 2.0), v > 0.35 ? '#dc2626' : '#059669');
+          document.getElementById('vib-tag').textContent = shock ? 'พบแรงกระแทก' : (v >= prof.vibWarn ? 'สั่นผิดปกติ' : (v >= prof.vibWarn * 0.65 ? 'เริ่มสั่น' : 'ปกติ'));
+          setRing('ring-vib', Math.min(1, v / 2.0), vibColor);
 
           document.getElementById('health-val').textContent = score;
-          document.getElementById('health-tag').textContent = score >= 80 ? 'พร้อมใช้งาน' : (score >= 50 ? 'ควรเฝ้าระวัง' : 'ต้องตรวจสอบ');
-          setRing('ring-health', score / 100, score >= 80 ? '#059669' : (score >= 50 ? '#d97706' : '#dc2626'));
+          document.getElementById('health-tag').textContent = score >= 80 ? 'ดีมาก' : (score >= 50 ? 'ปานกลาง' : 'ต้องตรวจสอบ');
+          setRing('ring-health', score / 100, healthColor);
 
           const hero = document.getElementById('hero-banner');
           hero.className = 'card hero-banner' + (status === 'CRITICAL' ? ' status-crit' : (status === 'WARNING' ? ' status-warn' : ''));
@@ -1010,7 +1021,6 @@
           document.getElementById('z-val').textContent = Number(ai.z_score ?? latest.z_score ?? 0).toFixed(2);
           document.getElementById('mean-val').textContent = `${Number(ai.moving_mean ?? t).toFixed(1)} °C`;
           document.getElementById('sd-val').textContent = Number(ai.std_dev ?? 0).toFixed(2);
-          const shock = Boolean(ai.shock_detected ?? latest.shock);
           const shockEl = document.getElementById('shock-val');
           shockEl.textContent = shock ? 'พบแรงกระแทก' : 'ปกติ';
           shockEl.style.color = shock ? 'var(--crit)' : '';
