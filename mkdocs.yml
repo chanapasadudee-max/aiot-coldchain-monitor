@@ -82,4 +82,3 @@ nav:
       - 6. การติดตั้ง Docker & Dev Tunnels: 06_docker_deployment.md
       - 7. โมเดลธุรกิจ & ความคุ้มค่า (ROI): 07_business_case.md
       - 8. ความปลอดภัย AI & Guardrails: 09_ai_safety_guardrails.md
-      - 9. สคริปต์คลิปนำเสนอ AI Flow: 08_video_walkthrough.md

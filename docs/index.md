@@ -136,9 +136,4 @@ hide:
     <h4>ความปลอดภัย AI & Guardrails</h4>
     <p>การออกแบบ Deterministic Guardrails ป้องกัน AI สั่งงานอันตรายต่อฮาร์ดแวร์</p>
   </a>
-  <a class="course-card" href="08_video_walkthrough/">
-    <span class="kicker">บทที่ 09</span>
-    <h4>สคริปต์คลิปนำเสนอ AI Flow</h4>
-    <p>แนวทางอัดคลิปส่งงาน 3–5 นาที อธิบายการสั่งงานและตรวจงานกับ AI</p>
-  </a>
 </div>
