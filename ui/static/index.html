@@ -14,293 +14,319 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    /* TSE Official Palette (Crimson #8c181c + Gold #ffd04f) on Reference Bento Layout */
     :root {
-      --font: 'Sarabun', 'Inter', -apple-system, sans-serif;
-      --num: 'Inter', -apple-system, sans-serif;
-      --mono: 'IBM Plex Mono', ui-monospace, monospace;
-
-      --brand: #8c181c;
-      --brand-deep: #5a0d10;
-      --brand-soft: rgba(140, 24, 28, 0.09);
-      --gold: #ffd04f;
-      --gold-dark: #d99b00;
-
-      --bg: #f3f5f8;
+      /* TSE Crimson & Gold — Clean Rounded Bento */
+      --bg: #f3f4f6;
       --card: #ffffff;
-      --card-2: #f6f7fa;
+      --card-2: #f8f9fb;
       --border: rgba(15, 23, 42, 0.06);
-      --shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
-      --shadow-float: 0 20px 52px rgba(15, 23, 42, 0.22);
+      --shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+      --shadow-float: 0 18px 46px rgba(15, 23, 42, 0.16);
 
       --text: #111827;
       --text-dim: #6b7280;
       --text-faint: #9ca3af;
 
-      --ok: #10b981;      --ok-soft: #ecfdf5;
-      --warn: #d97706;    --warn-soft: #fffbeb;
-      --crit: #dc2626;    --crit-soft: #fef2f2;
+      --brand: #8c181c;
+      --brand-dark: #5e0d10;
+      --brand-soft: rgba(140, 24, 28, 0.09);
+      --gold: #ffd04f;
+      --gold-dark: #b47b00;
+      --gold-soft: rgba(255, 208, 79, 0.22);
 
+      --ok: #059669;
+      --warn: #d97706;
+      --crit: #dc2626;
+      --info: #2563eb;
+
+      --ring-track: #eceef2;
       --bubble-ai: #eceef2;
       --bubble-ai-text: #111827;
-      --chart-grid: rgba(15, 23, 42, 0.06);
-      --chart-tick: #6b7280;
+
+      --font: 'Sarabun', 'Inter', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
     }
 
-    html[data-theme="dark"] {
-      --bg: #0c0e13;
-      --card: #161922;
-      --card-2: #1e222e;
+    [data-theme="dark"] {
+      --bg: #0f1115;
+      --card: #181b21;
+      --card-2: #20242c;
       --border: rgba(255, 255, 255, 0.07);
-      --shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
-      --shadow-float: 0 24px 60px rgba(0, 0, 0, 0.72);
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      --shadow-float: 0 20px 50px rgba(0, 0, 0, 0.6);
 
       --text: #f3f4f6;
       --text-dim: #9ca3af;
       --text-faint: #6b7280;
 
-      --ok-soft: rgba(16, 185, 129, 0.14);
-      --warn-soft: rgba(217, 119, 6, 0.16);
-      --crit-soft: rgba(220, 38, 38, 0.16);
+      --brand: #d94148;
+      --brand-dark: #8c181c;
+      --brand-soft: rgba(217, 65, 72, 0.16);
+      --gold: #ffd04f;
+      --gold-dark: #ffd04f;
+      --gold-soft: rgba(255, 208, 79, 0.14);
 
-      --bubble-ai: #252a38;
+      --ring-track: #2a2f3a;
+      --bubble-ai: #262b35;
       --bubble-ai-text: #f3f4f6;
-      --chart-grid: rgba(255, 255, 255, 0.07);
-      --chart-tick: #9ca3af;
     }
 
+    html { scroll-behavior: smooth; }
     body {
       font-family: var(--font);
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
     }
 
-    /* ================= Shell: Floating Rounded Left Sidebar + Main ================= */
+    /* ================= Shell ================= */
     .shell {
       display: grid;
-      grid-template-columns: 236px minmax(0, 1fr);
-      gap: 20px;
-      max-width: 1440px;
+      grid-template-columns: 224px 1fr;
+      gap: 18px;
+      max-width: 1460px;
       margin: 0 auto;
-      padding: 16px 20px 80px;
+      padding: 16px;
       min-height: 100vh;
     }
 
+    /* Floating Rounded Sidebar */
     .sidebar {
-      position: sticky; top: 16px;
+      position: sticky;
+      top: 16px;
       height: calc(100vh - 32px);
       background: var(--card);
       border-radius: 24px;
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
-      padding: 18px 14px;
-      display: flex; flex-direction: column; justify-content: space-between;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
     .sb-brand {
       display: flex; align-items: center; gap: 10px;
-      padding: 4px 10px 16px; margin-bottom: 6px;
-      border-bottom: 1px solid var(--border);
+      padding: 4px 8px 18px;
     }
-    .sb-brand img { width: 32px; height: 32px; object-fit: contain; }
-    .sb-brand b { font-size: 0.98rem; font-weight: 700; display: block; line-height: 1.2; }
+    .sb-brand img { width: 34px; height: 34px; border-radius: 10px; object-fit: contain; }
+    .sb-brand b { display: block; font-size: 0.96rem; font-weight: 700; line-height: 1.15; }
     .sb-brand small { font-size: 0.72rem; color: var(--text-dim); }
 
     .sb-nav { display: flex; flex-direction: column; gap: 4px; }
     .sb-link {
-      display: flex; align-items: center; gap: 12px;
-      padding: 11px 14px; border-radius: 999px;
+      display: flex; align-items: center; gap: 11px;
+      padding: 11px 14px; border-radius: 14px;
       color: var(--text-dim); text-decoration: none;
-      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      font-size: 0.9rem; font-weight: 600;
       transition: background .15s, color .15s;
     }
     .sb-link svg { width: 18px; height: 18px; flex-shrink: 0; }
     .sb-link:hover { background: var(--card-2); color: var(--text); }
     .sb-link.active {
-      background: var(--brand); color: #ffffff;
-      box-shadow: 0 6px 16px rgba(140, 24, 28, 0.28);
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(140, 24, 28, 0.25);
     }
 
     .sb-bottom {
-      border-top: 1px solid var(--border); padding-top: 12px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
       display: flex; flex-direction: column; gap: 4px;
     }
 
-    /* ================= Main Area ================= */
-    .main { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+    /* ================= Main ================= */
+    .main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
-    /* Top Pill Bar */
+    /* Top Bar */
     .topbar {
       display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     }
     .seg-pill {
       display: inline-flex; padding: 4px; border-radius: 999px;
-      background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--border); gap: 4px;
+      background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow);
     }
     .seg-btn {
-      padding: 7px 15px; border-radius: 999px; border: 0; background: transparent;
-      color: var(--text-dim); font-family: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
-      transition: all .15s;
+      padding: 7px 16px; border-radius: 999px; border: 0; background: transparent;
+      color: var(--text-dim); font-family: inherit; font-size: 0.84rem; font-weight: 600; cursor: pointer;
+      transition: background .15s, color .15s;
     }
-    .seg-btn.active { background: #18181b; color: #ffffff; }
-    html[data-theme="dark"] .seg-btn.active { background: var(--brand); color: #fff; }
+    .seg-btn.active { background: var(--brand); color: #fff; }
 
-    .top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .top-right { display: flex; align-items: center; gap: 10px; }
     .pill-live {
       display: inline-flex; align-items: center; gap: 7px;
-      padding: 7px 14px; border-radius: 999px; background: var(--ok-soft); color: var(--ok);
-      font-size: 0.78rem; font-weight: 700;
+      padding: 7px 14px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow);
+      font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
     }
-    .pill-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+    .pill-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
     .circle-btn {
-      width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border);
-      background: var(--card); color: var(--text); cursor: pointer;
-      display: grid; place-items: center; box-shadow: var(--shadow);
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow);
+      color: var(--text-dim); cursor: pointer; display: grid; place-items: center;
     }
+    .circle-btn:hover { color: var(--brand); }
     .circle-btn svg { width: 17px; height: 17px; }
     .user-chip {
-      display: inline-flex; align-items: center; gap: 9px;
+      display: flex; align-items: center; gap: 9px;
       padding: 5px 14px 5px 6px; border-radius: 999px;
       background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow);
-      font-size: 0.8rem; font-weight: 600;
+      font-size: 0.84rem; font-weight: 600;
     }
     .user-ava {
-      width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: #fff;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--brand); color: var(--gold);
       display: grid; place-items: center; font-size: 0.72rem; font-weight: 700;
     }
 
-    /* ================= Row 1: 3-Column Bento Hero ================= */
-    .row-hero { display: grid; grid-template-columns: 1.55fr 1fr 1fr; gap: 18px; }
+    /* Bento Card */
     .card {
-      background: var(--card); border-radius: 22px; padding: 20px 22px;
-      box-shadow: var(--shadow); border: 1px solid var(--border);
+      background: var(--card);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 18px 20px;
     }
+    .card-title { font-size: 0.96rem; font-weight: 700; }
+    .card-sub { font-size: 0.76rem; color: var(--text-dim); }
 
-    /* Dark Crimson Gradient Hero Banner (Matching Reference Dark Card) */
-    .hero-card {
-      background: linear-gradient(135deg, #4b0a0d 0%, #8c181c 62%, #6e1115 100%);
-      color: #ffffff; border: 0;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 14px;
+    /* Hero Banner (Compact Full-width) */
+    .hero-banner {
+      background: linear-gradient(125deg, #5e0d10 0%, #8c181c 60%, #a52429 100%);
+      color: #fff;
+      border: 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 18px 24px;
     }
-    .hero-card.warning { background: linear-gradient(135deg, #6b3e00 0%, #b45309 100%); }
-    .hero-card.critical { background: linear-gradient(135deg, #63080b 0%, #b91c1c 100%); }
+    .hero-banner.status-warn { background: linear-gradient(125deg, #78350f 0%, #b45309 100%); }
+    .hero-banner.status-crit { background: linear-gradient(125deg, #7f1d1d 0%, #dc2626 100%); }
+    .hero-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .hero-tag {
-      display: inline-flex; align-items: center; gap: 7px; align-self: flex-start;
-      padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, 0.14);
-      font-size: 0.76rem; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.04em;
     }
     .hero-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
-    .hero-card h1 { font-size: 1.65rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
-    .hero-card p { font-size: 0.84rem; opacity: 0.88; margin-top: 3px; }
-    .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .hero-banner h1 { font-size: 1.2rem; font-weight: 700; line-height: 1.2; }
+    .hero-banner p { font-size: 0.82rem; color: rgba(255,255,255,0.82); margin-top: 2px; }
+    .hero-btns { display: flex; gap: 8px; }
     .btn-gold {
-      padding: 9px 18px; border-radius: 999px; border: 0; background: var(--gold); color: #1c1200;
+      padding: 9px 16px; border-radius: 999px; border: 0;
+      background: var(--gold); color: #1f1300;
       font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
     }
     .btn-ghost {
       padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.28);
-      background: rgba(255,255,255,0.12); color: #fff; text-decoration: none;
+      background: rgba(255,255,255,0.1); color: #fff;
       font-family: inherit; font-size: 0.82rem; font-weight: 600; cursor: pointer;
     }
 
-    /* Top Metric Cards */
-    .card-head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .card-label { font-size: 0.86rem; font-weight: 600; color: var(--text-dim); }
-    .soft-icon {
-      width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
-      background: var(--brand-soft); color: var(--brand);
+    /* ================= 5 Circular Donut Gauges Row (OUR PROJECT FIRST) ================= */
+    .gauges-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
     }
-    .soft-icon.gold { background: rgba(217, 155, 0, 0.14); color: var(--gold-dark); }
-    .soft-icon svg { width: 18px; height: 18px; }
-    .big-num { font-family: var(--num); font-size: 2.1rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
-    .big-unit { font-size: 0.9rem; font-weight: 600; color: var(--text-dim); margin-left: 4px; }
-    .seg-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0 8px; }
-    .seg-bars span { height: 6px; border-radius: 999px; background: var(--brand); }
-    .seg-bars span.ok { background: var(--ok); }
-    .card-foot { font-size: 0.78rem; color: var(--text-dim); margin-top: 6px; }
-
-    /* ================= Row 2: Chart (Left) + Health Ring & Sensors (Right) ================= */
-    .row-main { display: grid; grid-template-columns: 1.65fr 1fr; gap: 18px; }
-    .chart-wrap { position: relative; height: 270px; width: 100%; margin-top: 10px; }
-
-    .ring-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 0 12px; }
-    .ring-wrap { position: relative; width: 148px; height: 148px; display: grid; place-items: center; }
-    .ring-wrap svg { width: 148px; height: 148px; transform: rotate(-90deg); }
-    .ring-bg { fill: none; stroke: var(--card-2); stroke-width: 13; }
-    .ring-fg { fill: none; stroke-width: 13; stroke-linecap: round; stroke-dasharray: 377; stroke-dashoffset: 0; transition: stroke-dashoffset .7s ease, stroke .3s; }
-    .ring-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .ring-mid b { font-family: var(--num); font-size: 2rem; font-weight: 800; line-height: 1; }
-    .ring-mid small { font-size: 0.78rem; color: var(--text-dim); }
-
-    .sensor-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-    .sensor-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px; border-radius: 14px; background: var(--card-2);
+    .gauge-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 16px 12px 14px;
+      transition: transform .15s ease;
     }
-    .sensor-item b { font-size: 0.84rem; display: block; }
-    .sensor-item small { font-size: 0.72rem; color: var(--text-dim); font-family: var(--mono); }
-    .badge-ok {
-      padding: 4px 10px; border-radius: 999px; background: var(--brand); color: #fff;
-      font-size: 0.72rem; font-weight: 600;
+    .gauge-card:hover { transform: translateY(-2px); }
+    .gauge-label { font-size: 0.82rem; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; }
+    .donut-box {
+      position: relative;
+      width: 112px; height: 112px;
+      display: grid; place-items: center;
+    }
+    .donut-box svg { width: 112px; height: 112px; transform: rotate(-90deg); }
+    .donut-box circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+    .donut-track { stroke: var(--ring-track); }
+    .donut-fill { transition: stroke-dashoffset .6s ease, stroke .3s ease; }
+    .donut-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .donut-val {
+      font-family: 'Inter', var(--font);
+      font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05;
+    }
+    .donut-unit { font-size: 0.72rem; font-weight: 600; color: var(--text-dim); margin-top: 2px; }
+    .gauge-sub {
+      margin-top: 10px; font-size: 0.74rem; font-weight: 600; color: var(--text-dim);
+      padding: 3px 10px; border-radius: 999px; background: var(--card-2);
     }
 
-    /* ================= Row 3: 4 Clean Mini Metric Cards ================= */
-    .row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .mini-card {
-      background: var(--card); border-radius: 20px; padding: 16px 18px;
-      box-shadow: var(--shadow); border: 1px solid var(--border);
+    /* ================= Main Row: Trend Chart (Left) + AI & Hardware Control (Right) ================= */
+    .workspace-row {
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 16px;
     }
-    .mini-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .mini-ico {
-      width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
-      background: var(--brand-soft); color: var(--brand); flex-shrink: 0;
+    .chart-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      margin-bottom: 14px; flex-wrap: wrap;
     }
-    .mini-ico svg { width: 16px; height: 16px; }
-    .mini-card .ml { font-size: 0.8rem; color: var(--text-dim); font-weight: 600; }
-    .mini-card .mv { font-family: var(--num); font-size: 1.45rem; font-weight: 800; line-height: 1.15; }
-    .mini-card .ms { font-size: 0.74rem; color: var(--text-faint); margin-top: 4px; }
+    .tab-pills { display: inline-flex; gap: 4px; background: var(--card-2); padding: 4px; border-radius: 999px; }
+    .tab-pill {
+      padding: 5px 12px; border-radius: 999px; border: 0; background: transparent;
+      color: var(--text-dim); font-family: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    }
+    .tab-pill.active { background: var(--brand); color: #fff; }
+    .chart-wrap { position: relative; height: 295px; }
 
-    /* ================= Row 4: Dark AI Insight Strip + Controls ================= */
-    .ai-strip {
-      background: linear-gradient(135deg, #4b0a0d, #8c181c);
-      color: #ffffff; border-radius: 20px; padding: 16px 22px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      cursor: pointer; box-shadow: var(--shadow); transition: transform .16s ease;
-    }
-    .ai-strip:hover { transform: translateY(-2px); }
-    .ai-strip-left { display: flex; align-items: center; gap: 14px; }
-    .ai-strip-ico {
-      width: 40px; height: 40px; border-radius: 12px; background: rgba(255,208,79,0.18); color: var(--gold);
-      display: grid; place-items: center; flex-shrink: 0;
-    }
-    .ai-strip small { font-size: 0.74rem; color: var(--gold); font-weight: 600; display: block; }
-    .ai-strip p { font-size: 0.9rem; font-weight: 600; }
+    .right-stack { display: flex; flex-direction: column; gap: 16px; }
 
-    /* Controls & Compact Log */
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+    /* AI Predictive Summary Card */
+    .ai-metrics-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px;
+    }
+    .ai-mini {
+      background: var(--card-2); border-radius: 14px; padding: 10px 10px; text-align: center;
+    }
+    .ai-mini small { display: block; font-size: 0.7rem; color: var(--text-dim); }
+    .ai-mini b {
+      display: block; margin-top: 3px; font-family: 'Inter', var(--font);
+      font-size: 0.98rem; font-weight: 700;
+    }
+    .ai-insight-text {
+      margin-top: 12px; padding: 10px 12px; border-radius: 14px;
+      background: var(--brand-soft); color: var(--text);
+      font-size: 0.82rem; line-height: 1.45;
+    }
+
+    /* Hardware Control Card */
+    .ctrl-grid { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 12px; }
     .act-btn {
-      padding: 10px 8px; border-radius: 12px; border: 1px solid var(--border);
-      background: var(--card-2); color: var(--text); font-family: inherit; font-size: 0.8rem; font-weight: 600;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s;
+      flex: 1; min-width: 78px; padding: 9px 10px; border-radius: 12px;
+      border: 1px solid var(--border); background: var(--card-2); color: var(--text);
+      font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      transition: border-color .15s, background .15s;
     }
     .act-btn:hover { border-color: var(--brand); background: var(--card); }
-    .dot-led { width: 9px; height: 9px; border-radius: 50%; }
-    .dot-led.g { background: #10b981; } .dot-led.y { background: #f59e0b; } .dot-led.r { background: #dc2626; } .dot-led.o { border: 1.5px solid var(--text-dim); }
+    .dot-led { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-led.g { background: #10b981; } .dot-led.y { background: #f59e0b; }
+    .dot-led.r { background: #dc2626; } .dot-led.o { border: 1.5px solid var(--text-dim); }
+    .ctrl-hint { margin-top: 10px; font-size: 0.74rem; color: var(--text-dim); }
 
+    /* ================= Bottom Row: Events & MQTT ================= */
+    .events-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .log-list {
-      max-height: 140px; overflow-y: auto; margin-top: 10px;
-      font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+      max-height: 145px; overflow-y: auto; margin-top: 10px;
+      font-family: var(--mono); font-size: 0.73rem; color: var(--text-dim);
       display: flex; flex-direction: column; gap: 6px;
     }
-    .log-row { padding: 6px 10px; border-radius: 10px; background: var(--card-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .log-row {
+      padding: 7px 11px; border-radius: 10px; background: var(--card-2);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
 
     footer { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-faint); padding: 4px 6px; }
 
-    /* ================= Pure Icon Floating Chat Button + AI Assistant Bubbles ================= */
+    /* ================= Floating Pure-Icon Chat Button + AI Assistant ================= */
     .chat-fab {
       position: fixed; right: 24px; bottom: 24px; z-index: 1000;
       width: 56px; height: 56px; border-radius: 50%; border: 0;
@@ -369,13 +395,14 @@
     }
     .send-btn:disabled { opacity: 0.45; cursor: wait; }
 
-    @media (max-width: 1080px) {
-      .row-hero, .row-main, .row-2 { grid-template-columns: 1fr; }
-      .row-4 { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 1180px) {
+      .gauges-row { grid-template-columns: repeat(3, 1fr); }
+      .workspace-row, .events-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 860px) {
       .shell { grid-template-columns: 1fr; }
       .sidebar { display: none; }
+      .gauges-row { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -391,11 +418,11 @@
         <nav class="sb-nav">
           <a class="sb-link active" href="#overview">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-            หน้าแรก
+            ภาพรวม
           </a>
           <a class="sb-link" href="#trend">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            กราฟอุณหภูมิ
+            กราฟแนวโน้ม
           </a>
           <a class="sb-link" href="#control">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4"/></svg>
@@ -437,161 +464,169 @@
         </div>
       </header>
 
-      <!-- Row 1: Hero Crimson Banner + Temp + Sensors -->
-      <section class="row-hero">
-        <div id="hero-banner" class="card hero-card">
+      <!-- Compact Hero Status Strip -->
+      <section id="hero-banner" class="card hero-banner">
+        <div class="hero-left">
+          <span class="hero-tag"><i></i><span id="hero-badge">OPTIMAL</span></span>
           <div>
-            <span class="hero-tag"><i></i><span id="hero-badge">OPTIMAL</span></span>
-            <h1 id="hero-heading" style="margin-top:10px;">ระบบเฝ้าระวังปกติ</h1>
-            <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัย 2.0 – 8.0°C</p>
-          </div>
-          <div class="hero-btns">
-            <button class="btn-gold" onclick="triggerScenario('failure')">จำลองคอมฯ ดับ</button>
-            <button class="btn-ghost" onclick="toggleChatPopup(true)">ถาม AI Assistant</button>
+            <h1 id="hero-heading">ระบบเฝ้าระวังปกติ</h1>
+            <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัย 2.0 – 8.0 °C</p>
           </div>
         </div>
-
-        <div class="card">
-          <div class="card-head-row">
-            <span class="card-label">อุณหภูมิล่าสุด</span>
-            <div class="soft-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-            </div>
-          </div>
-          <div><span id="temp-val" class="big-num">4.2</span><span class="big-unit">°C</span></div>
-          <div id="temp-tag" class="card-foot">เกณฑ์ปลอดภัย 2.0 – 8.0 °C</div>
-        </div>
-
-        <div class="card">
-          <div class="card-head-row">
-            <span class="card-label">เซ็นเซอร์ที่เชื่อมต่อ</span>
-            <div class="soft-icon gold">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
-            </div>
-          </div>
-          <div><span id="sensor-count" class="big-num">3</span><span class="big-unit">/ 3</span></div>
-          <div class="seg-bars"><span class="ok"></span><span class="ok"></span><span class="ok"></span></div>
-          <div class="card-foot">พร้อมส่งข้อมูล (Cucumber RIS)</div>
+        <div class="hero-btns">
+          <button class="btn-gold" onclick="triggerScenario('failure')">จำลองคอมฯ ดับ</button>
+          <button class="btn-ghost" onclick="toggleChatPopup(true)">ถาม AI Assistant</button>
         </div>
       </section>
 
-      <!-- Row 2: Live Hover Chart + Health Score Donut & Sensor List -->
-      <section class="row-main" id="trend">
-        <div class="card">
-          <div class="card-head-row">
-            <div>
-              <b style="font-size:1rem;">แนวโน้มอุณหภูมิเรียลไทม์</b>
-              <div id="chart-band-tag" style="font-size:0.78rem; color:var(--text-dim);">ช่วงปลอดภัย 2.0 – 8.0°C</div>
+      <!-- 5 Circular Donut Gauges FIRST (Our Project's 5 Core Metrics) -->
+      <section class="gauges-row">
+        <!-- 1. Temperature -->
+        <div class="card gauge-card">
+          <span class="gauge-label">อุณหภูมิ</span>
+          <div class="donut-box">
+            <svg viewBox="0 0 112 112">
+              <circle class="donut-track" cx="56" cy="56" r="46"></circle>
+              <circle id="ring-temp" class="donut-fill" cx="56" cy="56" r="46" stroke="#8c181c" stroke-dasharray="289" stroke-dashoffset="160"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="temp-val" class="donut-val">--</span>
+              <span class="donut-unit">°C</span>
             </div>
           </div>
-          <div class="chart-wrap"><canvas id="liveChart"></canvas></div>
+          <span id="temp-tag" class="gauge-sub">2.0 – 8.0 °C</span>
         </div>
 
-        <div class="card">
-          <div class="card-head-row">
-            <span class="card-label">คะแนนสุขภาพระบบ</span>
-            <span id="m-led" style="font-size:0.76rem; font-weight:700; color:var(--ok);">LED: SAFE</span>
+        <!-- 2. Humidity -->
+        <div class="card gauge-card">
+          <span class="gauge-label">ความชื้นสัมพัทธ์</span>
+          <div class="donut-box">
+            <svg viewBox="0 0 112 112">
+              <circle class="donut-track" cx="56" cy="56" r="46"></circle>
+              <circle id="ring-hum" class="donut-fill" cx="56" cy="56" r="46" stroke="#2563eb" stroke-dasharray="289" stroke-dashoffset="140"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="hum-val" class="donut-val">--</span>
+              <span class="donut-unit">%RH</span>
+            </div>
           </div>
-          <div class="ring-box">
-            <div class="ring-wrap">
-              <svg viewBox="0 0 140 140">
-                <circle class="ring-bg" cx="70" cy="70" r="60"/>
-                <circle id="ring-health" class="ring-fg" cx="70" cy="70" r="60" stroke="#8c181c"/>
-              </svg>
-              <div class="ring-mid">
-                <b id="m-health">100</b>
-                <small>/ 100</small>
+          <span class="gauge-sub">HTS221</span>
+        </div>
+
+        <!-- 3. Pressure -->
+        <div class="card gauge-card">
+          <span class="gauge-label">ความกดอากาศ</span>
+          <div class="donut-box">
+            <svg viewBox="0 0 112 112">
+              <circle class="donut-track" cx="56" cy="56" r="46"></circle>
+              <circle id="ring-pres" class="donut-fill" cx="56" cy="56" r="46" stroke="#b47b00" stroke-dasharray="289" stroke-dashoffset="80"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="pres-val" class="donut-val">--</span>
+              <span class="donut-unit">hPa</span>
+            </div>
+          </div>
+          <span class="gauge-sub">BMP280</span>
+        </div>
+
+        <!-- 4. Vibration -->
+        <div class="card gauge-card">
+          <span class="gauge-label">แรงสั่นสะเทือน</span>
+          <div class="donut-box">
+            <svg viewBox="0 0 112 112">
+              <circle class="donut-track" cx="56" cy="56" r="46"></circle>
+              <circle id="ring-vib" class="donut-fill" cx="56" cy="56" r="46" stroke="#059669" stroke-dasharray="289" stroke-dashoffset="250"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="vib-val" class="donut-val">--</span>
+              <span class="donut-unit">G</span>
+            </div>
+          </div>
+          <span id="vib-tag" class="gauge-sub">ปกติ</span>
+        </div>
+
+        <!-- 5. Health Score -->
+        <div class="card gauge-card">
+          <span class="gauge-label">คะแนนสุขภาพระบบ</span>
+          <div class="donut-box">
+            <svg viewBox="0 0 112 112">
+              <circle class="donut-track" cx="56" cy="56" r="46"></circle>
+              <circle id="ring-health" class="donut-fill" cx="56" cy="56" r="46" stroke="#8c181c" stroke-dasharray="289" stroke-dashoffset="15"></circle>
+            </svg>
+            <div class="donut-center">
+              <span id="health-val" class="donut-val">98</span>
+              <span class="donut-unit">/ 100</span>
+            </div>
+          </div>
+          <span id="health-tag" class="gauge-sub">พร้อมใช้งาน</span>
+        </div>
+      </section>
+
+      <!-- Main Row: Trend Chart (Left) + AI Analysis & LED Control (Right) -->
+      <section class="workspace-row" id="trend">
+        <div class="card">
+          <div class="chart-head">
+            <div>
+              <div class="card-title">กราฟแนวโน้มแบบเรียลไทม์</div>
+              <div class="card-sub">เลื่อนเมาส์บนเส้นกราฟเพื่อดูค่าแต่ละช่วงเวลา</div>
+            </div>
+            <div class="tab-pills">
+              <button class="tab-pill active" onclick="setChartMetric('temp', this)">อุณหภูมิ</button>
+              <button class="tab-pill" onclick="setChartMetric('hum', this)">ความชื้น</button>
+              <button class="tab-pill" onclick="setChartMetric('pres', this)">ความกดอากาศ</button>
+              <button class="tab-pill" onclick="setChartMetric('vib', this)">แรงสั่น</button>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+        </div>
+
+        <div class="right-stack" id="control">
+          <!-- AI Predictive Analysis -->
+          <div class="card">
+            <div class="card-title">การวิเคราะห์ล่วงหน้า (AI Engine)</div>
+            <div class="ai-metrics-grid">
+              <div class="ai-mini">
+                <small>เวลาถึงวิกฤต (ETTF)</small>
+                <b id="ettf-val">ปลอดภัย</b>
+              </div>
+              <div class="ai-mini">
+                <small>อัตราเปลี่ยนแปลง</small>
+                <b id="slope-val">0.00 °C/m</b>
+              </div>
+              <div class="ai-mini">
+                <small>Z-Score</small>
+                <b id="z-val">0.00</b>
               </div>
             </div>
-          </div>
-          <div class="sensor-list">
-            <div class="sensor-item"><div><b>HTS221</b><small>Temp &amp; Humidity</small></div><span class="badge-ok">เชื่อมต่อแล้ว</span></div>
-            <div class="sensor-item"><div><b>BMP280</b><small>Barometric Pressure</small></div><span class="badge-ok">เชื่อมต่อแล้ว</span></div>
-            <div class="sensor-item"><div><b>MPU6050</b><small>Vibration &amp; Shock</small></div><span class="badge-ok">เชื่อมต่อแล้ว</span></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Row 3: 4 Clean Mini Metric Cards -->
-      <section class="row-4">
-        <div class="mini-card">
-          <div class="mini-top">
-            <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></div>
-            <span class="ml">ความชื้นสัมพัทธ์</span>
-          </div>
-          <div id="humid-val" class="mv">60.0%</div>
-          <div id="humid-tag" class="ms">เป้าหมาย 45–75%</div>
-        </div>
-
-        <div class="mini-card">
-          <div class="mini-top">
-            <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2.5"/></svg></div>
-            <span class="ml">ความดันอากาศ</span>
-          </div>
-          <div id="m-press" class="mv">1013.2 hPa</div>
-          <div class="ms">อ้างอิง 1013.25 hPa</div>
-        </div>
-
-        <div class="mini-card">
-          <div class="mini-top">
-            <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-            <span class="ml">แรงสั่นสะเทือน</span>
-          </div>
-          <div id="m-vib" class="mv">0.020 g</div>
-          <div id="vib-tag" class="ms">เกณฑ์เตือน 0.35 g</div>
-        </div>
-
-        <div class="mini-card">
-          <div class="mini-top">
-            <div class="mini-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
-            <span class="ml">แนวโน้มอุณหภูมิ</span>
-          </div>
-          <div id="slope-val" class="mv">+0.00 °C</div>
-          <div id="m-ettf" class="ms">คงที่ · ปลอดภัย</div>
-        </div>
-      </section>
-
-      <!-- Row 4: Dark Crimson AI Insight Banner -->
-      <section class="ai-strip" onclick="toggleChatPopup(true)">
-        <div class="ai-strip-left">
-          <div class="ai-strip-ico">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div>
-            <small>AI Assistant</small>
-            <p id="ai-strip-text">คลิกเพื่อถามสถานะ วิเคราะห์ปัญหา หรือสั่งเปลี่ยนสีไฟบนบอร์ดด้วยภาษาไทย</p>
-          </div>
-        </div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-      </section>
-
-      <!-- Row 5: Controls & Event Log -->
-      <section class="row-2" id="control">
-        <div class="card">
-          <b style="font-size:0.94rem;">ควบคุมไฟบนบอร์ด &amp; จำลองสถานการณ์</b>
-          <div class="btn-row">
-            <button class="act-btn" onclick="sendLed('safe')"><span class="dot-led g"></span>เขียว</button>
-            <button class="act-btn" onclick="sendLed('warning')"><span class="dot-led y"></span>เหลือง</button>
-            <button class="act-btn" onclick="sendLed('critical')"><span class="dot-led r"></span>แดง</button>
-            <button class="act-btn" onclick="sendLed('off')"><span class="dot-led o"></span>ปิดไฟ</button>
-          </div>
-          <div class="btn-row">
-            <button class="act-btn" onclick="triggerScenario('normal')">ปกติ</button>
-            <button class="act-btn" onclick="triggerScenario('warning')">แอร์แผ่ว</button>
-            <button class="act-btn" onclick="triggerScenario('failure')" style="color:var(--crit);">คอมฯ ดับ</button>
-            <button class="act-btn" onclick="triggerScenario('door_slam')">กระแทก</button>
-          </div>
-        </div>
-
-        <div class="card" id="events">
-          <div class="card-head-row" style="margin-bottom:0;">
-            <b style="font-size:0.94rem;">บันทึกเหตุการณ์</b>
-            <div style="display:flex; gap:6px;">
-              <button id="tab-mqtt" class="seg-btn active" style="padding:4px 10px; font-size:0.74rem;" onclick="switchLogTab('mqtt')">MQTT</button>
-              <button id="tab-audit" class="seg-btn" style="padding:4px 10px; font-size:0.74rem;" onclick="switchLogTab('audit')">Audit</button>
+            <div id="ai-insight-text" class="ai-insight-text">
+              ระบบกำลังวิเคราะห์ข้อมูลจากเซ็นเซอร์อย่างต่อเนื่อง
             </div>
           </div>
-          <div id="log-box" class="log-list"><div class="log-row">กำลังรอรับข้อมูล...</div></div>
+
+          <!-- Hardware LED Control -->
+          <div class="card">
+            <div class="card-title">ควบคุมไฟสถานะ (NeoPixel RGB)</div>
+            <div class="ctrl-grid">
+              <button class="act-btn" onclick="sendLED('AUTO')">อัตโนมัติ</button>
+              <button class="act-btn" onclick="sendLED('GREEN')"><i class="dot-led g"></i>ปกติ</button>
+              <button class="act-btn" onclick="sendLED('YELLOW')"><i class="dot-led y"></i>เตือน</button>
+              <button class="act-btn" onclick="sendLED('RED')"><i class="dot-led r"></i>วิกฤต</button>
+              <button class="act-btn" onclick="sendLED('OFF')"><i class="dot-led o"></i>ปิดไฟ</button>
+            </div>
+            <div id="ctrl-hint" class="ctrl-hint">สั่งงานผ่าน MQTT ไปยังบอร์ด Cucumber RIS (GPIO 18)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Row: Audit Log & MQTT Stream -->
+      <section class="events-row" id="events">
+        <div class="card">
+          <div id="tab-audit" class="card-title">บันทึกเหตุการณ์ (Audit Log)</div>
+          <div id="audit-list" class="log-list"><div class="log-row">กำลังโหลดข้อมูล...</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">สตรีมข้อมูล MQTT</div>
+          <div id="mqtt-list" class="log-list"><div class="log-row">รอรับข้อมูลจาก Broker...</div></div>
         </div>
       </section>
 
@@ -602,280 +637,356 @@
     </main>
   </div>
 
-  <!-- Pure Circular Floating Chat Icon (Bottom-Right) -->
-  <button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="AI Assistant" title="AI Assistant">
+  <!-- Pure-Icon Floating Chat Button -->
+  <button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="AI Assistant">
     <span class="fab-dot"></span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
     </svg>
   </button>
 
-  <!-- Real Chat-Bubble Popup: AI Assistant -->
-  <section id="chat-popup" class="chat-popup" aria-label="AI Assistant">
+  <!-- Floating AI Assistant Chat Popup -->
+  <div id="chat-popup" class="chat-popup">
     <div class="chat-head">
       <h3>AI Assistant</h3>
       <button class="chat-close" onclick="toggleChatPopup(false)" aria-label="ปิด">✕</button>
     </div>
     <div id="chat-messages" class="chat-messages">
-      <div class="msg ai">สวัสดีครับ มีอะไรให้ช่วยเช็กอุณหภูมิหรือสั่งงานบอร์ด บอกได้เลยครับ</div>
+      <div class="msg ai">สวัสดีครับ มีอะไรให้ช่วยตรวจสอบเรื่องอุณหภูมิหรือสถานะห้องเย็นไหมครับ</div>
     </div>
     <div class="chat-foot">
       <div class="quick-prompts">
-        <button class="qp-btn" onclick="sendQuick('ตอนนี้สถานะเป็นยังไงบ้าง')">เช็กสถานะ</button>
-        <button class="qp-btn" onclick="sendQuick('ช่วยแนะนำวิธีแก้ปัญหาตอนนี้หน่อย')">ขอคำแนะนำ</button>
-        <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">ไฟแดง</button>
-        <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">ปิดไฟ</button>
+        <button class="qp-btn" onclick="askQuick('สรุปสถานะตอนนี้ให้หน่อย')">สรุปสถานะ</button>
+        <button class="qp-btn" onclick="askQuick('อีกกี่นาทีจะเกินเกณฑ์')">วิเคราะห์ความเสี่ยง</button>
+        <button class="qp-btn" onclick="askQuick('ปิดไฟ LED หน่อย')">ทดสอบปิดไฟ</button>
       </div>
       <div class="chat-input-row">
-        <input id="chat-input" class="chat-input" type="text" autocomplete="off" placeholder="พิมพ์ข้อความ..." onkeydown="if(event.key==='Enter') sendChat()">
+        <input id="chat-input" class="chat-input" type="text" placeholder="พิมพ์ข้อความ..." onkeydown="if(event.key==='Enter')sendChat()">
         <button id="chat-send-btn" class="send-btn" onclick="sendChat()">ส่ง</button>
       </div>
     </div>
-  </section>
+  </div>
 
   <script>
-    const $ = (id) => document.getElementById(id);
-    const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-    const escHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const CIRC = 289; // 2 * pi * 46
+    const PROFILES = {
+      coldchain: { min: 2, max: 8, rangeMin: 0, rangeMax: 16, label: 'เกณฑ์ 2.0 – 8.0 °C' },
+      server:    { min: 18, max: 27, rangeMin: 10, rangeMax: 40, label: 'เกณฑ์ 18.0 – 27.0 °C' },
+      room:      { min: 20, max: 35, rangeMin: 15, rangeMax: 45, label: 'เกณฑ์ 20.0 – 35.0 °C' }
+    };
 
-    const tg = window.Telegram?.WebApp;
-    if (tg) { tg.ready(); tg.expand(); }
+    let currentProfile = 'coldchain';
+    let currentMetric = 'temp';
+    let historyData = [];
+    let mainChart = null;
+    let chatOpen = false;
 
     function toggleTheme() {
-      const html = document.documentElement;
-      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      $('brand-logo-img').src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
-      liveChart.options.scales.x.ticks.color = cssVar('--chart-tick');
-      liveChart.options.scales.y.ticks.color = cssVar('--chart-tick');
-      liveChart.options.scales.y.grid.color = cssVar('--chart-grid');
-      liveChart.update('none');
+      const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('tse-theme', next);
+      document.getElementById('brand-logo-img').src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+      updateChartTheme();
     }
+    (function initTheme() {
+      const saved = localStorage.getItem('tse-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+      document.getElementById('brand-logo-img').src = saved === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+    })();
 
-    function toggleChatPopup(forceOpen) {
-      const popup = $('chat-popup');
-      const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !popup.classList.contains('open');
-      popup.classList.toggle('open', willOpen);
-      if (willOpen) setTimeout(() => $('chat-input')?.focus(), 120);
-    }
-
-    // Sidebar smooth scroll + active state
-    document.querySelectorAll('.sidebar .sb-link[href^="#"]').forEach(link => {
+    // Working Sidebar Links
+    document.querySelectorAll('.sb-nav .sb-link').forEach(link => {
       link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
         e.preventDefault();
-        const id = link.getAttribute('href').slice(1);
-        document.querySelectorAll('.sidebar .sb-link').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll('.sb-nav .sb-link').forEach(a => a.classList.remove('active'));
         link.classList.add('active');
-        if (id === 'copilot') { toggleChatPopup(true); return; }
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (href === '#copilot') { toggleChatPopup(true); return; }
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
 
-    // Smooth Interactive Hover Area Chart (TSE Crimson)
-    const ctx = $('liveChart').getContext('2d');
-    let currentSafeRange = [2.0, 8.0];
-    const grad = ctx.createLinearGradient(0, 0, 0, 260);
-    grad.addColorStop(0, 'rgba(140, 24, 28, 0.24)');
-    grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
+    function setRing(id, pct, color) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const clamped = Math.max(0.04, Math.min(1, pct));
+      el.style.strokeDashoffset = (CIRC * (1 - clamped)).toFixed(1);
+      if (color) el.style.stroke = color;
+    }
 
-    const liveChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          { label: 'อุณหภูมิ', data: [], borderColor: '#8c181c', borderWidth: 2.4, backgroundColor: grad, fill: true, tension: 0.36, pointRadius: 2, pointHoverRadius: 6 },
-          { label: 'เกณฑ์สูงสุด', data: [], borderColor: 'rgba(217, 155, 0, 0.6)', borderDash: [5, 5], borderWidth: 1.4, pointRadius: 0, fill: false },
-          { label: 'เกณฑ์ต่ำสุด', data: [], borderColor: 'rgba(16, 185, 129, 0.5)', borderDash: [5, 5], borderWidth: 1.4, pointRadius: 0, fill: false }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: { padding: 10, cornerRadius: 10, callbacks: { label: (c) => ` ${c.dataset.label}: ${Number(c.parsed.y).toFixed(2)} °C` } }
+    function initChart() {
+      const ctx = document.getElementById('mainChart').getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 290);
+      grad.addColorStop(0, 'rgba(140, 24, 28, 0.24)');
+      grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
+
+      mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'อุณหภูมิ (°C)',
+            data: [],
+            borderColor: '#8c181c',
+            backgroundColor: grad,
+            borderWidth: 2.5,
+            tension: 0.36,
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#8c181c',
+            pointHoverBorderColor: '#ffffff',
+            pointHoverBorderWidth: 2
+          }]
         },
-        scales: {
-          x: { grid: { display: false }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 } } },
-          y: { grid: { color: cssVar('--chart-grid') }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#111827',
+              titleColor: '#ffd04f',
+              bodyColor: '#ffffff',
+              padding: 12,
+              cornerRadius: 12,
+              displayColors: false
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: '#9ca3af', maxTicksLimit: 7, font: { size: 11 } } },
+            y: { grid: { color: 'rgba(156, 163, 175, 0.14)' }, ticks: { color: '#9ca3af', font: { size: 11 } } }
+          }
         }
-      }
-    });
-
-    let activeLogTab = 'mqtt';
-    function switchLogTab(tab) {
-      activeLogTab = tab;
-      $('tab-mqtt').classList.toggle('active', tab === 'mqtt');
-      $('tab-audit').classList.toggle('active', tab === 'audit');
-      fetchLogs();
+      });
     }
 
-    async function fetchLatest() {
-      try {
-        const res = await fetch('/api/latest');
-        if (!res.ok) return;
-        const data = await res.json();
-        const ai = data.ai_evaluation;
-        if (!ai) return;
-
-        currentSafeRange = ai.safe_range || [2.0, 8.0];
-        ['coldchain', 'server', 'room'].forEach(p => $(`prof-${p}`)?.classList.toggle('active', ai.profile === p));
-        $('mqtt-status-pill').innerText = data.mqtt_connected ? 'LIVE' : 'OFFLINE';
-        if (ai.sensors?.length) $('sensor-count').innerText = ai.sensors.length;
-
-        const temp = ai.current_temp, humid = ai.current_humid, slope = ai.slope_per_step, risk = ai.risk_level;
-        $('temp-val').innerText = temp.toFixed(1);
-        $('temp-tag').innerText = `เกณฑ์ปลอดภัย ${currentSafeRange[0]} – ${currentSafeRange[1]} °C`;
-        $('chart-band-tag').innerText = `ช่วงปลอดภัย ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
-
-        $('humid-val').innerText = `${humid.toFixed(1)}%`;
-        const hRange = data.profiles?.[ai.profile];
-        if (hRange) $('humid-tag').innerText = `เป้าหมาย ${hRange.humid_min}–${hRange.humid_max}%`;
-
-        $('m-press').innerText = `${(ai.current_pressure ?? 1013.25).toFixed(1)} hPa`;
-        $('m-vib').innerText = `${(ai.current_vib_g ?? 0).toFixed(3)} g`;
-        $('vib-tag').innerText = ai.shock_detected ? 'ตรวจพบแรงกระแทก' : 'ปกติ (เกณฑ์ 0.35 g)';
-
-        $('slope-val').innerText = `${slope >= 0 ? '+' : ''}${slope.toFixed(2)} °C`;
-        $('m-ettf').innerText = ai.ettf_seconds != null ? `เกินเกณฑ์ใน ~${ai.ettf_seconds.toFixed(0)} วิ` : 'คงที่ · ปลอดภัย';
-
-        // Big Health Donut Ring (r=60 -> C=377)
-        const hs = ai.health_score ?? 100;
-        const hsCol = hs >= 80 ? '#10b981' : (hs >= 50 ? '#d97706' : '#dc2626');
-        $('m-health').innerText = hs;
-        $('ring-health').style.strokeDashoffset = 377 - (Math.max(0, Math.min(100, hs)) / 100) * 377;
-        $('ring-health').style.stroke = hsCol;
-        $('m-led').innerText = `LED: ${(data.led_mode || 'safe').toUpperCase()}`;
-
-        const hero = $('hero-banner');
-        hero.className = 'card hero-card';
-        if (risk === 'CRITICAL') {
-          hero.classList.add('critical');
-          $('hero-badge').innerText = 'CRITICAL';
-          $('hero-heading').innerText = 'เตือนภัยวิกฤต';
-          $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'อุณหภูมิเกินช่วงปลอดภัย';
-          $('ai-strip-text').innerText = `อุณหภูมิ ${temp.toFixed(1)}°C เกินเกณฑ์ปลอดภัย คลิกเพื่อขอคำแนะนำจาก AI Assistant`;
-        } else if (risk === 'WARNING') {
-          hero.classList.add('warning');
-          $('hero-badge').innerText = 'WARNING';
-          $('hero-heading').innerText = 'เฝ้าระวังล่วงหน้า';
-          $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'แนวโน้มอุณหภูมิหรือแรงสั่นผิดปกติ';
-          $('ai-strip-text').innerText = `ตรวจพบแนวโน้มผิดปกติ (${temp.toFixed(1)}°C) คลิกเพื่อถาม AI Assistant`;
-        } else {
-          $('hero-badge').innerText = 'OPTIMAL';
-          $('hero-heading').innerText = 'ระบบเฝ้าระวังปกติ';
-          $('hero-desc').innerText = `${ai.profile_name} · ช่วง ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
-          $('ai-strip-text').innerText = `สภาพแวดล้อมปกติ (${temp.toFixed(1)}°C) คลิกเพื่อคุยหรือสั่งงานผ่าน AI Assistant`;
-        }
-      } catch (e) {}
+    function updateChartTheme() {
+      if (!mainChart) return;
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mainChart.options.scales.y.grid.color = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(15,23,42,0.06)';
+      mainChart.update('none');
     }
 
-    async function fetchHistory() {
+    function setChartMetric(metric, btn) {
+      currentMetric = metric;
+      document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderChart();
+    }
+
+    function renderChart() {
+      if (!mainChart) return;
+      const labels = historyData.map(d => (d.ts || d.timestamp || '').slice(11, 19));
+      const map = {
+        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#8c181c' },
+        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#2563eb' },
+        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)', color: '#b47b00' },
+        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)', color: '#059669' }
+      }[currentMetric];
+
+      mainChart.data.labels = labels;
+      mainChart.data.datasets[0].label = map.label;
+      mainChart.data.datasets[0].borderColor = map.color;
+      mainChart.data.datasets[0].pointHoverBackgroundColor = map.color;
+      mainChart.data.datasets[0].data = historyData.map(d => d[map.key]);
+      mainChart.update('none');
+    }
+
+    async function fetchTelemetry() {
       try {
-        const res = await fetch('/api/history?limit=25');
-        if (!res.ok) return;
-        const rows = await res.json();
-        if (!rows.length) return;
-        liveChart.data.labels = rows.map(r => r.ts ? r.ts.substring(11, 19) : '');
-        liveChart.data.datasets[0].data = rows.map(r => r.temp);
-        liveChart.data.datasets[1].data = rows.map(() => currentSafeRange[1]);
-        liveChart.data.datasets[2].data = rows.map(() => currentSafeRange[0]);
-        liveChart.update('none');
-      } catch (e) {}
+        const [latRes, hisRes] = await Promise.all([
+          fetch('/api/latest'),
+          fetch('/api/history?limit=40')
+        ]);
+        const data = await latRes.json();
+        const hist = await hisRes.json();
+        const latest = data.telemetry || {};
+        const ai = data.ai_evaluation || {};
+        historyData = (hist.history || hist.records || []).slice();
+
+        if (ai.profile && ai.profile !== currentProfile) {
+          currentProfile = ai.profile;
+          updateProfileButtons();
+        }
+        const prof = PROFILES[currentProfile] || PROFILES.coldchain;
+
+        if (latest.temp !== undefined) {
+          const t = Number(latest.temp ?? 0);
+          const h = Number(latest.humid ?? 0);
+          const p = Number(latest.pressure ?? 1013);
+          const v = Number(latest.vib_g ?? 0);
+          const score = Math.round(ai.health_score ?? latest.health_score ?? 100);
+
+          const status = ai.risk_level || latest.risk_level || 'OPTIMAL';
+          const statusColor = status === 'CRITICAL' ? '#dc2626' : (status === 'WARNING' ? '#d97706' : '#8c181c');
+          const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)
+            ? ai.anomaly_reasons.join(' · ')
+            : `ระบบทำงานปกติ (${prof.label})`;
+
+          // 1. Temp Donut
+          document.getElementById('temp-val').textContent = t.toFixed(1);
+          document.getElementById('temp-tag').textContent = prof.label;
+          setRing('ring-temp', (t - prof.rangeMin) / (prof.rangeMax - prof.rangeMin), statusColor);
+
+          // 2. Humidity Donut
+          document.getElementById('hum-val').textContent = h.toFixed(0);
+          setRing('ring-hum', h / 100, '#2563eb');
+
+          // 3. Pressure Donut
+          document.getElementById('pres-val').textContent = p.toFixed(0);
+          setRing('ring-pres', (p - 950) / 100, '#b47b00');
+
+          // 4. Vibration Donut
+          document.getElementById('vib-val').textContent = v.toFixed(2);
+          document.getElementById('vib-tag').textContent = v > 0.35 ? 'สั่นผิดปกติ' : 'ปกติ';
+          setRing('ring-vib', Math.min(1, v / 2.0), v > 0.35 ? '#dc2626' : '#059669');
+
+          // 5. Health Score Donut
+          document.getElementById('health-val').textContent = score;
+          document.getElementById('health-tag').textContent = score >= 80 ? 'พร้อมใช้งาน' : (score >= 50 ? 'ควรเฝ้าระวัง' : 'ต้องตรวจสอบ');
+          setRing('ring-health', score / 100, score >= 80 ? '#059669' : (score >= 50 ? '#d97706' : '#dc2626'));
+
+          // Hero Banner
+          const hero = document.getElementById('hero-banner');
+          hero.className = 'card hero-banner' + (status === 'CRITICAL' ? ' status-crit' : (status === 'WARNING' ? ' status-warn' : ''));
+          document.getElementById('hero-badge').textContent = status;
+          document.getElementById('hero-heading').textContent =
+            status === 'CRITICAL' ? 'พบภาวะวิกฤต ต้องตรวจสอบทันที' :
+            status === 'WARNING'  ? 'ตรวจพบความเสี่ยงล่วงหน้า' : 'ระบบเฝ้าระวังปกติ';
+          document.getElementById('hero-desc').textContent = summaryText;
+
+          // AI Predictive Panel
+          const ettfSec = ai.ettf_seconds;
+          document.getElementById('ettf-val').textContent =
+            (ettfSec !== null && ettfSec !== undefined) ? `${(Number(ettfSec) / 60).toFixed(1)} นาที` : (status === 'CRITICAL' ? 'เกินเกณฑ์แล้ว' : 'ปลอดภัย');
+          const slope = Number(ai.slope_per_step ?? latest.slope ?? 0);
+          document.getElementById('slope-val').textContent = `${slope >= 0 ? '+' : ''}${slope.toFixed(2)} °C/s`;
+          document.getElementById('z-val').textContent = Number(ai.z_score ?? latest.z_score ?? 0).toFixed(2);
+          document.getElementById('ai-insight-text').textContent = summaryText;
+        }
+
+        document.getElementById('mqtt-status-pill').textContent = data.mqtt_connected ? 'LIVE' : 'LOCAL';
+        renderChart();
+      } catch (e) { console.error(e); }
     }
 
     async function fetchLogs() {
-      const box = $('log-box');
       try {
-        if (activeLogTab === 'mqtt') {
-          const data = await (await fetch('/api/mqtt-log')).json();
-          if (!data.packets?.length) { box.innerHTML = '<div class="log-row">ยังไม่มีข้อมูล MQTT...</div>'; return; }
-          box.innerHTML = data.packets.slice(0, 8).map(p =>
-            `<div class="log-row">[${escHtml(p.dir)}] ${escHtml((p.ts||'').substring(11,19))} ${escHtml(JSON.stringify(p.payload))}</div>`
-          ).join('');
-        } else {
-          const data = await (await fetch('/api/audit')).json();
-          if (!data.audit_log?.length) { box.innerHTML = '<div class="log-row">ยังไม่มีประวัติคำสั่ง</div>'; return; }
-          box.innerHTML = data.audit_log.slice(0, 8).map(a =>
-            `<div class="log-row">[${a.allowed?'ALLOWED':'BLOCKED'}] ${escHtml((a.ts||'').substring(11,19))} ${escHtml(a.guardrail_note)}</div>`
-          ).join('');
-        }
+        const [aRes, mRes] = await Promise.all([fetch('/api/audit'), fetch('/api/mqtt-log')]);
+        const audit = await aRes.json();
+        const mqtt = await mRes.json();
+        const aList = document.getElementById('audit-list');
+        const mList = document.getElementById('mqtt-list');
+        aList.innerHTML = (audit.logs || []).slice(0, 8).map(l =>
+          `<div class="log-row">[${(l.timestamp||'').slice(11,19)}] ${l.action || l.event || ''} — ${l.detail || ''}</div>`
+        ).join('') || '<div class="log-row">ยังไม่มีบันทึกเหตุการณ์</div>';
+        mList.innerHTML = (mqtt.logs || []).slice(0, 8).map(l =>
+          `<div class="log-row">${typeof l === 'string' ? l : `[${(l.ts||'').slice(11,19)}] ${l.topic || ''} ${JSON.stringify(l.payload || '')}`}</div>`
+        ).join('') || '<div class="log-row">ยังไม่มีข้อมูล MQTT</div>';
       } catch (e) {}
     }
 
+    function updateProfileButtons() {
+      ['coldchain', 'server', 'room'].forEach(p => {
+        const b = document.getElementById('prof-' + p);
+        if (b) b.classList.toggle('active', p === currentProfile);
+      });
+    }
+
     async function switchProfile(profile) {
-      await fetch('/api/profile', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({profile}) });
-      await fetchLatest(); await fetchHistory();
+      currentProfile = profile;
+      updateProfileButtons();
+      await fetch('/api/profile', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile })
+      });
+      fetchTelemetry();
     }
 
-    async function sendLed(mode) {
-      const res = await fetch('/api/command/led', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({mode}) });
-      if (!res.ok) {
-        const err = await res.json();
-        toggleChatPopup(true);
-        appendChat('ai', err.detail, true);
-      } else {
-        fetchLatest(); fetchLogs();
-      }
+    async function sendLED(color) {
+      await fetch('/api/command/led', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ color })
+      });
+      document.getElementById('ctrl-hint').textContent = `ส่งคำสั่งไฟสถานะ ${color} ไปยังบอร์ดแล้ว`;
+      fetchLogs();
     }
 
-    async function triggerScenario(scenario) {
-      await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
-      setTimeout(() => { fetchLatest(); fetchHistory(); fetchLogs(); }, 350);
+    async function triggerScenario(mode) {
+      await fetch(`/api/simulate-scenario?scenario=${encodeURIComponent(mode)}`, { method: 'POST' });
+      setTimeout(fetchTelemetry, 350);
     }
 
-    function appendChat(role, text, isBlocked = false) {
-      const box = $('chat-messages');
+    function toggleChatPopup(force) {
+      chatOpen = typeof force === 'boolean' ? force : !chatOpen;
+      document.getElementById('chat-popup').classList.toggle('open', chatOpen);
+      if (chatOpen) setTimeout(() => document.getElementById('chat-input').focus(), 180);
+    }
+
+    function askQuick(text) {
+      if (!chatOpen) toggleChatPopup(true);
+      document.getElementById('chat-input').value = text;
+      sendChat();
+    }
+
+    function appendMsg(role, text, guard) {
+      const box = document.getElementById('chat-messages');
       const div = document.createElement('div');
-      div.className = `msg ${role}`;
-      div.innerText = text;
-      if (isBlocked) {
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      if (guard) {
         const g = document.createElement('div');
         g.className = 'msg-guard';
-        g.innerText = 'GUARDRAIL BLOCKED';
+        g.textContent = guard;
         div.appendChild(g);
       }
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
-    }
-
-    function appendTyping() {
-      const box = $('chat-messages');
-      const div = document.createElement('div');
-      div.className = 'msg ai typing-indicator';
-      div.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
       return div;
     }
 
-    function sendQuick(text) { $('chat-input').value = text; sendChat(); }
-
     async function sendChat() {
-      const input = $('chat-input'), btn = $('chat-send-btn');
-      const msg = input.value.trim();
-      if (!msg) return;
+      const input = document.getElementById('chat-input');
+      const btn = document.getElementById('chat-send-btn');
+      const text = input.value.trim();
+      if (!text) return;
       input.value = '';
-      appendChat('user', msg);
-      const typingEl = appendTyping();
+      appendMsg('user', text);
+
+      const box = document.getElementById('chat-messages');
+      const typing = document.createElement('div');
+      typing.className = 'msg ai typing-indicator';
+      typing.innerHTML = '<span class="typing-dots"><i></i><i></i><i></i></span>';
+      box.appendChild(typing);
+      box.scrollTop = box.scrollHeight;
       btn.disabled = true;
+
       try {
-        const res = await fetch('/api/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({message: msg}) });
-        if (!res.ok) throw new Error();
+        const res = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
         const data = await res.json();
-        typingEl.remove();
-        appendChat('ai', data.reply, !data.guardrail_allowed);
-        fetchLatest(); fetchHistory(); fetchLogs();
+        typing.remove();
+        const guard = data.guardrail_triggered ? 'ระบบป้องกันความปลอดภัยไม่อนุญาตให้ปิดไฟระหว่างภาวะวิกฤต' : '';
+        appendMsg('ai', data.reply || 'ไม่สามารถตอบกลับได้ในขณะนี้', guard);
       } catch (e) {
-        typingEl.remove();
-        appendChat('ai', 'ขออภัยครับ ตอนนี้ติดต่อผู้ช่วยไม่ได้ ลองใหม่อีกครั้งนะครับ');
-      } finally { btn.disabled = false; }
+        typing.remove();
+        appendMsg('ai', 'เชื่อมต่อ AI Assistant ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+      } finally {
+        btn.disabled = false;
+      }
     }
 
-    setInterval(fetchLatest, 1500);
-    setInterval(fetchHistory, 3000);
-    setInterval(fetchLogs, 3000);
-    fetchLatest(); fetchHistory(); fetchLogs();
+    initChart();
+    fetchTelemetry();
+    fetchLogs();
+    setInterval(fetchTelemetry, 2500);
+    setInterval(fetchLogs, 6000);
   </script>
 </body>
 </html>
