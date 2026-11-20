@@ -6,9 +6,8 @@
 [![MQTT](https://img.shields.io/badge/MQTT-EMQX%20Broker-orange.svg)](https://www.emqx.io/)
 [![Telegram](https://img.shields.io/badge/Telegram-Mini_App-2CA5E0.svg)](https://telegram.org)
 
-> **โครงงานพัฒนาเว็บไซต์สอนและระบบ AIoT สำหรับเฝ้าระวังตู้แช่ยา วัคซีน และห้อง Server ระดับอุตสาหกรรม**  
-> มหาวิทยาลัยธรรมศาสตร์ (TSE) | ภาควิชาวิศวกรรมคอมพิวเตอร์  
-> **ผู้พัฒนา:** ชนาภา สดุดี (รหัสนักศึกษา: 6610680214)
+> **วิชา:** CN466 Internet of Things  
+> **ผู้พัฒนา:** ชนาภา สดุดี
 
 ---
 

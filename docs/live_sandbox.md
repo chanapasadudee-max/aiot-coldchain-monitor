@@ -1,14 +1,14 @@
-# 🧪 Live MQTT Sandbox (ทดลองเล่นสดบน GitHub Pages)
+# Live MQTT Sandbox (ทดลองเล่นสดบน GitHub Pages)
 
 > หน้านี้เชื่อมต่อกับ **MQTT Broker สาธารณะ (`wss://broker.emqx.io:8084/mqtt`)** โดยตรงจากเบราว์เซอร์ของคุณ (และรองรับ **Telegram Mini App** ตลอด 24 ชม.)!  
 > สามารถดูข้อมูลสดจากบอร์ด **Cucumber RIS (HTS221 + BMP280 + MPU6050)** หรือกดปุ่ม **จำลองวิกฤต (Virtual Simulator)** ได้ทันทีโดยไม่ต้องเปิดเซิร์ฟเวอร์ในเครื่อง
 
 <div id="sandbox-root">
   <div class="sb-bar">
-    <span id="sb-conn" class="sb-conn">⏳ กำลังเชื่อมต่อ WSS broker.emqx.io:8084...</span>
+    <span id="sb-conn" class="sb-conn">กำลังเชื่อมต่อ WSS broker.emqx.io:8084...</span>
     <span class="sb-topic">Topic: <code>tse/cn466/chanapa/telemetry</code></span>
     <div class="sb-actions">
-      <button onclick="sbToggleSim()" id="sb-sim-btn" class="sb-btn primary">▶️ เริ่มโหมดจำลอง (Offline Demo)</button>
+      <button onclick="sbToggleSim()" id="sb-sim-btn" class="sb-btn primary">เริ่มโหมดจำลอง (Offline Demo)</button>
       <button onclick="sbSendLed('safe')" class="sb-btn"><span class="sb-led g"></span>ไฟเขียว</button>
       <button onclick="sbSendLed('warning')" class="sb-btn"><span class="sb-led y"></span>ไฟเหลือง</button>
       <button onclick="sbSendLed('critical')" class="sb-btn"><span class="sb-led r"></span>ไฟแดง</button>
@@ -112,12 +112,12 @@
   try {
     client = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: 'ghp-sandbox-' + Math.random().toString(16).slice(2, 8), connectTimeout: 8000 });
     client.on('connect', () => {
-      setConn('🟢 เชื่อมต่อ WSS สำเร็จ! (รับข้อมูลสดจากบอร์ด Cucumber)', 'var(--x-ok)');
+      setConn('เชื่อมต่อ WSS แล้ว · รับข้อมูลสดจากบอร์ด Cucumber', 'var(--x-ok)');
       client.subscribe('tse/cn466/chanapa/telemetry');
       client.subscribe('tse/cn466/chanapa');
     });
-    client.on('error', () => setConn('⚠️ เชื่อมต่อ WSS ไม่สำเร็จ — กดปุ่มโหมดจำลองแทนได้', '#f59e0b'));
-    client.on('offline', () => setConn('🟠 ขาดการเชื่อมต่อ WSS ชั่วคราว (กำลังลองใหม่...)', '#f59e0b'));
+    client.on('error', () => setConn('เชื่อมต่อ WSS ไม่สำเร็จ — กดปุ่มโหมดจำลองแทนได้', '#f59e0b'));
+    client.on('offline', () => setConn('ขาดการเชื่อมต่อ WSS ชั่วคราว (กำลังลองใหม่...)', '#f59e0b'));
     client.on('message', (topic, message) => {
       if (simTimer) return;
       try {
@@ -126,7 +126,7 @@
       } catch (e) {}
     });
   } catch (e) {
-    setConn('⚠️ ไม่สามารถต่อ WSS ได้ (กดปุ่มโหมดจำลองแทนได้)', '#f59e0b');
+    setConn('ไม่สามารถต่อ WSS ได้ (กดปุ่มโหมดจำลองแทนได้)', '#f59e0b');
   }
 
   window.sbSendLed = function(mode) {
@@ -159,10 +159,10 @@
     const btn = document.getElementById('sb-sim-btn');
     if (simTimer) {
       clearInterval(simTimer); simTimer = null;
-      btn.innerText = '▶️ เริ่มโหมดจำลอง (Offline Demo)';
+      btn.innerText = 'เริ่มโหมดจำลอง (Offline Demo)';
       return;
     }
-    btn.innerText = '⏹️ หยุดโหมดจำลอง';
+    btn.innerText = 'หยุดโหมดจำลอง';
     emitSim();
     simTimer = setInterval(emitSim, 1500);
   };

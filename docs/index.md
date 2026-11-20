@@ -1,23 +1,50 @@
-# 🏭 AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
-
-<div class="hero-box">
-  <h3>แพลตฟอร์มการเรียนรู้และระบบ AIoT แบบสองทางระดับอุตสาหกรรม (Full-Stack Bidirectional AIoT)</h3>
-  <p>
-    ผสานฮาร์ดแวร์จริง <strong>บอร์ด Cucumber RIS (ESP32-S2)</strong> อ่านเซ็นเซอร์พร้อมกัน 3 ชนิด (<strong>HTS221 + BMP280 + MPU6050</strong>) 
-    ควบคุมไฟ <strong>NeoPixel RGB LED</strong> ผ่าน MQTT สองทาง ขับเคลื่อนด้วย <strong>Triple-Layer Hybrid AI</strong> 
-    (Predictive Slope/Shock Engine + Local Ollama <code>qwen2.5</code> Copilot + Deterministic Safety Guardrails + Google Colab) 
-    พร้อม UI ผ่าน <strong>Web Command Center & Telegram Mini App</strong>
-  </p>
-  <div class="hero-meta">
-    <span><strong>วิชา:</strong> CN466 Internet of Things &amp; AI</span>
-    <span><strong>ผู้พัฒนา:</strong> ชนาภา สดุดี (6610680214)</span>
-    <a class="hero-cta" href="live_sandbox/">ทดลอง Live MQTT Sandbox →</a>
-  </div>
-</div>
-
+---
+title: หน้าแรก
+hide:
+  - navigation
+  - toc
 ---
 
-## 📐 แผนภาพสถาปัตยกรรมระบบ (System Architecture)
+<section class="landing">
+  <div class="landing-copy">
+    <span class="eyebrow">วิชา: CN466 Internet of Things</span>
+    <h1 class="landing-title">ระบบเฝ้าระวังตู้แช่ยาและห้อง Server ด้วย AIoT</h1>
+    <p class="landing-lead">
+      บทเรียนสร้างระบบ IoT ระดับอุตสาหกรรมแบบครบวงจร ตั้งแต่อ่านเซ็นเซอร์บนบอร์ด <strong>Cucumber RIS</strong>
+      ส่งข้อมูลผ่าน <strong>MQTT สองทาง</strong> ให้ AI พยากรณ์ความผิดปกติล่วงหน้า
+      ไปจนถึงสั่งงานอุปกรณ์จริงด้วยภาษาไทยผ่าน <strong>AI Copilot</strong> ที่มี Safety Guardrails คุ้มกัน
+    </p>
+    <div class="landing-cta">
+      <a class="btn-primary" href="01_system_architecture/">เริ่มเรียนบทที่ 1</a>
+      <a class="btn-secondary" href="live_sandbox/">เปิด Live Sandbox</a>
+    </div>
+    <p class="landing-byline">ผู้พัฒนา: ชนาภา สดุดี</p>
+  </div>
+  <div class="spec">
+    <div class="spec-head"><span>System specification</span><span class="spec-live"><i></i>v2.0</span></div>
+    <dl>
+      <dt>Edge device</dt><dd>Cucumber RIS · ESP32-S2</dd>
+      <dt>Sensors</dt><dd><code>HTS221</code> <code>BMP280</code> <code>MPU6050</code></dd>
+      <dt>Actuator</dt><dd>NeoPixel RGB LED</dd>
+      <dt>Transport</dt><dd>MQTT · broker.emqx.io (TCP / WSS)</dd>
+      <dt>Analytics</dt><dd>Slope · Z-Score · ETTF · Shock</dd>
+      <dt>Copilot</dt><dd>Ollama <code>qwen2.5</code> + Guardrails</dd>
+      <dt>Interfaces</dt><dd>Web Console · Telegram Mini App</dd>
+      <dt>Compliance</dt><dd>GMP / GDP audit log (CSV)</dd>
+    </dl>
+  </div>
+</section>
+
+<div class="stats">
+  <div><b>3</b><span>เซ็นเซอร์บนบอร์ดจริง</span></div>
+  <div><b>2-way</b><span>MQTT Telemetry &amp; Command</span></div>
+  <div><b>3 ชั้น</b><span>Hybrid AI + Guardrails</span></div>
+  <div><b>9 บท</b><span>สำหรับผู้เรียนและผู้สอน</span></div>
+</div>
+
+## สถาปัตยกรรมระบบ
+
+<p class="section-lead">ข้อมูลไหลจากบอร์ดผ่าน Broker เข้าสู่ AI แล้วคำสั่งที่ผ่านการตรวจสอบจะไหลกลับไปยังอุปกรณ์ — ทุกชั้นแยกจากกัน (decoupled) ผ่าน MQTT</p>
 
 <div class="arch">
   <div class="arch-legend">
@@ -89,11 +116,9 @@
   </div>
 </div>
 
----
+## เส้นทางการเรียนรู้
 
-## 📚 เส้นทางการเรียนรู้ (แบ่งแทร็กตามบทบาท)
-
-### 🎓 สำหรับผู้เรียน (Learner Track)
+### สำหรับผู้เรียน (Learner Track)
 <div class="grid-cards">
   <a class="course-card" href="01_system_architecture/">
     <span class="kicker">บทที่ 01</span>
@@ -127,7 +152,7 @@
   </a>
 </div>
 
-### 🧑‍🏫 สำหรับผู้สอนและวิศวกร (Instructor & Engineer Track)
+### สำหรับผู้สอนและวิศวกร (Instructor & Engineer Track)
 <div class="grid-cards">
   <a class="course-card" href="06_docker_deployment/">
     <span class="kicker">บทที่ 06</span>

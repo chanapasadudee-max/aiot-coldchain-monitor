@@ -57,16 +57,18 @@ def run_e2e():
         # Switch log tab to Audit Log
         page.click("#tab-audit")
         page.wait_for_timeout(600)
+        page.evaluate("window.scrollTo(0, 0)")  # sticky sidebar/topbar render correctly in full-page capture
+        page.wait_for_timeout(300)
 
         # Screenshot 2: Critical Alert + AI Copilot Guardrail Blocked
         page.screenshot(path=str(SHOT_DIR / "02_dashboard_critical_guardrail.png"), full_page=True)
 
         # 5. Verify MkDocs Educational Site & Live MQTT Sandbox
-        page.goto("http://127.0.0.1:8000/", wait_until="load")
+        page.goto("http://127.0.0.1:8000/aiot-coldchain-monitor/", wait_until="load")
         page.wait_for_timeout(1200)
         page.screenshot(path=str(SHOT_DIR / "03_docs_home.png"), full_page=False)
 
-        page.goto("http://127.0.0.1:8000/live_sandbox/", wait_until="load")
+        page.goto("http://127.0.0.1:8000/aiot-coldchain-monitor/live_sandbox/", wait_until="load")
         page.wait_for_timeout(2500)
         page.screenshot(path=str(SHOT_DIR / "04_docs_live_sandbox.png"), full_page=False)
 

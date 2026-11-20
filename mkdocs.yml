@@ -1,9 +1,11 @@
 site_name: AIoT for Industry — ระบบเฝ้าระวังตู้แช่ยา & ห้อง Server
 site_description: คู่มือและบทเรียนการพัฒนา AIoT ระดับอุตสาหกรรมด้วยบอร์ด Cucumber RIS + Local Ollama AI Copilot + Guardrails + Telegram Mini App
-site_author: Chanapa Sadudee (6610680214)
+site_author: ชนาภา สดุดี
 site_url: https://chanapasadudee-max.github.io/aiot-coldchain-monitor/
 repo_name: chanapasadudee-max/aiot-coldchain-monitor
 repo_url: https://github.com/chanapasadudee-max/aiot-coldchain-monitor
+
+copyright: วิชา CN466 Internet of Things · ผู้พัฒนา ชนาภา สดุดี
 
 theme:
   name: material
@@ -29,9 +31,18 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.top
+    - navigation.footer
+    - toc.follow
     - content.code.copy
     - search.suggest
     - search.highlight
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/chanapasadudee-max/aiot-coldchain-monitor
+      name: Source code on GitHub
 
 extra_css:
   - stylesheets/extra.css
@@ -60,7 +71,7 @@ markdown_extensions:
 
 nav:
   - หน้าแรก: index.md
-  - 🧪 Live Sandbox: live_sandbox.md
+  - Live Sandbox: live_sandbox.md
   - สำหรับผู้เรียน (Learner):
       - 1. สถาปัตยกรรมระบบ AIoT: 01_system_architecture.md
       - 2. บอร์ด Cucumber RIS & Multi-Sensor: 02_cucumber_hardware.md
