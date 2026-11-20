@@ -953,17 +953,17 @@
       if (!mainChart) return;
       const labels = historyData.map(d => (d.ts || d.timestamp || '').slice(11, 19));
       const map = {
-        temp: { key: 'temp', label: 'อุณหภูมิ (°C)', color: '#ec4899', fill: 'rgba(236, 72, 153, 0.16)' },
-        hum:  { key: 'humid', label: 'ความชื้น (%RH)', color: '#0ea5e9', fill: 'rgba(14, 165, 233, 0.16)' },
-        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)', color: '#8b5cf6', fill: 'rgba(139, 92, 246, 0.16)' },
-        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)', color: '#f97316', fill: 'rgba(249, 115, 22, 0.16)' }
+        temp: { key: 'temp', label: 'อุณหภูมิ (°C)' },
+        hum:  { key: 'humid', label: 'ความชื้น (%RH)' },
+        pres: { key: 'pressure', label: 'ความกดอากาศ (hPa)' },
+        vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)' }
       }[currentMetric];
 
-      const lineColor = map.color;
+      const lineColor = '#2563eb';
       const ctx = mainChart.ctx;
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, map.fill);
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
+      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
 
       mainChart.data.labels = labels;
       mainChart.data.datasets[0].label = map.label;
