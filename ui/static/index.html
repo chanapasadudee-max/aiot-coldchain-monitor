@@ -289,9 +289,43 @@
     .send-btn:disabled { opacity: .55; cursor: progress; }
 
     /* Controls */
-    .ctrl-sec + .ctrl-sec { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .ctrl-grid-2 { display: grid; grid-template-columns: 1fr 1.35fr; gap: 22px; align-items: start; }
     .ctrl-sec h4 { font-size: 0.84rem; font-weight: 600; color: var(--text-strong); }
     .ctrl-sec p { font-size: 0.76rem; color: var(--text-faint); margin: 1px 0 10px; }
+    @media (max-width: 960px) { .ctrl-grid-2 { grid-template-columns: 1fr; gap: 16px; } }
+
+    /* Floating Bottom-Right AI Copilot Widget */
+    .chat-fab {
+      position: fixed; right: 22px; bottom: 22px; z-index: 1000;
+      display: inline-flex; align-items: center; gap: 10px;
+      height: 50px; padding: 0 18px 0 14px; border-radius: 999px;
+      border: 1px solid rgba(255, 208, 79, 0.35);
+      background: linear-gradient(135deg, #8c181c, #630f12);
+      color: #fff; font-family: inherit; font-size: 0.86rem; font-weight: 700;
+      cursor: pointer; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(140, 24, 28, 0.55); }
+    .chat-fab .fab-dot { width: 9px; height: 9px; border-radius: 50%; background: #3fb96f; box-shadow: 0 0 8px #3fb96f; }
+    .chat-popup {
+      position: fixed; right: 22px; bottom: 84px; z-index: 1000;
+      width: 410px; max-width: calc(100vw - 28px);
+      height: 520px; max-height: calc(100vh - 110px);
+      display: flex; flex-direction: column;
+      background: var(--panel); border: 1px solid var(--border-strong);
+      border-radius: 16px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      overflow: hidden; opacity: 0; pointer-events: none;
+      transform: translateY(16px) scale(0.97);
+      transition: opacity .22s ease, transform .22s ease;
+    }
+    .chat-popup.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .chat-popup .chat-messages { flex: 1; min-height: 0; max-height: none; }
+    .chat-close-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--panel-2); color: var(--text-dim); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .chat-close-btn:hover { color: var(--text-strong); border-color: var(--border-strong); }
     .btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
     button.ctrl-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; padding: 6px 8px;
@@ -543,56 +577,32 @@
         </section>
       </div>
 
-      <!-- Copilot + controls -->
-      <div class="grid-ops">
-        <section class="panel chat-box" id="copilot">
-          <div class="panel-head">
-            <h3>AI Plant Engineer Copilot<small>Local Ollama · Safety Guardrails</small></h3>
-            <span class="tag info">ภาษาไทย</span>
-          </div>
-          <div id="chat-messages" class="chat-messages">
-            <div class="msg ai"><span class="who">Copilot</span>สวัสดีครับ ผมเชื่อมต่อกับบอร์ด Cucumber RIS อยู่ ถามสถานะ ขอรายงาน CAPA หรือสั่งเปลี่ยนไฟสถานะบนบอร์ดได้เลยครับ ทุกคำสั่งจะผ่านการตรวจสอบของ Safety Guardrails ก่อนส่งไปยังอุปกรณ์</div>
-          </div>
-          <div class="chat-foot">
-            <div class="quick-prompts">
-              <button class="qp-btn" onclick="sendQuick('สรุปสถานะตอนนี้')">สรุปสถานะ</button>
-              <button class="qp-btn" onclick="sendQuick('ขอรายงาน CAPA')">รายงาน CAPA</button>
-              <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">เปิดไฟแดงฉุกเฉิน</button>
-              <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">ทดสอบ Guardrail: ปิดไฟ</button>
-            </div>
-            <div class="chat-input-row">
-              <input id="chat-input" class="chat-input" type="text" autocomplete="off" placeholder="พิมพ์คำสั่ง เช่น “เปลี่ยนเป็นโหมดห้องเซิร์ฟเวอร์”" onkeydown="if(event.key==='Enter') sendChat()">
-              <button id="chat-send-btn" class="send-btn" onclick="sendChat()">ส่ง</button>
+      <!-- Device controls & crisis simulator (full width) -->
+      <section class="panel" id="control">
+        <div class="panel-head"><h3>ควบคุมอุปกรณ์ &amp; จำลองสถานการณ์</h3><span class="tag mono">tse/cn466/chanapa/cmd</span></div>
+        <div class="panel-body ctrl-grid-2">
+          <div class="ctrl-sec">
+            <h4>ไฟสถานะ NeoPixel RGB</h4>
+            <p>ส่งคำสั่งผ่าน MQTT ไปยังบอร์ดจริง คำสั่งที่ขัดกับสถานะวิกฤตจะถูก Guardrails ปฏิเสธ</p>
+            <div class="btn-row">
+              <button class="ctrl-btn" onclick="sendLed('safe')"><span class="led g"></span>เขียว</button>
+              <button class="ctrl-btn" onclick="sendLed('warning')"><span class="led y"></span>เหลือง</button>
+              <button class="ctrl-btn" onclick="sendLed('critical')"><span class="led r"></span>แดง</button>
+              <button class="ctrl-btn" onclick="sendLed('off')"><span class="led o"></span>ปิดไฟ</button>
             </div>
           </div>
-        </section>
-
-        <section class="panel" id="control">
-          <div class="panel-head"><h3>ควบคุมอุปกรณ์</h3><span class="tag mono">tse/cn466/chanapa/cmd</span></div>
-          <div class="panel-body">
-            <div class="ctrl-sec">
-              <h4>ไฟสถานะ NeoPixel RGB</h4>
-              <p>ส่งคำสั่งผ่าน MQTT ไปยังบอร์ดจริง คำสั่งที่ขัดกับสถานะวิกฤตจะถูก Guardrails ปฏิเสธ</p>
-              <div class="btn-row">
-                <button class="ctrl-btn" onclick="sendLed('safe')"><span class="led g"></span>เขียว</button>
-                <button class="ctrl-btn" onclick="sendLed('warning')"><span class="led y"></span>เหลือง</button>
-                <button class="ctrl-btn" onclick="sendLed('critical')"><span class="led r"></span>แดง</button>
-                <button class="ctrl-btn" onclick="sendLed('off')"><span class="led o"></span>ปิดไฟ</button>
-              </div>
-            </div>
-            <div class="ctrl-sec">
-              <h4>จำลองสถานการณ์ (Crisis Simulator)</h4>
-              <p>ป้อนข้อมูลผิดปกติเข้า AI Engine เพื่อทดสอบการแจ้งเตือนและการตอบสนอง</p>
-              <div class="btn-row">
-                <button class="ctrl-btn scn" onclick="triggerScenario('normal')">ปกติ<small>Normal</small></button>
-                <button class="ctrl-btn scn" onclick="triggerScenario('warning')">แอร์แผ่ว<small>Cooling degraded</small></button>
-                <button class="ctrl-btn scn danger" onclick="triggerScenario('failure')">คอมฯ ดับ<small>Compressor failure</small></button>
-                <button class="ctrl-btn scn" onclick="triggerScenario('door_slam')">กระแทก<small>Shock / door slam</small></button>
-              </div>
+          <div class="ctrl-sec">
+            <h4>จำลองสถานการณ์ (Crisis Simulator)</h4>
+            <p>ป้อนข้อมูลผิดปกติเข้า AI Engine เพื่อทดสอบการแจ้งเตือนและการตอบสนอง</p>
+            <div class="btn-row">
+              <button class="ctrl-btn scn" onclick="triggerScenario('normal')">ปกติ<small>Normal</small></button>
+              <button class="ctrl-btn scn" onclick="triggerScenario('warning')">แอร์แผ่ว<small>Cooling degraded</small></button>
+              <button class="ctrl-btn scn danger" onclick="triggerScenario('failure')">คอมฯ ดับ<small>Compressor failure</small></button>
+              <button class="ctrl-btn scn" onclick="triggerScenario('door_slam')">กระแทก<small>Shock / door slam</small></button>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       <!-- Event log -->
       <section class="panel" id="events">
@@ -617,6 +627,34 @@
   </div>
 </div>
 
+<!-- Floating Bottom-Right AI Copilot Widget -->
+<button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="เปิดแชต AI Copilot">
+  <span class="fab-dot"></span>
+  <span>💬 AI Copilot</span>
+</button>
+
+<section id="chat-popup" class="chat-popup" aria-label="AI Plant Engineer Copilot">
+  <div class="panel-head">
+    <h3>AI Copilot<small>Gemini 2.5 Flash · Safety Guardrails</small></h3>
+    <button class="chat-close-btn" onclick="toggleChatPopup(false)" title="ปิดหน้าต่างแชต">✕</button>
+  </div>
+  <div id="chat-messages" class="chat-messages">
+    <div class="msg ai"><span class="who">Copilot</span>สวัสดีครับ! ผมคือ AI Copilot (Gemini 2.5 Flash) ที่เชื่อมต่อกับบอร์ด Cucumber RIS จริง ถามสถานะ วิเคราะห์ปัญหา ขอรายงาน CAPA หรือสั่งคุมไฟบนบอร์ดเป็นภาษาไทยได้เลยครับ</div>
+  </div>
+  <div class="chat-foot">
+    <div class="quick-prompts">
+      <button class="qp-btn" onclick="sendQuick('สรุปสถานะตอนนี้')">สรุปสถานะ</button>
+      <button class="qp-btn" onclick="sendQuick('ขอรายงาน CAPA')">รายงาน CAPA</button>
+      <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">เปิดไฟแดงฉุกเฉิน</button>
+      <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">ทดสอบ Guardrail: ปิดไฟ</button>
+    </div>
+    <div class="chat-input-row">
+      <input id="chat-input" class="chat-input" type="text" autocomplete="off" placeholder="พิมพ์ถามหรือสั่งงานภาษาไทยได้เลย..." onkeydown="if(event.key==='Enter') sendChat()">
+      <button id="chat-send-btn" class="send-btn" onclick="sendChat()">ส่ง</button>
+    </div>
+  </div>
+</section>
+
 <script>
   const $ = (id) => document.getElementById(id);
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -625,6 +663,17 @@
   function escHtml(str) {
     return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
+  function toggleChatPopup(forceOpen) {
+    const popup = $('chat-popup');
+    if (!popup) return;
+    const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !popup.classList.contains('open');
+    popup.classList.toggle('open', willOpen);
+    if (willOpen) setTimeout(() => $('chat-input')?.focus(), 120);
+  }
+  document.querySelector('a[href="#copilot"]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleChatPopup(true);
+  });
   const ICONS = {
     ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
     warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',

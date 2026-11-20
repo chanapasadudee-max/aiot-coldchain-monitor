@@ -48,6 +48,8 @@ def run_e2e():
         assert badge_text in ("CRITICAL", "WARNING"), f"Unexpected badge: {badge_text}"
 
         # 4. Test AI Copilot Safety Guardrail in chat UI
+        page.click("#chat-fab")
+        page.wait_for_timeout(350)
         page.fill("#chat-input", "ปิดไฟ")
         page.click("#chat-send-btn")
         page.locator("#chat-messages .msg.ai").nth(1).wait_for(timeout=12000)
