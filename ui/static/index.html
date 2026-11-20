@@ -447,7 +447,19 @@
           <button class="sb-btn" onclick="triggerScenario('normal')">
             <span class="sb-btn-left">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              จำลองสถานะปกติ
+              สถานะปกติ
+            </span>
+          </button>
+          <button class="sb-btn" onclick="triggerScenario('warning')">
+            <span class="sb-btn-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              แนวโน้มเสี่ยง
+            </span>
+          </button>
+          <button class="sb-btn" onclick="triggerScenario('door_slam')">
+            <span class="sb-btn-left">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              กระแทก / เปิดประตู
             </span>
           </button>
           <button class="sb-btn" onclick="triggerScenario('failure')">
@@ -613,12 +625,14 @@
               <button id="led-YELLOW" class="act-btn" onclick="sendLED('YELLOW')"><i class="dot-led y"></i>เหลือง</button>
               <button id="led-RED" class="act-btn" onclick="sendLED('RED')"><i class="dot-led r"></i>แดง</button>
             </div>
-            <div id="ctrl-hint" class="ctrl-hint">พร้อมรับคำสั่งควบคุมไปยังบอร์ดผ่าน MQTT</div>
           </div>
 
           <!-- AI Predictive Analysis -->
           <div class="card">
-            <div class="card-title">การวิเคราะห์ล่วงหน้า (AI Engine)</div>
+            <div class="led-head">
+              <div class="card-title">การวิเคราะห์ล่วงหน้า (AI Engine)</div>
+              <button class="qp-btn" onclick="loadIncidentReport()">สร้างรายงาน</button>
+            </div>
             <div class="ai-metrics-grid">
               <div class="ai-mini">
                 <small>เวลาถึงวิกฤต (ETTF)</small>
@@ -631,6 +645,18 @@
               <div class="ai-mini">
                 <small>Z-Score</small>
                 <b id="z-val">0.00</b>
+              </div>
+              <div class="ai-mini">
+                <small>ค่าเฉลี่ยเคลื่อนที่</small>
+                <b id="mean-val">-- °C</b>
+              </div>
+              <div class="ai-mini">
+                <small>ส่วนเบี่ยงเบน (SD)</small>
+                <b id="sd-val">--</b>
+              </div>
+              <div class="ai-mini">
+                <small>แรงกระแทก</small>
+                <b id="shock-val">ปกติ</b>
               </div>
             </div>
             <div id="ai-insight-text" class="ai-insight-text">
@@ -824,7 +850,7 @@
         const hist = await hisRes.json();
         const latest = data.telemetry || {};
         const ai = data.ai_evaluation || {};
-        historyData = (hist.history || hist.records || []).slice();
+        historyData = Array.isArray(hist) ? hist : (hist.history || hist.records || []);
 
         if (ai.profile && ai.profile !== currentProfile) {
           currentProfile = ai.profile;
@@ -877,6 +903,12 @@
           const slope = Number(ai.slope_per_step ?? latest.slope ?? 0);
           document.getElementById('slope-val').textContent = `${slope >= 0 ? '+' : ''}${slope.toFixed(2)} °C/s`;
           document.getElementById('z-val').textContent = Number(ai.z_score ?? latest.z_score ?? 0).toFixed(2);
+          document.getElementById('mean-val').textContent = `${Number(ai.moving_mean ?? t).toFixed(1)} °C`;
+          document.getElementById('sd-val').textContent = Number(ai.std_dev ?? 0).toFixed(2);
+          const shock = Boolean(ai.shock_detected ?? latest.shock);
+          const shockEl = document.getElementById('shock-val');
+          shockEl.textContent = shock ? 'พบแรงกระแทก' : 'ปกติ';
+          shockEl.style.color = shock ? 'var(--crit)' : '';
           document.getElementById('ai-insight-text').textContent = summaryText;
         }
 
@@ -892,12 +924,23 @@
         const mqtt = await mRes.json();
         const aList = document.getElementById('audit-list');
         const mList = document.getElementById('mqtt-list');
-        aList.innerHTML = (audit.logs || []).slice(0, 8).map(l =>
-          `<div class="log-row">[${(l.timestamp||l.ts||'').slice(11,19)}] ${l.action || l.event || ''} — ${l.detail || ''}</div>`
+        const auditRows = (audit.audit_log || audit.logs || []).slice().reverse().slice(0, 10);
+        const mqttRows = (mqtt.packets || mqtt.logs || []).slice().reverse().slice(0, 10);
+        aList.innerHTML = auditRows.map(l =>
+          `<div class="log-row">[${(l.timestamp||l.ts||'').slice(11,19)}] ${l.action || l.event || l.type || 'EVENT'} — ${l.detail || l.reason || l.message || JSON.stringify(l)}</div>`
         ).join('') || '<div class="log-row">ยังไม่มีบันทึกเหตุการณ์</div>';
-        mList.innerHTML = (mqtt.logs || []).slice(0, 8).map(l =>
-          `<div class="log-row">${typeof l === 'string' ? l : `[${(l.ts||'').slice(11,19)}] ${l.topic || ''} ${JSON.stringify(l.payload || '')}`}</div>`
+        mList.innerHTML = mqttRows.map(l =>
+          `<div class="log-row">${typeof l === 'string' ? l : `[${(l.ts||l.timestamp||'').slice(11,19)}] ${l.topic || 'telemetry'} ${l.payload ? JSON.stringify(l.payload) : JSON.stringify(l)}`}</div>`
         ).join('') || '<div class="log-row">ยังไม่มีข้อมูล MQTT</div>';
+      } catch (e) {}
+    }
+
+    async function loadIncidentReport() {
+      try {
+        const res = await fetch('/api/incident-report');
+        const data = await res.json();
+        const text = data.report || data.summary || JSON.stringify(data, null, 2);
+        document.getElementById('ai-insight-text').textContent = text;
       } catch (e) {}
     }
 
@@ -921,7 +964,6 @@
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ color })
       });
-      document.getElementById('ctrl-hint').textContent = `ส่งคำสั่งไฟสถานะ ${color} ไปยังบอร์ดแล้ว`;
       fetchLogs();
     }
 
