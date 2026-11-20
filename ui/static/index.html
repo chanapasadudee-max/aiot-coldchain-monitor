@@ -1,14 +1,11 @@
 <!DOCTYPE html>
-<html lang="th" data-theme="dark">
+<html lang="th" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AIoT Industrial Cold Chain — Command Center (CN466)</title>
+  <title>ColdChain Ops — AIoT Monitor</title>
   <link rel="icon" type="image/png" href="logo.png">
-
-  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -17,1096 +14,831 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    /* ================= Tokens ================= */
+    /* Apple Store Inspired Design System + Exact Original Fonts (Sarabun / Inter / IBM Plex Mono) */
     :root {
-      --brand: #b3262c;
-      --brand-hover: #c7343a;
+      --font: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --num: 'Inter', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-      --bg: #0e1014;
-      --panel: #15181d;
-      --panel-2: #1b1f25;
-      --sidebar: #111317;
-      --border: #252a32;
-      --border-strong: #323843;
-      --text: #dde1e7;
-      --text-strong: #f3f5f8;
-      --text-dim: #8c94a2;
-      --text-faint: #5e6573;
-      --hover: rgba(255,255,255,0.04);
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --card-2: #f5f5f7;
+      --nav-bg: rgba(255, 255, 255, 0.82);
+      --border: rgba(0, 0, 0, 0.06);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.10);
+      --shadow-float: 0 20px 56px rgba(0, 0, 0, 0.18);
 
-      --ok: #3fb96f;
-      --warn: #e0a531;
-      --crit: #f0534d;
-      --info: #5b9cf2;
-      --ok-bg: rgba(63,185,111,0.12);
-      --warn-bg: rgba(224,165,49,0.13);
-      --crit-bg: rgba(240,83,77,0.13);
-      --info-bg: rgba(91,156,242,0.12);
+      --text: #1d1d1f;
+      --text-dim: #6e6e73;
+      --text-faint: #86868b;
 
-      --chart-line: #6fa8f5;
-      --chart-band: rgba(63,185,111,0.08);
-      --chart-grid: rgba(255,255,255,0.05);
-      --chart-tick: #6b7280;
+      --brand: #8c181c;
+      --apple-blue: #0071e3;
+      --ok: #28a745;      --ok-soft: rgba(40, 167, 69, 0.12);
+      --warn: #e69500;    --warn-soft: rgba(230, 149, 0, 0.14);
+      --crit: #d92d20;    --crit-soft: rgba(217, 45, 32, 0.12);
+      --ring-track: #e8e8ed;
 
-      --r: 8px;
-      --r-sm: 6px;
-      --num: 'Inter', 'Sarabun', system-ui, sans-serif;
-      --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
-    }
-    html[data-theme="light"] {
-      --brand: #9e1d22;
-      --brand-hover: #b3262c;
-      --bg: #f4f5f7;
-      --panel: #ffffff;
-      --panel-2: #f8f9fb;
-      --sidebar: #ffffff;
-      --border: #e3e6eb;
-      --border-strong: #d2d6dd;
-      --text: #2a2f37;
-      --text-strong: #12151a;
-      --text-dim: #5f6876;
-      --text-faint: #939aa6;
-      --hover: rgba(15,23,42,0.04);
+      --bubble-ai: #e9e9eb;
+      --bubble-ai-text: #1d1d1f;
+      --bubble-user: #8c181c;
 
-      --ok: #198754;
-      --warn: #b7791f;
-      --crit: #d0312d;
-      --info: #2f6fd6;
-      --ok-bg: rgba(25,135,84,0.10);
-      --warn-bg: rgba(183,121,31,0.12);
-      --crit-bg: rgba(208,49,45,0.09);
-      --info-bg: rgba(47,111,214,0.09);
-
-      --chart-line: #2f6fd6;
-      --chart-band: rgba(25,135,84,0.07);
-      --chart-grid: rgba(15,23,42,0.06);
-      --chart-tick: #8a919c;
+      --chart-line: #0071e3;
+      --chart-grid: rgba(0, 0, 0, 0.06);
+      --chart-tick: #86868b;
     }
 
-    html, body { height: 100%; }
+    html[data-theme="dark"] {
+      --bg: #000000;
+      --card: #1c1c1e;
+      --card-2: #2c2c2e;
+      --nav-bg: rgba(28, 28, 30, 0.82);
+      --border: rgba(255, 255, 255, 0.09);
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.6);
+      --shadow-float: 0 24px 64px rgba(0, 0, 0, 0.75);
+
+      --text: #f5f5f7;
+      --text-dim: #a1a1a6;
+      --text-faint: #6e6e73;
+
+      --apple-blue: #2997ff;
+      --ok: #30d158;      --ok-soft: rgba(48, 209, 88, 0.16);
+      --warn: #ffd60a;    --warn-soft: rgba(255, 214, 10, 0.16);
+      --crit: #ff453a;    --crit-soft: rgba(255, 69, 58, 0.16);
+      --ring-track: #2c2c2e;
+
+      --bubble-ai: #2c2c2e;
+      --bubble-ai-text: #f5f5f7;
+      --bubble-user: #b3262c;
+
+      --chart-line: #2997ff;
+      --chart-grid: rgba(255, 255, 255, 0.08);
+      --chart-tick: #86868b;
+    }
+
     body {
-      font-family: 'Sarabun', system-ui, sans-serif;
-      font-size: 15px; line-height: 1.5;
-      background: var(--bg); color: var(--text);
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      transition: background .25s ease, color .25s ease;
     }
-    a { color: inherit; text-decoration: none; }
-    button { font-family: inherit; }
-    .mono { font-family: var(--mono); }
-    .num { font-family: var(--num); font-variant-numeric: tabular-nums; }
 
-    /* ================= App shell ================= */
-    .shell { display: grid; grid-template-columns: 232px 1fr; min-height: 100vh; }
-
-    .sidebar {
-      position: sticky; top: 0; height: 100vh; overflow-y: auto;
-      display: flex; flex-direction: column;
-      background: var(--sidebar); border-right: 1px solid var(--border);
-    }
-    .sb-brand { display: flex; align-items: center; gap: 10px; padding: 16px 16px 14px; border-bottom: 1px solid var(--border); }
-    .sb-brand img { width: 30px; height: 30px; object-fit: contain; }
-    .sb-brand b { display: block; font-size: 0.95rem; font-weight: 700; color: var(--text-strong); line-height: 1.2; }
-    .sb-brand span { display: block; font-size: 0.72rem; color: var(--text-faint); }
-
-    .sb-nav { padding: 10px 8px; flex: 1; }
-    .sb-group { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); padding: 14px 10px 6px; }
-    .sb-link {
-      display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: var(--r-sm);
-      font-size: 0.88rem; color: var(--text-dim); transition: background .12s, color .12s;
-    }
-    .sb-link:hover { background: var(--hover); color: var(--text); }
-    .sb-link.active { background: var(--hover); color: var(--text-strong); font-weight: 600; box-shadow: inset 2px 0 0 var(--brand); }
-    .sb-link svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .sb-link .count { margin-left: auto; font-family: var(--num); font-size: 0.7rem; font-weight: 600; padding: 0 6px; border-radius: 9px; background: var(--crit-bg); color: var(--crit); display: none; }
-    .sb-link .count.show { display: inline-block; }
-
-    .sb-device { margin: 8px; padding: 12px; border: 1px solid var(--border); border-radius: var(--r); background: var(--panel); font-size: 0.78rem; }
-    .sb-device-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .sb-device-head b { font-size: 0.8rem; color: var(--text-strong); }
-    .kv { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; color: var(--text-dim); }
-    .kv span:last-child { color: var(--text); text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .sb-user { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--border); font-size: 0.8rem; }
-    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 0.72rem; font-family: var(--num); }
-    .sb-user b { display: block; color: var(--text-strong); font-weight: 600; line-height: 1.2; }
-    .sb-user span { color: var(--text-faint); font-size: 0.72rem; }
-
-    .main { min-width: 0; display: flex; flex-direction: column; }
-
-    /* ================= Top bar ================= */
-    .topbar {
-      position: sticky; top: 0; z-index: 10;
-      display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 24px;
-      background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px);
+    /* Apple-style Translucent Frosted Top Nav */
+    .topnav {
+      position: sticky; top: 0; z-index: 40;
+      background: var(--nav-bg);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
       border-bottom: 1px solid var(--border);
     }
-    .m-brand { display: none; align-items: center; gap: 8px; font-weight: 700; color: var(--text-strong); font-size: 0.9rem; white-space: nowrap; }
-    .m-brand img { width: 26px; height: 26px; object-fit: contain; }
-    .crumbs { display: flex; align-items: center; gap: 6px; font-size: 0.84rem; color: var(--text-dim); min-width: 0; white-space: nowrap; overflow: hidden; }
-    .crumbs .sep { color: var(--text-faint); }
-    .crumbs b { color: var(--text-strong); font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
-    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-    .live {
-      display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 10px;
-      border: 1px solid var(--border); border-radius: var(--r-sm); font-size: 0.76rem; color: var(--text-dim); background: var(--panel);
+    .topnav-inner {
+      max-width: 1120px; margin: 0 auto; padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
     }
-    .live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px var(--ok-bg); }
-    .live.offline .dot { background: var(--crit); box-shadow: 0 0 0 3px var(--crit-bg); }
-    .live b { font-weight: 600; color: var(--ok); font-family: var(--num); font-size: 0.72rem; letter-spacing: 0.04em; }
-    .live.offline b { color: var(--crit); }
-    .live .upd { border-left: 1px solid var(--border); padding-left: 8px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.96rem; }
+    .nav-brand img { width: 28px; height: 28px; object-fit: contain; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 30px; padding: 0 11px;
-      border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--panel); color: var(--text);
-      font-size: 0.8rem; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background .12s, border-color .12s;
+    .live-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: var(--ok-soft); color: var(--ok);
+      font-size: 0.76rem; font-weight: 600;
     }
-    .btn:hover { background: var(--panel-2); border-color: var(--border-strong); }
-    .btn svg { width: 15px; height: 15px; }
-    .btn.icon { width: 30px; padding: 0; }
-
-    /* ================= Content ================= */
-    .content { padding: 22px 24px 40px; display: flex; flex-direction: column; gap: 16px; max-width: 1440px; width: 100%; }
-
-    .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; scroll-margin-top: 70px; }
-    .page-head h1 { font-size: 1.4rem; font-weight: 700; color: var(--text-strong); line-height: 1.3; }
-    .page-head p { font-size: 0.86rem; color: var(--text-dim); margin-top: 2px; }
-    section[id] { scroll-margin-top: 70px; }
-
-    .seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); }
-    .profile-btn {
-      display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px;
-      border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-dim);
-      font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background .12s, color .12s;
+    .live-chip i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+    .nav-btn {
+      padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card); color: var(--text); font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all .15s;
     }
-    .profile-btn:hover { color: var(--text); }
-    .profile-btn .range { font-family: var(--num); font-size: 0.72rem; color: var(--text-faint); font-variant-numeric: tabular-nums; }
-    .profile-btn.active { background: var(--panel-2); color: var(--text-strong); font-weight: 600; box-shadow: 0 0 0 1px var(--border-strong); }
-    .profile-btn.active .range { color: var(--text-dim); }
+    .nav-btn:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
 
-    /* Alarm strip */
-    .hero-banner {
-      --s: var(--ok); --s-bg: var(--ok-bg);
-      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-      padding: 12px 16px; border-radius: var(--r);
-      background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--s);
+    /* Main Container */
+    .page {
+      max-width: 1120px; margin: 0 auto; padding: 34px 24px 100px;
+      display: flex; flex-direction: column; gap: 26px;
     }
-    .hero-banner.warning { --s: var(--warn); --s-bg: var(--warn-bg); background: linear-gradient(90deg, var(--warn-bg), var(--panel) 60%); }
-    .hero-banner.critical { --s: var(--crit); --s-bg: var(--crit-bg); background: linear-gradient(90deg, var(--crit-bg), var(--panel) 60%); }
-    .hero-sev { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--s-bg); color: var(--s); flex-shrink: 0; }
-    .hero-sev svg { width: 16px; height: 16px; }
-    .hero-banner.critical .hero-sev { animation: ring 1.6s ease-in-out infinite; }
-    @keyframes ring { 0%,100% { box-shadow: 0 0 0 0 var(--crit-bg); } 50% { box-shadow: 0 0 0 6px var(--crit-bg); } }
-    #hero-icon { display: none; }
-    .hero-content { flex: 1; min-width: 220px; }
-    .hero-content h2 { font-size: 0.95rem; font-weight: 600; color: var(--text-strong); line-height: 1.4; }
-    .hero-content p { font-size: 0.84rem; color: var(--text-dim); }
-    .hero-right { display: flex; align-items: center; gap: 12px; font-size: 0.78rem; color: var(--text-dim); }
-    .hero-badge { font-family: var(--num); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; padding: 4px 9px; border-radius: 4px; }
 
-    /* Panels */
-    .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--r); min-width: 0; }
-    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-    .panel-head h3 { font-size: 0.9rem; font-weight: 600; color: var(--text-strong); }
-    .panel-head h3 small { font-weight: 400; color: var(--text-faint); font-size: 0.78rem; margin-left: 6px; }
-    .panel-body { padding: 16px; }
-    .tag { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 4px; font-family: var(--num); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.03em; background: var(--panel-2); color: var(--text-dim); border: 1px solid var(--border); white-space: nowrap; }
-    .tag.mono { font-family: var(--mono); font-weight: 500; letter-spacing: 0; }
-    .tag.ok { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
-    .tag.warn { background: var(--warn-bg); color: var(--warn); border-color: transparent; }
-    .tag.crit { background: var(--crit-bg); color: var(--crit); border-color: transparent; }
-    .tag.info { background: var(--info-bg); color: var(--info); border-color: transparent; }
-
-    /* KPI tiles */
-    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .kpi { padding: 14px 16px; display: flex; flex-direction: column; }
-    .kpi-top { display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: var(--text-dim); }
-    .kpi-top .src { font-family: var(--mono); font-size: 0.66rem; color: var(--text-faint); }
-    .kpi-val { display: flex; align-items: baseline; gap: 5px; margin-top: 6px; }
-    .kpi-val .big-number, .kpi-val .v { font-family: var(--num); font-variant-numeric: tabular-nums; font-size: 1.85rem; font-weight: 600; color: var(--text-strong); letter-spacing: -0.02em; line-height: 1.1; }
-    .u { font-size: 0.82rem; font-weight: 400; color: var(--text-dim); letter-spacing: 0; }
-    .kpi-val .v .u { margin-left: 5px; }
-    .kpi-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.74rem; color: var(--text-faint); margin-top: 8px; }
-    .meter { position: relative; height: 4px; border-radius: 2px; background: var(--panel-2); margin-top: 10px; box-shadow: inset 0 0 0 1px var(--border); }
-    .meter .band { position: absolute; top: 0; bottom: 0; background: var(--ok-bg); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ok) 35%, transparent); }
-    .meter .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 2px; background: var(--info); transition: width .8s cubic-bezier(.2,.8,.2,1), background .3s; }
-    .meter .mark { position: absolute; top: -3px; bottom: -3px; width: 2px; border-radius: 1px; background: var(--warn); }
-
-    /* AI analytics row */
-    .metrics { display: grid; grid-template-columns: repeat(5, 1fr); }
-    .metric { padding: 12px 16px; border-right: 1px solid var(--border); min-width: 0; }
-    .metric:last-child { border-right: 0; }
-    .metric .l { font-size: 0.76rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .metric .mini-val { font-family: var(--num); font-variant-numeric: tabular-nums; font-size: 1.05rem; font-weight: 600; color: var(--text-strong); margin-top: 2px; }
-    .metric .s { font-size: 0.72rem; color: var(--text-faint); font-weight: 400; }
-
-    /* Main grids */
-    .grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; }
-    .grid-ops { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 16px; }
-
-    .chart-wrap { position: relative; height: 290px; }
-    .chart-stats { display: flex; gap: 22px; padding: 0 16px 14px; font-size: 0.76rem; color: var(--text-dim); flex-wrap: wrap; }
-    .chart-stats b { font-family: var(--num); font-variant-numeric: tabular-nums; color: var(--text-strong); font-weight: 600; margin-left: 4px; }
-    .legend { display: flex; gap: 14px; font-size: 0.74rem; color: var(--text-dim); }
-    .legend i { display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 6px; }
-    .legend i.line { background: var(--chart-line); }
-    .legend i.band { height: 8px; background: var(--chart-band); border: 1px dashed color-mix(in srgb, var(--ok) 60%, transparent); }
-
-    .dl { display: grid; grid-template-columns: auto 1fr; font-size: 0.82rem; }
-    .dl dt, .dl dd { padding: 9px 0; border-bottom: 1px solid var(--border); }
-    .dl dt { color: var(--text-dim); padding-right: 12px; white-space: nowrap; }
-    .dl dd { text-align: right; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .dl dt:nth-last-child(2), .dl dd:last-child { border-bottom: 0; }
-    .sensor-chips { display: inline-flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-    .sensor-chip { font-family: var(--mono); font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text-dim); }
-
-    /* Copilot */
-    .chat-box { display: flex; flex-direction: column; }
-    .chat-messages { height: 340px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding: 16px; }
-    .msg { max-width: 92%; font-size: 0.88rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-    .msg .who { display: block; font-size: 0.72rem; font-weight: 600; color: var(--text-faint); margin-bottom: 3px; white-space: normal; }
-    .msg.ai { align-self: flex-start; padding-left: 12px; border-left: 2px solid var(--border-strong); }
-    .msg.user { align-self: flex-end; padding: 8px 12px; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--r); }
-    .msg.user .who { text-align: right; }
-    .msg-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; font-family: var(--mono); font-size: 0.68rem; white-space: normal; }
-    .msg-meta span { padding: 1px 6px; border-radius: 4px; background: var(--panel-2); color: var(--text-dim); }
-    .msg-meta span.guard-ok { color: var(--ok); background: var(--ok-bg); }
-    .msg-meta span.guard-block { color: var(--crit); background: var(--crit-bg); font-weight: 500; }
-    .chat-foot { border-top: 1px solid var(--border); padding: 12px 16px 14px; }
-    .quick-prompts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-    .qp-btn { height: 26px; padding: 0 10px; font-size: 0.76rem; border-radius: 13px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; }
-    .qp-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--hover); }
-    .chat-input-row { display: flex; gap: 8px; }
-    .chat-input {
-      flex: 1; min-width: 0; height: 38px; padding: 0 12px; border-radius: var(--r-sm);
-      border: 1px solid var(--border-strong); background: var(--bg); color: var(--text-strong);
-      font-family: inherit; font-size: 0.88rem; outline: none;
+    /* Apple Store Two-Tone Hero Header */
+    .hero-head {
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
     }
-    .chat-input::placeholder { color: var(--text-faint); }
-    .chat-input:focus { border-color: var(--info); box-shadow: 0 0 0 3px var(--info-bg); }
-    .send-btn { height: 38px; padding: 0 16px; border: 0; border-radius: var(--r-sm); background: var(--brand); color: #fff; font-weight: 600; font-size: 0.86rem; cursor: pointer; }
-    .send-btn:hover { background: var(--brand-hover); }
-    .send-btn:disabled { opacity: .55; cursor: progress; }
+    .hero-title { font-size: clamp(1.85rem, 3.2vw, 2.5rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.18; }
+    .hero-title span { color: var(--text-dim); font-weight: 600; }
 
-    /* Controls */
-    .ctrl-grid-2 { display: grid; grid-template-columns: 1fr 1.35fr; gap: 22px; align-items: start; }
-    .ctrl-sec h4 { font-size: 0.84rem; font-weight: 600; color: var(--text-strong); }
-    .ctrl-sec p { font-size: 0.76rem; color: var(--text-faint); margin: 1px 0 10px; }
-    @media (max-width: 960px) { .ctrl-grid-2 { grid-template-columns: 1fr; gap: 16px; } }
+    /* Apple Segmented Control */
+    .segmented {
+      display: inline-flex; padding: 4px; border-radius: 999px;
+      background: var(--card); box-shadow: var(--shadow); gap: 4px; flex-wrap: wrap;
+    }
+    .seg-btn {
+      padding: 8px 16px; border-radius: 999px; border: 0; background: transparent;
+      color: var(--text-dim); font-family: inherit; font-size: 0.84rem; font-weight: 600;
+      cursor: pointer; transition: all .18s ease;
+    }
+    .seg-btn:hover { color: var(--text); }
+    .seg-btn.active { background: var(--text); color: var(--card); }
 
-    /* Floating Bottom-Right AI Chat Widget (Pure Icon) */
+    /* Status Pill Banner */
+    .status-strip {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 16px 22px; border-radius: 20px;
+      background: var(--card); box-shadow: var(--shadow);
+      border-left: 5px solid var(--ok); transition: border-color .25s;
+    }
+    .status-strip.warning { border-left-color: var(--warn); }
+    .status-strip.critical { border-left-color: var(--crit); }
+    .status-left { display: flex; align-items: center; gap: 14px; }
+    .status-orb {
+      width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center;
+      font-size: 1.25rem; background: var(--ok-soft);
+    }
+    .status-strip.warning .status-orb { background: var(--warn-soft); }
+    .status-strip.critical .status-orb { background: var(--crit-soft); }
+    .status-left h2 { font-size: 1.05rem; font-weight: 700; }
+    .status-left p { font-size: 0.86rem; color: var(--text-dim); }
+    .status-pill {
+      padding: 6px 16px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+      background: var(--ok-soft); color: var(--ok); letter-spacing: 0.04em;
+    }
+    .status-strip.warning .status-pill { background: var(--warn-soft); color: var(--warn); }
+    .status-strip.critical .status-pill { background: var(--crit-soft); color: var(--crit); }
+
+    /* 4 Visual Ring & Gauge Cards (Apple Store Bento Grid) */
+    .bento-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    @media (max-width: 960px) { .bento-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .bento-4 { grid-template-columns: 1fr; } }
+
+    .bento-card {
+      background: var(--card); border-radius: 22px; padding: 22px 20px;
+      box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; text-align: center;
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+    .bento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .bento-label { font-size: 0.86rem; font-weight: 600; color: var(--text-dim); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+    /* SVG Activity Ring */
+    .ring-wrap { position: relative; width: 124px; height: 124px; display: grid; place-items: center; }
+    .ring-wrap svg { width: 124px; height: 124px; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: var(--ring-track); stroke-width: 11; }
+    .ring-fg { fill: none; stroke-width: 11; stroke-linecap: round; stroke-dasharray: 327; stroke-dashoffset: 327; transition: stroke-dashoffset .8s cubic-bezier(0.22, 1, 0.36, 1), stroke .3s; }
+    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-num { font-family: var(--num); font-size: 1.65rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+    .ring-unit { font-size: 0.76rem; color: var(--text-faint); font-weight: 500; margin-top: 2px; }
+    .bento-foot { margin-top: 14px; font-size: 0.78rem; color: var(--text-faint); font-weight: 500; }
+
+    /* Visual Bar Meter for Vibration & Pressure Card */
+    .dual-visual { width: 100%; display: flex; flex-direction: column; gap: 14px; margin: 8px 0; text-align: left; }
+    .bar-item-top { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; }
+    .bar-track { height: 10px; border-radius: 999px; background: var(--ring-track); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; transition: width .5s ease, background .3s; }
+
+    /* Full-Width Interactive Chart Card */
+    .card-full {
+      background: var(--card); border-radius: 22px; padding: 22px 24px; box-shadow: var(--shadow);
+    }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+    .card-top h3 { font-size: 1.08rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .chip-subtle {
+      font-size: 0.78rem; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+      background: var(--card-2); color: var(--text-dim);
+    }
+    .chart-wrap { position: relative; height: 280px; width: 100%; }
+
+    /* 2-Column Visual Action Cards */
+    .bento-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 820px) { .bento-2 { grid-template-columns: 1fr; } }
+
+    .tile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 480px) { .tile-row { grid-template-columns: repeat(2, 1fr); } }
+    .tile-btn {
+      padding: 14px 8px; border-radius: 16px; border: 1px solid var(--border);
+      background: var(--card-2); color: var(--text); font-family: inherit; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 7px;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s;
+    }
+    .tile-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); background: var(--card); }
+    .tile-dot { width: 18px; height: 18px; border-radius: 50%; }
+    .tile-dot.g { background: #28a745; box-shadow: 0 0 10px rgba(40,167,69,0.45); }
+    .tile-dot.y { background: #f59e0b; box-shadow: 0 0 10px rgba(245,158,11,0.45); }
+    .tile-dot.r { background: #dc2626; box-shadow: 0 0 10px rgba(220,38,38,0.45); }
+    .tile-dot.o { border: 2px solid var(--text-faint); }
+    .tile-ico { font-size: 1.25rem; line-height: 1; }
+
+    /* Compact Event Log */
+    .log-tabs { display: flex; gap: 6px; }
+    .log-tab {
+      padding: 6px 14px; border-radius: 999px; border: 0; background: var(--card-2);
+      color: var(--text-dim); font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+    }
+    .log-tab.active { background: var(--text); color: var(--card); }
+    .log-list {
+      max-height: 160px; overflow-y: auto; margin-top: 12px;
+      font-family: var(--mono); font-size: 0.74rem; color: var(--text-dim);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .log-row { padding: 7px 12px; border-radius: 10px; background: var(--card-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    footer {
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+      font-size: 0.8rem; color: var(--text-faint); padding-top: 4px;
+    }
+
+    /* ================= Pure Icon Floating Chat Button ================= */
     .chat-fab {
-      position: fixed; right: 22px; bottom: 22px; z-index: 1000;
-      width: 54px; height: 54px; border-radius: 50%;
+      position: fixed; right: 24px; bottom: 24px; z-index: 1000;
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 0; background: var(--brand); color: #fff; cursor: pointer;
       display: grid; place-items: center;
-      border: 1px solid rgba(255, 208, 79, 0.45);
-      background: linear-gradient(135deg, #8c181c, #630f12);
-      color: #fff; cursor: pointer;
-      box-shadow: 0 10px 26px rgba(140, 24, 28, 0.45);
+      box-shadow: 0 10px 28px rgba(140, 24, 28, 0.42);
       transition: transform .2s ease, box-shadow .2s ease;
     }
-    .chat-fab:hover { transform: scale(1.07); box-shadow: 0 14px 32px rgba(140, 24, 28, 0.58); }
-    .chat-fab svg { width: 24px; height: 24px; }
-    .chat-fab .fab-dot {
+    .chat-fab:hover { transform: scale(1.08); box-shadow: 0 14px 36px rgba(140, 24, 28, 0.55); }
+    .chat-fab svg { width: 25px; height: 25px; }
+    .chat-fab .fab-online {
       position: absolute; top: 3px; right: 3px;
-      width: 11px; height: 11px; border-radius: 50%;
-      background: #3fb96f; border: 2px solid var(--panel);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #30d158; border: 2px solid var(--card);
     }
-    .typing-dots { display: inline-flex; align-items: center; gap: 4px; padding: 4px 2px; }
-    .typing-dots i {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint);
-      animation: typingBounce 1.2s infinite ease-in-out;
-    }
-    .typing-dots i:nth-child(2) { animation-delay: 0.16s; }
-    .typing-dots i:nth-child(3) { animation-delay: 0.32s; }
-    @keyframes typingBounce {
-      0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
-      40% { transform: translateY(-4px); opacity: 1; }
-    }
+
+    /* ================= Real Chat-Bubble Popup (AI assistance) ================= */
     .chat-popup {
-      position: fixed; right: 22px; bottom: 84px; z-index: 1000;
-      width: 410px; max-width: calc(100vw - 28px);
-      height: 520px; max-height: calc(100vh - 110px);
+      position: fixed; right: 24px; bottom: 92px; z-index: 1000;
+      width: 380px; max-width: calc(100vw - 32px);
+      height: 500px; max-height: calc(100vh - 120px);
       display: flex; flex-direction: column;
-      background: var(--panel); border: 1px solid var(--border-strong);
-      border-radius: 16px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      background: var(--card); border-radius: 24px;
+      box-shadow: var(--shadow-float); border: 1px solid var(--border);
       overflow: hidden; opacity: 0; pointer-events: none;
-      transform: translateY(16px) scale(0.97);
+      transform: translateY(16px) scale(0.96);
       transition: opacity .22s ease, transform .22s ease;
     }
     .chat-popup.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
-    .chat-popup .chat-messages { flex: 1; min-height: 0; max-height: none; }
-    .chat-close-btn {
-      width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--panel-2); color: var(--text-dim); cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem;
-    }
-    .chat-close-btn:hover { color: var(--text-strong); border-color: var(--border-strong); }
-    .btn-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    button.ctrl-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; padding: 6px 8px;
-      border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--panel-2); color: var(--text);
-      font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background .12s, border-color .12s;
-    }
-    button.ctrl-btn:hover { border-color: var(--border-strong); background: var(--hover); }
-    button.ctrl-btn:active { transform: translateY(1px); }
-    .led { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
-    .led.g { background: #3fb96f; } .led.y { background: #e0a531; } .led.r { background: #f0534d; }
-    .led.o { border: 1.5px solid var(--text-faint); }
-    button.ctrl-btn.scn { flex-direction: column; gap: 0; align-items: flex-start; padding: 8px 10px; text-align: left; }
-    button.ctrl-btn.scn small { font-size: 0.68rem; color: var(--text-faint); font-weight: 400; }
-    button.ctrl-btn.scn.danger { border-color: color-mix(in srgb, var(--crit) 40%, var(--border)); }
-    button.ctrl-btn.scn.danger:hover { background: var(--crit-bg); }
 
-    /* Event log */
-    .tab-header { display: flex; gap: 2px; }
-    .tab-btn { height: 30px; padding: 0 12px; border: 0; border-radius: var(--r-sm); background: transparent; color: var(--text-dim); font-size: 0.82rem; font-weight: 500; cursor: pointer; }
-    .tab-btn:hover { color: var(--text); background: var(--hover); }
-    .tab-btn.active { color: var(--text-strong); background: var(--panel-2); font-weight: 600; box-shadow: 0 0 0 1px var(--border); }
-    .log-box { max-height: 280px; overflow-y: auto; font-size: 0.78rem; }
-    .log-line, .log-head { display: grid; grid-template-columns: 74px 96px 230px minmax(0,1fr); gap: 12px; align-items: center; padding: 7px 16px; }
-    .log-line { border-bottom: 1px solid var(--border); color: var(--text-dim); }
-    .log-line:last-child { border-bottom: 0; }
-    .log-line:hover { background: var(--hover); }
-    .log-line.empty { display: block; padding: 18px 16px; color: var(--text-faint); }
-    .log-line .t { font-family: var(--num); font-variant-numeric: tabular-nums; color: var(--text-faint); }
-    .log-line .topic { font-family: var(--mono); font-size: 0.72rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .log-line .payload { font-family: var(--mono); font-size: 0.72rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .log-head { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-faint); border-bottom: 1px solid var(--border); background: var(--panel-2); }
-
-    footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.74rem; color: var(--text-faint); padding-top: 4px; }
-
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
-
-    /* ================= Responsive ================= */
-    @media (max-width: 1280px) { .grid-2 { grid-template-columns: minmax(0,1fr) 300px; } }
-    @media (max-width: 1100px) {
-      .kpis { grid-template-columns: repeat(2, 1fr); }
-      .grid-2, .grid-ops { grid-template-columns: 1fr; }
+    .chat-head {
+      padding: 15px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card);
     }
-    @media (max-width: 900px) {
-      .shell { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .m-brand { display: flex; }
-      .crumbs { display: none; }
-      .topbar { padding: 0 14px; }
-      .content { padding: 16px 14px 32px; }
-      .metrics { grid-template-columns: repeat(3, 1fr); }
-      .metric:nth-child(3) { border-right: 0; }
-      .metric:nth-child(n+4) { border-top: 1px solid var(--border); }
-      .log-line, .log-head { grid-template-columns: 64px 84px minmax(0,1fr); }
-      .log-line .payload, .log-head .ph { display: none; }
+    .chat-head-left { display: flex; align-items: center; gap: 10px; }
+    .chat-ava {
+      width: 34px; height: 34px; border-radius: 50%; background: var(--brand); color: #fff;
+      display: grid; place-items: center;
     }
-    @media (max-width: 560px) {
-      .live .upd, .btn .lbl { display: none; }
-      .page-head h1 { font-size: 1.2rem; }
-      .seg { width: 100%; }
-      .profile-btn { flex: 1; justify-content: center; padding: 0 6px; }
-      .profile-btn .range { display: none; }
-      .kpi { padding: 12px 14px; }
-      .kpi-val .big-number, .kpi-val .v { font-size: 1.5rem; }
-      .kpi-foot span:last-child { display: none; }
-      .metrics { grid-template-columns: repeat(2, 1fr); }
-      .metric { border-right: 1px solid var(--border) !important; border-top: 1px solid var(--border); }
-      .metric:nth-child(-n+2) { border-top: 0; }
-      .metric:nth-child(2n) { border-right: 0 !important; }
-      .metric:last-child { grid-column: span 2; border-right: 0 !important; }
-      .btn-row { grid-template-columns: repeat(2, 1fr); }
-      .chart-wrap { height: 230px; }
-      .chat-messages { height: 300px; }
+    .chat-head h3 { font-size: 0.96rem; font-weight: 700; line-height: 1.15; }
+    .chat-head small { font-size: 0.74rem; color: var(--ok); display: flex; align-items: center; gap: 5px; font-weight: 600; }
+    .chat-head small i { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); display: inline-block; }
+    .chat-close {
+      width: 30px; height: 30px; border-radius: 50%; border: 0;
+      background: var(--card-2); color: var(--text-dim); cursor: pointer; font-size: 0.88rem;
     }
-    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    .chat-close:hover { color: var(--text); }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px 14px;
+      background: var(--bg);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .bubble-row { display: flex; flex-direction: column; max-width: 82%; }
+    .bubble-row.user { align-self: flex-end; align-items: flex-end; }
+    .bubble-row.ai { align-self: flex-start; align-items: flex-start; }
+
+    .msg {
+      padding: 10px 14px; font-size: 0.88rem; line-height: 1.5;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .msg.user {
+      background: var(--bubble-user); color: #fff;
+      border-radius: 18px 18px 4px 18px;
+      box-shadow: 0 2px 8px rgba(140, 24, 28, 0.22);
+    }
+    .msg.ai {
+      background: var(--bubble-ai); color: var(--bubble-ai-text);
+      border-radius: 18px 18px 18px 4px;
+    }
+    .msg-guard {
+      margin-top: 4px; font-size: 0.72rem; font-weight: 700; color: var(--crit); padding: 0 4px;
+    }
+
+    /* Bouncing ... Typing Indicator Bubble */
+    .typing-dots { display: inline-flex; align-items: center; gap: 4px; padding: 4px 2px; }
+    .typing-dots i {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim);
+      animation: bounceDot 1.2s infinite ease-in-out;
+    }
+    .typing-dots i:nth-child(2) { animation-delay: 0.16s; }
+    .typing-dots i:nth-child(3) { animation-delay: 0.32s; }
+    @keyframes bounceDot {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+      40% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    .chat-foot { padding: 10px 12px 12px; background: var(--card); border-top: 1px solid var(--border); }
+    .quick-prompts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .qp-btn {
+      padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card-2); color: var(--text-dim); font-family: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer;
+    }
+    .qp-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input {
+      flex: 1; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card-2); color: var(--text); font-family: inherit; font-size: 0.88rem; outline: none;
+    }
+    .chat-input:focus { border-color: var(--apple-blue); background: var(--card); }
+    .send-btn {
+      padding: 0 18px; border-radius: 999px; border: 0; background: var(--brand); color: #fff;
+      font-family: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer;
+    }
+    .send-btn:disabled { opacity: 0.45; cursor: wait; }
   </style>
 </head>
 <body>
-<div class="shell">
 
-  <!-- ================= Sidebar ================= -->
-  <aside class="sidebar">
-    <div class="sb-brand">
-      <img data-logo id="brand-logo-img" src="logo_dark.png" alt="">
-      <div><b>ColdChain Ops</b><span>AIoT Command Center</span></div>
-    </div>
-    <nav class="sb-nav">
-      <div class="sb-group">Monitor</div>
-      <a class="sb-link active" href="#overview">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-        ภาพรวม <span class="count" id="nav-alarm-count">1</span>
-      </a>
-      <a class="sb-link" href="#trend">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
-        แนวโน้มอุณหภูมิ
-      </a>
-      <div class="sb-group">Operations</div>
-      <a class="sb-link" href="#copilot">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        AI Copilot
-      </a>
-      <a class="sb-link" href="#control">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
-        ควบคุมอุปกรณ์
-      </a>
-      <a class="sb-link" href="#events">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-        บันทึกเหตุการณ์
-      </a>
-      <div class="sb-group">Reports</div>
-      <a class="sb-link" href="/api/export.csv" download>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>
-        GMP Audit (CSV)
-      </a>
-    </nav>
-
-    <div class="sb-device">
-      <div class="sb-device-head"><b>อุปกรณ์</b><span class="tag ok" id="dev-state">ONLINE</span></div>
-      <div class="kv"><span>Node</span><span class="mono" id="dev-node">cucumber-ris-01</span></div>
-      <div class="kv"><span>บอร์ด</span><span>Cucumber RIS</span></div>
-      <div class="kv"><span>Broker</span><span class="mono" id="dev-broker">broker.emqx.io</span></div>
-      <div class="kv"><span>ข้อมูลสะสม</span><span class="num" id="dev-count">—</span></div>
-    </div>
-    <div class="sb-user">
-      <div class="avatar">CS</div>
-      <div><b>Chanapa S.</b><span>Plant Engineer · CN466</span></div>
-    </div>
-  </aside>
-
-  <!-- ================= Main ================= -->
-  <div class="main">
-    <header class="topbar">
-      <div class="m-brand"><img data-logo src="logo_dark.png" alt="">ColdChain Ops</div>
-      <div class="crumbs">
-        <span>TSE Lab</span><span class="sep">/</span>
-        <span id="crumb-site">Cold Chain</span><span class="sep">/</span>
-        <b id="crumb-node">cucumber-ris-01</b>
+  <!-- Frosted Apple-Style Top Nav -->
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="nav-brand">
+        <img id="brand-logo-img" src="logo_light.png" alt="Logo">
+        <span>ColdChain Ops</span>
       </div>
-      <div class="top-actions">
-        <div class="live" id="live-box"><span class="dot"></span><b id="mqtt-status-pill">LIVE</b><span class="upd" id="last-update">กำลังเชื่อมต่อ…</span></div>
-        <a class="btn" href="/api/export.csv" download title="ดาวน์โหลดบันทึก GMP (CSV)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
-          <span class="lbl">Export CSV</span>
-        </a>
-        <button class="btn icon" onclick="toggleTheme()" title="สลับธีม สว่าง/มืด" aria-label="สลับธีม">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-        </button>
+      <div class="nav-right">
+        <span class="live-chip"><i></i><span id="mqtt-status-pill">LIVE</span></span>
+        <a class="nav-btn" href="/api/export.csv" download>📥 CSV</a>
+        <button class="nav-btn" onclick="toggleTheme()">🌓 ธีม</button>
       </div>
-    </header>
+    </div>
+  </nav>
 
-    <main class="content">
-      <!-- Page heading + facility profile -->
-      <section class="page-head" id="overview">
+  <main class="page">
+    <!-- Apple Store Two-Tone Hero Headline + Segmented Mode Switcher -->
+    <section class="hero-head">
+      <h1 class="hero-title">ColdChain Ops. <span>เฝ้าระวังอุณหภูมิอัจฉริยะ</span></h1>
+      <div class="segmented">
+        <button id="prof-coldchain" class="seg-btn active" onclick="switchProfile('coldchain')">❄️ ตู้แช่ยา</button>
+        <button id="prof-server" class="seg-btn" onclick="switchProfile('server')">🖥️ ห้อง Server</button>
+        <button id="prof-room" class="seg-btn" onclick="switchProfile('room')">🧪 ห้องจริง</button>
+      </div>
+    </section>
+
+    <!-- Clean Visual Status Strip -->
+    <section id="hero-banner" class="status-strip">
+      <div class="status-left">
+        <div id="hero-icon" class="status-orb">🟢</div>
         <div>
-          <h1>ภาพรวมการเฝ้าระวัง</h1>
-          <p id="page-sub">Cold Chain (ตู้แช่ยา/วัคซีน GMP) · ตรวจวัดแบบเรียลไทม์</p>
+          <h2 id="hero-heading">ระบบทำงานปกติ</h2>
+          <p id="hero-desc">เซ็นเซอร์ทุกตัวอยู่ในเกณฑ์ปลอดภัย</p>
         </div>
-        <div class="seg profile-btns" role="tablist" aria-label="โปรไฟล์สถานที่">
-          <button id="prof-coldchain" class="profile-btn active" onclick="switchProfile('coldchain')">Cold Chain <span class="range">2–8°C</span></button>
-          <button id="prof-server" class="profile-btn" onclick="switchProfile('server')">Server Room <span class="range">18–24°C</span></button>
-          <button id="prof-room" class="profile-btn" onclick="switchProfile('room')">Live Room <span class="range">20–36.5°C</span></button>
-        </div>
-      </section>
+      </div>
+      <span id="hero-badge" class="status-pill">OPTIMAL</span>
+    </section>
 
-      <!-- Alarm strip -->
-      <div id="hero-banner" class="hero-banner" role="status">
-        <div class="hero-sev" id="hero-sev">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <!-- 4 Visual Activity-Ring & Bar Cards -->
+    <section class="bento-4">
+      <!-- Ring 1: Temperature -->
+      <div class="bento-card">
+        <div class="bento-label">🌡️ อุณหภูมิ</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle id="ring-temp" class="ring-fg" cx="60" cy="60" r="52" stroke="var(--ok)"/>
+          </svg>
+          <div class="ring-center">
+            <span id="temp-val" class="ring-num">--</span>
+            <span class="ring-unit">°C</span>
+          </div>
         </div>
-        <div class="hero-content">
-          <h2><span id="hero-icon"></span><span id="hero-heading">สภาวะความเย็นปกติ (Normal Operation)</span></h2>
-          <p id="hero-desc">อุณหภูมิอยู่ในเกณฑ์ปลอดภัยมาตรฐาน GMP / FDA (2.0°C – 8.0°C)</p>
+        <div id="temp-tag" class="bento-foot">เกณฑ์ 2.0 – 8.0 °C</div>
+      </div>
+
+      <!-- Ring 2: Humidity -->
+      <div class="bento-card">
+        <div class="bento-label">💧 ความชื้น</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle id="ring-humid" class="ring-fg" cx="60" cy="60" r="52" stroke="var(--apple-blue)"/>
+          </svg>
+          <div class="ring-center">
+            <span id="humid-val" class="ring-num">--</span>
+            <span class="ring-unit">%RH</span>
+          </div>
         </div>
-        <div class="hero-right">
-          <span id="hero-since"></span>
-          <div id="hero-badge" class="hero-badge" style="background: var(--ok-bg); color: var(--ok);">OPTIMAL</div>
+        <div id="humid-tag" class="bento-foot">เหมาะสม 45 – 75%</div>
+      </div>
+
+      <!-- Ring 3: Health Score -->
+      <div class="bento-card">
+        <div class="bento-label">❤️ สุขภาพระบบ</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle id="ring-health" class="ring-fg" cx="60" cy="60" r="52" stroke="var(--ok)"/>
+          </svg>
+          <div class="ring-center">
+            <span id="m-health" class="ring-num">100</span>
+            <span class="ring-unit">/ 100</span>
+          </div>
+        </div>
+        <div id="m-ettf" class="bento-foot">แนวโน้มคงที่</div>
+      </div>
+
+      <!-- Visual Bars 4: Vibration & Pressure -->
+      <div class="bento-card" style="justify-content: space-between;">
+        <div class="bento-label">📡 แรงสั่น &amp; ความดัน</div>
+        <div class="dual-visual">
+          <div>
+            <div class="bar-item-top"><span>📳 แรงสั่น</span><span id="m-vib">0.00 g</span></div>
+            <div class="bar-track"><div id="bar-vib" class="bar-fill" style="width:8%; background: var(--warn);"></div></div>
+          </div>
+          <div>
+            <div class="bar-item-top"><span>🧭 ความดัน</span><span id="m-press">1013 hPa</span></div>
+            <div class="bar-track"><div id="bar-press" class="bar-fill" style="width:65%; background: var(--apple-blue);"></div></div>
+          </div>
+        </div>
+        <div id="m-led" class="bento-foot">💡 ไฟบอร์ด: SAFE</div>
+      </div>
+    </section>
+
+    <!-- Full-Width Interactive Hover Chart -->
+    <section class="card-full">
+      <div class="card-top">
+        <h3>📈 กราฟอุณหภูมิเรียลไทม์</h3>
+        <span id="chart-band-tag" class="chip-subtle">ช่วงปลอดภัย: 2.0 – 8.0°C</span>
+      </div>
+      <div class="chart-wrap"><canvas id="liveChart"></canvas></div>
+    </section>
+
+    <!-- Visual Tile Controls -->
+    <section class="bento-2">
+      <div class="card-full">
+        <div class="card-top"><h3>💡 ไฟสถานะบนบอร์ด</h3></div>
+        <div class="tile-row">
+          <button class="tile-btn" onclick="sendLed('safe')"><span class="tile-dot g"></span>เขียว</button>
+          <button class="tile-btn" onclick="sendLed('warning')"><span class="tile-dot y"></span>เหลือง</button>
+          <button class="tile-btn" onclick="sendLed('critical')"><span class="tile-dot r"></span>แดง</button>
+          <button class="tile-btn" onclick="sendLed('off')"><span class="tile-dot o"></span>ปิดไฟ</button>
         </div>
       </div>
 
-      <!-- Primary KPIs -->
-      <div class="kpis">
-        <div class="panel kpi">
-          <div class="kpi-top"><span>อุณหภูมิ</span><span class="src">HTS221</span></div>
-          <div class="kpi-val"><span id="temp-val" class="big-number">4.2</span><span class="u">°C</span></div>
-          <div class="meter"><div class="band" id="temp-band"></div><div class="fill" id="temp-bar"></div></div>
-          <div class="kpi-foot"><span id="temp-tag">ช่วงปลอดภัย: 2.0 – 8.0°C</span><span>สเกล 0–45°C</span></div>
-        </div>
-        <div class="panel kpi">
-          <div class="kpi-top"><span>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
-          <div class="kpi-val"><span id="humid-val" class="big-number">60.0</span><span class="u">%RH</span></div>
-          <div class="meter"><div class="band" id="humid-band"></div><div class="fill" id="humid-bar"></div></div>
-          <div class="kpi-foot"><span id="humid-tag">เป้าหมาย: 45% – 75%</span><span>สเกล 0–100%</span></div>
-        </div>
-        <div class="panel kpi">
-          <div class="kpi-top"><span>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
-          <div class="kpi-val"><span id="m-press" class="v">1013.2<span class="u">hPa</span></span></div>
-          <div class="meter"><div class="fill" id="press-bar"></div></div>
-          <div class="kpi-foot"><span>อ้างอิง 1013.25 hPa</span><span>สเกล 950–1050</span></div>
-        </div>
-        <div class="panel kpi">
-          <div class="kpi-top"><span>แรงสั่นสะเทือน</span><span class="src">MPU6050</span></div>
-          <div class="kpi-val"><span id="m-vib" class="v">0.020<span class="u">g</span></span></div>
-          <div class="meter"><div class="fill" id="vib-bar"></div><div class="mark" style="left:50%"></div></div>
-          <div class="kpi-foot"><span id="vib-tag">เกณฑ์เตือน 0.35 g</span><span id="shock-tag"></span></div>
+      <div class="card-full">
+        <div class="card-top"><h3>⚡ จำลองสถานการณ์</h3></div>
+        <div class="tile-row">
+          <button class="tile-btn" onclick="triggerScenario('normal')"><span class="tile-ico">🟢</span>ปกติ</button>
+          <button class="tile-btn" onclick="triggerScenario('warning')"><span class="tile-ico">🟡</span>แอร์แผ่ว</button>
+          <button class="tile-btn" onclick="triggerScenario('failure')"><span class="tile-ico">🚨</span>คอมฯ ดับ</button>
+          <button class="tile-btn" onclick="triggerScenario('door_slam')"><span class="tile-ico">📳</span>กระแทก</button>
         </div>
       </div>
+    </section>
 
-      <!-- AI analytics row -->
-      <div class="panel metrics">
-        <div class="metric"><div class="l">Health Score</div><div id="m-health" class="mini-val" style="color: var(--ok);">100 / 100</div><div class="meter" style="margin-top:7px"><div class="fill" id="health-bar" style="width:100%; background: var(--ok)"></div></div></div>
-        <div class="metric"><div class="l">ความชันอุณหภูมิ (AI)</div><div class="mini-val"><span id="slope-val">+0.00</span> <span class="s">°C/step</span></div><div class="s" id="slope-tag">ความชันคงที่</div></div>
-        <div class="metric"><div class="l">เวลาก่อนเกินเกณฑ์</div><div id="m-ettf" class="mini-val">ปลอดภัย (∞)</div><div class="s">ETTF (พยากรณ์)</div></div>
-        <div class="metric"><div class="l">Z-Score</div><div id="m-zscore" class="mini-val">0.00</div><div class="s">เทียบค่าเฉลี่ยเคลื่อนที่</div></div>
-        <div class="metric"><div class="l">ไฟสถานะบนบอร์ด</div><div id="m-led" class="mini-val" style="color: var(--ok);">SAFE</div><div class="s">NeoPixel RGB</div></div>
+    <!-- Compact Log Card -->
+    <section class="card-full">
+      <div class="card-top" style="margin-bottom:0;">
+        <div class="log-tabs">
+          <button id="tab-mqtt" class="log-tab active" onclick="switchLogTab('mqtt')">📡 MQTT</button>
+          <button id="tab-audit" class="log-tab" onclick="switchLogTab('audit')">🛡️ Audit Log</button>
+        </div>
       </div>
-
-      <!-- Trend + asset details -->
-      <div class="grid-2">
-        <section class="panel" id="trend">
-          <div class="panel-head">
-            <h3>แนวโน้มอุณหภูมิ<small>25 จุดล่าสุด</small></h3>
-            <div class="legend"><span><i class="line"></i>อุณหภูมิ</span><span><i class="band"></i><span id="chart-band-tag">Safe: 2–8°C</span></span></div>
-          </div>
-          <div class="panel-body" style="padding-bottom:8px">
-            <div class="chart-wrap"><canvas id="liveChart"></canvas></div>
-          </div>
-          <div class="chart-stats">
-            <span>ต่ำสุด<b id="st-min">—</b></span>
-            <span>สูงสุด<b id="st-max">—</b></span>
-            <span>เฉลี่ย<b id="st-avg">—</b></span>
-            <span>ล่าสุด<b id="st-last">—</b></span>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="panel-head"><h3>ข้อมูลสินทรัพย์</h3><span class="tag mono" id="as-scn">—</span></div>
-          <div class="panel-body" style="padding-top:4px;padding-bottom:4px">
-            <dl class="dl">
-              <dt>Node ID</dt><dd class="mono" id="as-node">cucumber-ris-01</dd>
-              <dt>โปรไฟล์</dt><dd id="as-profile" title="">Cold Chain</dd>
-              <dt>ช่วงอุณหภูมิ</dt><dd class="num" id="as-range">2.0 – 8.0 °C</dd>
-              <dt>ช่วงความชื้น</dt><dd class="num" id="as-humid">45 – 75 %</dd>
-              <dt>เซ็นเซอร์</dt><dd><span id="sensor-chips" class="sensor-chips"><span class="sensor-chip">HTS221</span><span class="sensor-chip">BMP280</span><span class="sensor-chip">MPU6050</span></span></dd>
-              <dt>ค่าเฉลี่ยเคลื่อนที่</dt><dd class="num" id="as-mean">—</dd>
-              <dt>ส่วนเบี่ยงเบน (σ)</dt><dd class="num" id="as-std">—</dd>
-              <dt>อ่านค่าล่าสุด</dt><dd class="num" id="as-ts">—</dd>
-            </dl>
-          </div>
-        </section>
+      <div id="log-box" class="log-list">
+        <div class="log-row">กำลังรอรับข้อมูลจากบอร์ด...</div>
       </div>
+    </section>
 
-      <!-- Device controls & crisis simulator (full width) -->
-      <section class="panel" id="control">
-        <div class="panel-head"><h3>ควบคุมอุปกรณ์ &amp; จำลองสถานการณ์</h3><span class="tag mono">tse/cn466/chanapa/cmd</span></div>
-        <div class="panel-body ctrl-grid-2">
-          <div class="ctrl-sec">
-            <h4>ไฟสถานะ NeoPixel RGB</h4>
-            <p>ส่งคำสั่งผ่าน MQTT ไปยังบอร์ดจริง คำสั่งที่ขัดกับสถานะวิกฤตจะถูก Guardrails ปฏิเสธ</p>
-            <div class="btn-row">
-              <button class="ctrl-btn" onclick="sendLed('safe')"><span class="led g"></span>เขียว</button>
-              <button class="ctrl-btn" onclick="sendLed('warning')"><span class="led y"></span>เหลือง</button>
-              <button class="ctrl-btn" onclick="sendLed('critical')"><span class="led r"></span>แดง</button>
-              <button class="ctrl-btn" onclick="sendLed('off')"><span class="led o"></span>ปิดไฟ</button>
-            </div>
-          </div>
-          <div class="ctrl-sec">
-            <h4>จำลองสถานการณ์ (Crisis Simulator)</h4>
-            <p>ป้อนข้อมูลผิดปกติเข้า AI Engine เพื่อทดสอบการแจ้งเตือนและการตอบสนอง</p>
-            <div class="btn-row">
-              <button class="ctrl-btn scn" onclick="triggerScenario('normal')">ปกติ<small>Normal</small></button>
-              <button class="ctrl-btn scn" onclick="triggerScenario('warning')">แอร์แผ่ว<small>Cooling degraded</small></button>
-              <button class="ctrl-btn scn danger" onclick="triggerScenario('failure')">คอมฯ ดับ<small>Compressor failure</small></button>
-              <button class="ctrl-btn scn" onclick="triggerScenario('door_slam')">กระแทก<small>Shock / door slam</small></button>
-            </div>
-          </div>
+    <footer>
+      <span>วิชา: CN466 Internet of Things</span>
+      <span>ผู้พัฒนา: ชนาภา สดุดี</span>
+    </footer>
+  </main>
+
+  <!-- Pure Circular Floating Chat Icon (NO Text!) -->
+  <button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="AI assistance" title="AI assistance">
+    <span class="fab-online"></span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </svg>
+  </button>
+
+  <!-- Real Chat-Bubble Popup: AI assistance -->
+  <section id="chat-popup" class="chat-popup" aria-label="AI assistance">
+    <div class="chat-head">
+      <div class="chat-head-left">
+        <div class="chat-ava">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
-      </section>
-
-      <!-- Event log -->
-      <section class="panel" id="events">
-        <div class="panel-head">
-          <div class="tab-header">
-            <button id="tab-mqtt" class="tab-btn active" onclick="switchLogTab('mqtt')">MQTT Packets</button>
-            <button id="tab-audit" class="tab-btn" onclick="switchLogTab('audit')">Guardrail Audit Log</button>
-          </div>
-          <span class="tag" id="log-count">—</span>
+        <div>
+          <h3>AI assistance</h3>
+          <small><i></i>ออนไลน์</small>
         </div>
-        <div class="log-head" id="log-head"><span>เวลา</span><span>ทิศทาง</span><span>Topic</span><span class="ph">Payload</span></div>
-        <div id="log-box" class="log-box">
-          <div class="log-line empty">กำลังรอรับข้อมูล MQTT จากบอร์ด Cucumber RIS…</div>
-        </div>
-      </section>
-
-      <footer>
-        <span>วิชา: CN466 Internet of Things</span>
-        <span>ผู้พัฒนา: ชนาภา สดุดี</span>
-      </footer>
-    </main>
-  </div>
-</div>
-
-<!-- Floating Bottom-Right AI Chat Widget -->
-<button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="เปิดแชตผู้ช่วย AI" title="คุยกับผู้ช่วย AI">
-  <span class="fab-dot"></span>
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-  </svg>
-</button>
-
-<section id="chat-popup" class="chat-popup" aria-label="ผู้ช่วย AI">
-  <div class="panel-head">
-    <h3>ผู้ช่วย AI</h3>
-    <button class="chat-close-btn" onclick="toggleChatPopup(false)" title="ปิดหน้าต่างแชต">✕</button>
-  </div>
-  <div id="chat-messages" class="chat-messages">
-    <div class="msg ai"><span class="who">ผู้ช่วย AI</span>สวัสดีครับ มีอะไรให้ช่วยเช็กอุณหภูมิหรือสั่งงานบอร์ด บอกได้เลยครับ</div>
-  </div>
-  <div class="chat-foot">
-    <div class="quick-prompts">
-      <button class="qp-btn" onclick="sendQuick('ตอนนี้สถานะเป็นยังไงบ้าง')">เช็กสถานะ</button>
-      <button class="qp-btn" onclick="sendQuick('ช่วยแนะนำวิธีแก้ปัญหาตอนนี้หน่อย')">ขอคำแนะนำ</button>
-      <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">ไฟแดง</button>
-      <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">ปิดไฟ</button>
+      </div>
+      <button class="chat-close" onclick="toggleChatPopup(false)" aria-label="ปิด">✕</button>
     </div>
-    <div class="chat-input-row">
-      <input id="chat-input" class="chat-input" type="text" autocomplete="off" placeholder="พิมพ์คุยได้เลย..." onkeydown="if(event.key==='Enter') sendChat()">
-      <button id="chat-send-btn" class="send-btn" onclick="sendChat()">ส่ง</button>
+
+    <div id="chat-messages" class="chat-messages">
+      <div class="bubble-row ai"><div class="msg ai">สวัสดีครับ มีอะไรให้ช่วยเช็กอุณหภูมิหรือสั่งงานบอร์ด บอกได้เลยครับ</div></div>
     </div>
-  </div>
-</section>
 
-<script>
-  const $ = (id) => document.getElementById(id);
-  const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  const clamp = (v, a = 0, b = 100) => Math.max(a, Math.min(b, v));
-  const fmtClock = (d) => d.toLocaleTimeString('en-GB', { hour12: false });
-  function escHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  }
-  function toggleChatPopup(forceOpen) {
-    const popup = $('chat-popup');
-    if (!popup) return;
-    const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !popup.classList.contains('open');
-    popup.classList.toggle('open', willOpen);
-    if (willOpen) setTimeout(() => $('chat-input')?.focus(), 120);
-  }
-  document.querySelector('a[href="#copilot"]')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleChatPopup(true);
-  });
-  const ICONS = {
-    ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
-    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>',
-    crit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5h.01"/></svg>'
-  };
+    <div class="chat-foot">
+      <div class="quick-prompts">
+        <button class="qp-btn" onclick="sendQuick('ตอนนี้สถานะเป็นยังไงบ้าง')">เช็กสถานะ</button>
+        <button class="qp-btn" onclick="sendQuick('ช่วยแนะนำวิธีแก้ปัญหาตอนนี้หน่อย')">ขอคำแนะนำ</button>
+        <button class="qp-btn" onclick="sendQuick('เปิดไฟสีแดงฉุกเฉิน')">ไฟแดง</button>
+        <button class="qp-btn" onclick="sendQuick('ปิดไฟ')">ปิดไฟ</button>
+      </div>
+      <div class="chat-input-row">
+        <input id="chat-input" class="chat-input" type="text" autocomplete="off" placeholder="พิมพ์ข้อความ..." onkeydown="if(event.key==='Enter') sendChat()">
+        <button id="chat-send-btn" class="send-btn" onclick="sendChat()">ส่ง</button>
+      </div>
+    </div>
+  </section>
 
-  // ---------- Theme + Telegram Mini App chrome ----------
-  // telegram-web-app.js defines Telegram.WebApp in every browser; initData is only set inside Telegram
-  const tg = window.Telegram?.WebApp?.initData ? window.Telegram.WebApp : null;
-  function applyLogo(theme) {
-    document.querySelectorAll('[data-logo]').forEach(img => img.src = theme === 'dark' ? 'logo_dark.png' : 'logo_light.png');
-  }
-  function syncTelegramChrome(theme) {
-    if (!tg) return;
-    const bg = theme === 'light' ? '#f4f5f7' : '#0e1014';
-    if (tg.setHeaderColor) tg.setHeaderColor(bg);
-    if (tg.setBackgroundColor) tg.setBackgroundColor(bg);
-  }
-  function setTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-    applyLogo(theme);
-    syncTelegramChrome(theme);
-  }
-  try {
-    const saved = localStorage.getItem('cc-theme');
-    if (saved === 'light' || saved === 'dark') setTheme(saved);
-  } catch (e) {}
-  if (tg) {
-    tg.ready(); tg.expand();
-    if (tg.colorScheme === 'light') setTheme('light');
-    syncTelegramChrome(document.documentElement.getAttribute('data-theme'));
-  }
-  function haptic(type = 'medium') { tg?.HapticFeedback?.impactOccurred?.(type); }
-  function hapticNotify(type = 'error') { tg?.HapticFeedback?.notificationOccurred?.(type); }
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const escHtml = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-  function toggleTheme() {
-    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    try { localStorage.setItem('cc-theme', next); } catch (e) {}
-    applyChartTheme();
-  }
-
-  // Linear meters (replace the old SVG rings; same call signature)
-  function setGauge(id, pct) {
-    const el = $(id);
-    if (el) el.style.width = clamp(pct) + '%';
-  }
-  function setBand(id, lo, hi, scale) {
-    const el = $(id);
-    if (!el) return;
-    el.style.left = clamp(lo / scale * 100) + '%';
-    el.style.width = clamp((hi - lo) / scale * 100) + '%';
-  }
-
-  // ---------- Chart ----------
-  const ctx = $('liveChart').getContext('2d');
-  let currentSafeRange = [2.0, 8.0];
-  Chart.defaults.font.family = "'Inter', 'Sarabun', sans-serif";
-
-  const liveChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [
-        { label: 'อุณหภูมิ', data: [], borderColor: cssVar('--chart-line'), borderWidth: 2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 4, order: 0 },
-        { label: 'Max Limit', data: [], borderColor: cssVar('--ok'), borderDash: [4, 4], borderWidth: 1, pointRadius: 0, pointHoverRadius: 0, fill: '+1', backgroundColor: cssVar('--chart-band'), order: 1 },
-        { label: 'Min Limit', data: [], borderColor: cssVar('--ok'), borderDash: [4, 4], borderWidth: 1, pointRadius: 0, pointHoverRadius: 0, fill: false, order: 1 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: false },
-        tooltip: { backgroundColor: '#1b1f25', borderColor: '#323843', borderWidth: 1, padding: 10, titleColor: '#f3f5f8', bodyColor: '#dde1e7', displayColors: false,
-          callbacks: { label: (c) => `${c.dataset.label}: ${Number(c.parsed.y).toFixed(2)} °C` } }
-      },
-      scales: {
-        x: { grid: { display: false }, border: { color: cssVar('--chart-grid') }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 }, maxRotation: 0, autoSkipPadding: 24 } },
-        y: { grid: { color: cssVar('--chart-grid') }, border: { display: false }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 }, padding: 8 } }
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready(); tg.expand();
+      if (tg.colorScheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        $('brand-logo-img').src = 'logo_dark.png';
       }
     }
-  });
+    const haptic = (t = 'medium') => tg?.HapticFeedback?.impactOccurred?.(t);
 
-  function applyChartTheme() {
-    const ds = liveChart.data.datasets;
-    ds[0].borderColor = ds[0].pointHoverBackgroundColor = cssVar('--chart-line');
-    ds[1].borderColor = ds[2].borderColor = cssVar('--ok');
-    ds[1].backgroundColor = cssVar('--chart-band');
-    const tick = cssVar('--chart-tick'), grid = cssVar('--chart-grid');
-    liveChart.options.scales.x.ticks.color = tick;
-    liveChart.options.scales.y.ticks.color = tick;
-    liveChart.options.scales.y.grid.color = grid;
-    liveChart.options.scales.x.border.color = grid;
-    liveChart.update('none');
-  }
-  applyChartTheme();
+    function toggleTheme() {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      $('brand-logo-img').src = next === 'dark' ? 'logo_dark.png' : 'logo_light.png';
+      applyChartTheme();
+    }
 
-  // ---------- Live status ----------
-  let lastUpdate = null, lastRisk = null, riskSince = null;
-  setInterval(() => {
-    if (!lastUpdate) return;
-    const s = Math.round((Date.now() - lastUpdate) / 1000);
-    $('last-update').innerText = s < 3 ? 'อัปเดตเมื่อสักครู่' : `อัปเดต ${s} วินาทีที่แล้ว`;
-  }, 1000);
+    function toggleChatPopup(forceOpen) {
+      const popup = $('chat-popup');
+      const willOpen = typeof forceOpen === 'boolean' ? forceOpen : !popup.classList.contains('open');
+      popup.classList.toggle('open', willOpen);
+      if (willOpen) setTimeout(() => $('chat-input')?.focus(), 120);
+    }
 
-  let activeLogTab = 'mqtt';
-  function switchLogTab(tab) {
-    activeLogTab = tab;
-    $('tab-mqtt').classList.toggle('active', tab === 'mqtt');
-    $('tab-audit').classList.toggle('active', tab === 'audit');
-    $('log-head').innerHTML = tab === 'mqtt'
-      ? '<span>เวลา</span><span>ทิศทาง</span><span>Topic</span><span class="ph">Payload</span>'
-      : '<span>เวลา</span><span>ผลตรวจ</span><span>Engine · Action</span><span class="ph">หมายเหตุ Guardrail</span>';
-    fetchLogs();
-  }
+    // SVG Ring helper (r=52 -> circumference ≈ 326.7)
+    const RING_C = 327;
+    function setRing(id, pct, colorVar) {
+      const el = $(id);
+      if (!el) return;
+      el.style.strokeDashoffset = RING_C - (Math.max(0, Math.min(100, pct)) / 100) * RING_C;
+      if (colorVar) el.style.stroke = colorVar;
+    }
 
-  const unitSpan = (u) => `<span class="u">${u}</span>`;
+    // Interactive Hover Chart.js
+    const ctx = $('liveChart').getContext('2d');
+    let currentSafeRange = [2.0, 8.0];
+    const grad = ctx.createLinearGradient(0, 0, 0, 260);
+    grad.addColorStop(0, 'rgba(0, 113, 227, 0.24)');
+    grad.addColorStop(1, 'rgba(0, 113, 227, 0.0)');
 
-  async function fetchLatest() {
-    try {
-      const res = await fetch('/api/latest');
-      if (!res.ok) return;
-      const data = await res.json();
-      const ai = data.ai_evaluation;
-      if (!ai) return;
-      lastUpdate = Date.now();
-
-      // Connection state
-      if (data.mqtt_connected !== undefined) {
-        const online = !!data.mqtt_connected;
-        $('live-box').classList.toggle('offline', !online);
-        $('mqtt-status-pill').innerText = online ? 'LIVE' : 'OFFLINE';
-        $('dev-state').className = 'tag ' + (online ? 'ok' : 'crit');
-        $('dev-state').innerText = online ? 'ONLINE' : 'OFFLINE';
+    const liveChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'อุณหภูมิ', data: [], borderColor: cssVar('--chart-line'), borderWidth: 2.5, backgroundColor: grad, fill: true, tension: 0.38, pointRadius: 2, pointHoverRadius: 6 },
+          { label: 'เกณฑ์สูงสุด', data: [], borderColor: 'rgba(217, 45, 32, 0.55)', borderDash: [6, 5], borderWidth: 1.4, pointRadius: 0, fill: false },
+          { label: 'เกณฑ์ต่ำสุด', data: [], borderColor: 'rgba(40, 167, 69, 0.45)', borderDash: [6, 5], borderWidth: 1.4, pointRadius: 0, fill: false }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            padding: 12, cornerRadius: 12,
+            callbacks: { label: (c) => ` ${c.dataset.label}: ${Number(c.parsed.y).toFixed(2)} °C` }
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 } } },
+          y: { grid: { color: cssVar('--chart-grid') }, ticks: { color: cssVar('--chart-tick'), font: { size: 11 } } }
+        }
       }
+    });
 
-      currentSafeRange = ai.safe_range || [2.0, 8.0];
-      const prof = (data.profiles || {})[ai.profile] || {};
-      ['coldchain', 'server', 'room'].forEach(p => {
-        $(`prof-${p}`)?.classList.toggle('active', ai.profile === p);
-      });
-      const shortName = { coldchain: 'Cold Chain', server: 'Server Room', room: 'Live Room' }[ai.profile] || ai.profile;
-      $('crumb-site').innerText = shortName;
-      $('page-sub').innerText = `${ai.profile_name} · ตรวจวัดแบบเรียลไทม์`;
-      $('as-profile').innerText = ai.profile_name;
-      $('as-profile').title = ai.profile_name;
-      $('as-range').innerText = `${currentSafeRange[0].toFixed(1)} – ${currentSafeRange[1].toFixed(1)} °C`;
-
-      const t = data.telemetry;
-      if (t) {
-        ['crumb-node', 'dev-node', 'as-node'].forEach(id => $(id).innerText = t.node_id || '—');
-        $('as-scn').innerText = t.scenario || '—';
-        if (t.ts) $('as-ts').innerText = fmtClock(new Date(t.ts));
-      }
-
-      if (ai.sensors && ai.sensors.length) {
-        $('sensor-chips').innerHTML = ai.sensors.map(s => `<span class="sensor-chip">${escHtml(s)}</span>`).join('');
-      }
-
-      const temp = ai.current_temp, humid = ai.current_humid, slope = ai.slope_per_step, risk = ai.risk_level;
-      const riskColor = risk === 'CRITICAL' ? 'var(--crit)' : (risk === 'WARNING' ? 'var(--warn)' : 'var(--ok)');
-
-      // Temperature
-      $('temp-val').innerText = temp.toFixed(1);
-      $('temp-val').style.color = risk === 'NORMAL' ? 'var(--text-strong)' : riskColor;
-      setGauge('temp-bar', (temp / 45) * 100);
-      $('temp-bar').style.background = riskColor;
-      setBand('temp-band', currentSafeRange[0], currentSafeRange[1], 45);
-      $('temp-tag').innerText = `ช่วงปลอดภัย: ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
-      $('chart-band-tag').innerText = `Safe: ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
-
-      // Humidity
-      $('humid-val').innerText = humid.toFixed(1);
-      setGauge('humid-bar', humid);
-      const hMin = prof.humid_min ?? 45, hMax = prof.humid_max ?? 75;
-      setBand('humid-band', hMin, hMax, 100);
-      $('humid-bar').style.background = (humid >= hMin && humid <= hMax) ? 'var(--info)' : 'var(--warn)';
-      $('humid-tag').innerText = `เป้าหมาย: ${hMin}% – ${hMax}%`;
-      $('as-humid').innerText = `${hMin} – ${hMax} %`;
-
-      // Pressure / vibration
-      const press = ai.current_pressure ?? 1013.25;
-      $('m-press').innerHTML = `${press.toFixed(1)}${unitSpan('hPa')}`;
-      setGauge('press-bar', press - 950);
-      const vib = ai.current_vib_g ?? 0, vibWarn = prof.vib_warn ?? 0.35;
-      const vibEl = $('m-vib');
-      vibEl.innerHTML = `${vib.toFixed(3)}${unitSpan('g')}`;
-      vibEl.style.color = ai.shock_detected ? 'var(--crit)' : 'var(--text-strong)';
-      setGauge('vib-bar', (vib / (vibWarn * 2)) * 100);
-      $('vib-bar').style.background = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : 'var(--info)';
-      $('vib-tag').innerText = `เกณฑ์เตือน ${vibWarn} g`;
-      $('shock-tag').innerHTML = ai.shock_detected ? '<span class="tag crit">SHOCK</span>' : '';
-
-      // AI analytics
-      $('slope-val').innerText = `${slope >= 0 ? '+' : ''}${slope.toFixed(2)}`;
-      $('slope-val').style.color = slope > 0.18 ? 'var(--warn)' : '';
-      $('slope-tag').innerText = slope > 0.18 ? 'กำลังไต่ขึ้นเร็ว' : 'ความชันคงที่';
-      const hs = ai.health_score ?? 100;
-      const hsColor = hs >= 80 ? 'var(--ok)' : (hs >= 50 ? 'var(--warn)' : 'var(--crit)');
-      $('m-health').innerText = `${hs} / 100`;
-      $('m-health').style.color = hsColor;
-      setGauge('health-bar', hs);
-      $('health-bar').style.background = hsColor;
-      $('m-ettf').innerText = ai.ettf_seconds != null ? `~${ai.ettf_seconds.toFixed(0)}s` : 'ปลอดภัย (∞)';
-      $('m-ettf').style.color = ai.ettf_seconds != null ? 'var(--warn)' : '';
-      $('m-zscore').innerText = ai.z_score.toFixed(2);
-      $('as-mean').innerText = ai.moving_mean != null ? `${ai.moving_mean.toFixed(2)} °C` : '—';
-      $('as-std').innerText = ai.std_dev != null ? ai.std_dev.toFixed(3) : '—';
-      const ledMode = (data.led_mode || 'safe').toUpperCase();
-      $('m-led').innerText = ledMode;
-      $('m-led').style.color = ledMode === 'CRITICAL' ? 'var(--crit)' : (ledMode === 'WARNING' ? 'var(--warn)' : (ledMode === 'OFF' ? 'var(--text-dim)' : 'var(--ok)'));
-
-      // Alarm strip
-      if (risk !== lastRisk) { lastRisk = risk; riskSince = new Date(); }
-      const hero = $('hero-banner');
-      const badge = $('hero-badge');
-      hero.className = 'hero-banner';
-      $('hero-since').innerText = riskSince ? `ตั้งแต่ ${fmtClock(riskSince)}` : '';
-      $('nav-alarm-count').classList.toggle('show', risk !== 'NORMAL');
-      if (risk === 'CRITICAL') {
-        hero.classList.add('critical');
-        $('hero-sev').innerHTML = ICONS.crit;
-        $('hero-heading').innerText = `วิกฤต (CRITICAL) — ${ai.profile_name}`;
-        $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'อุณหภูมิเกินเกณฑ์ปลอดภัย!';
-        badge.innerText = 'CRITICAL'; badge.style.color = '#fff'; badge.style.background = 'var(--crit)';
-      } else if (risk === 'WARNING') {
-        hero.classList.add('warning');
-        $('hero-sev').innerHTML = ICONS.warn;
-        $('hero-heading').innerText = `เฝ้าระวังล่วงหน้า (PREDICTIVE WARNING)`;
-        $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'ตรวจพบแนวโน้มผิดปกติ';
-        badge.innerText = 'WARNING'; badge.style.color = '#1a1300'; badge.style.background = 'var(--warn)';
-      } else {
-        $('hero-sev').innerHTML = ICONS.ok;
-        $('hero-heading').innerText = `ระบบปกติ (OPTIMAL) — ${ai.profile_name}`;
-        $('hero-desc').innerText = `เซ็นเซอร์ทั้งหมดทำงานเสถียร อยู่ในเกณฑ์ ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
-        badge.innerText = 'OPTIMAL'; badge.style.color = 'var(--ok)'; badge.style.background = 'var(--ok-bg)';
-      }
-    } catch (e) { console.error(e); }
-  }
-
-  async function fetchHistory() {
-    try {
-      const res = await fetch('/api/history?limit=25');
-      if (!res.ok) return;
-      const rows = await res.json();
-      if (!rows.length) return;
-      liveChart.data.labels = rows.map(r => r.ts ? r.ts.substring(11, 19) : '');
-      liveChart.data.datasets[0].data = rows.map(r => r.temp);
-      liveChart.data.datasets[1].data = rows.map(() => currentSafeRange[1]);
-      liveChart.data.datasets[2].data = rows.map(() => currentSafeRange[0]);
+    function applyChartTheme() {
+      liveChart.data.datasets[0].borderColor = cssVar('--chart-line');
+      liveChart.options.scales.x.ticks.color = cssVar('--chart-tick');
+      liveChart.options.scales.y.ticks.color = cssVar('--chart-tick');
+      liveChart.options.scales.y.grid.color = cssVar('--chart-grid');
       liveChart.update('none');
-      const temps = rows.map(r => r.temp).filter(v => typeof v === 'number');
-      if (temps.length) {
-        const f = (v) => `${v.toFixed(2)} °C`;
-        $('st-min').innerText = f(Math.min(...temps));
-        $('st-max').innerText = f(Math.max(...temps));
-        $('st-avg').innerText = f(temps.reduce((a, b) => a + b, 0) / temps.length);
-        $('st-last').innerText = f(temps[temps.length - 1]);
-      }
-    } catch (e) {}
-  }
+    }
 
-  async function fetchHealth() {
-    try {
-      const res = await fetch('/api/health');
-      if (!res.ok) return;
-      const h = await res.json();
-      if (h.mqtt_broker) $('dev-broker').innerText = h.mqtt_broker;
-      if (h.total_readings != null) $('dev-count').innerText = Number(h.total_readings).toLocaleString('en-US') + ' จุด';
-    } catch (e) {}
-  }
+    let activeLogTab = 'mqtt';
+    function switchLogTab(tab) {
+      activeLogTab = tab;
+      $('tab-mqtt').classList.toggle('active', tab === 'mqtt');
+      $('tab-audit').classList.toggle('active', tab === 'audit');
+      fetchLogs();
+    }
 
-  async function fetchLogs() {
-    const box = $('log-box');
-    try {
-      if (activeLogTab === 'mqtt') {
-        const res = await fetch('/api/mqtt-log');
+    async function fetchLatest() {
+      try {
+        const res = await fetch('/api/latest');
+        if (!res.ok) return;
         const data = await res.json();
-        const packets = data.packets || [];
-        $('log-count').innerText = `${packets.length} รายการ`;
-        if (!packets.length) { box.innerHTML = '<div class="log-line empty">ยังไม่มีแพ็กเก็ต MQTT…</div>'; return; }
-        box.innerHTML = packets.slice(0, 15).map(p => {
-          const tx = String(p.dir || '').toUpperCase().startsWith('TX');
-          const payload = escHtml(JSON.stringify(p.payload));
-          return `<div class="log-line"><span class="t">${escHtml((p.ts || '').substring(11, 19))}</span><span><span class="tag ${tx ? 'warn' : 'info'}">${escHtml(p.dir)}</span></span><span class="topic" title="${escHtml(p.topic)}">${escHtml(p.topic)}</span><span class="payload" title="${payload}">${payload}</span></div>`;
-        }).join('');
-      } else {
-        const res = await fetch('/api/audit');
-        const data = await res.json();
-        const log = data.audit_log || [];
-        $('log-count').innerText = `${log.length} รายการ`;
-        if (!log.length) { box.innerHTML = '<div class="log-line empty">ยังไม่มีประวัติคำสั่ง AI Copilot — ลองสั่งงานในแชตด้านบน</div>'; return; }
-        box.innerHTML = log.slice(0, 15).map(a =>
-          `<div class="log-line"><span class="t">${escHtml((a.ts || '').substring(11, 19))}</span><span><span class="tag ${a.allowed ? 'ok' : 'crit'}">${a.allowed ? 'ALLOWED' : 'BLOCKED'}</span></span><span class="topic">${escHtml(a.engine)} · ${escHtml(a.action)}</span><span class="payload" title="${escHtml(a.guardrail_note)}">${escHtml(a.guardrail_note)}</span></div>`
-        ).join('');
-      }
-    } catch (e) {}
-  }
+        const ai = data.ai_evaluation;
+        if (!ai) return;
 
-  async function switchProfile(profile) {
-    haptic('light');
-    try {
-      await fetch('/api/profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profile }) });
+        currentSafeRange = ai.safe_range || [2.0, 8.0];
+        ['coldchain', 'server', 'room'].forEach(p => {
+          $(`prof-${p}`)?.classList.toggle('active', ai.profile === p);
+        });
+        $('mqtt-status-pill').innerText = data.mqtt_connected ? 'LIVE' : 'OFFLINE';
+
+        const temp = ai.current_temp;
+        const humid = ai.current_humid;
+        const risk = ai.risk_level;
+        const riskColor = risk === 'CRITICAL' ? 'var(--crit)' : (risk === 'WARNING' ? 'var(--warn)' : 'var(--ok)');
+
+        // Ring 1: Temp
+        $('temp-val').innerText = temp.toFixed(1);
+        setRing('ring-temp', (temp / 45) * 100, riskColor);
+        $('temp-tag').innerText = `เกณฑ์ ${currentSafeRange[0]} – ${currentSafeRange[1]} °C`;
+        $('chart-band-tag').innerText = `ช่วงปลอดภัย: ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
+
+        // Ring 2: Humid
+        $('humid-val').innerText = humid.toFixed(1);
+        setRing('ring-humid', humid, 'var(--apple-blue)');
+        const hRange = data.profiles?.[ai.profile];
+        if (hRange) $('humid-tag').innerText = `เหมาะสม ${hRange.humid_min} – ${hRange.humid_max}%`;
+
+        // Ring 3: Health Score
+        const hs = ai.health_score ?? 100;
+        const hsColor = hs >= 80 ? 'var(--ok)' : (hs >= 50 ? 'var(--warn)' : 'var(--crit)');
+        $('m-health').innerText = hs;
+        setRing('ring-health', hs, hsColor);
+        $('m-ettf').innerText = ai.ettf_seconds != null ? `⚠️ เกินเกณฑ์ใน ~${ai.ettf_seconds.toFixed(0)} วิ` : 'แนวโน้มคงที่';
+
+        // Bars 4: Vibration & Pressure
+        const vib = ai.current_vib_g ?? 0;
+        const press = ai.current_pressure ?? 1013.25;
+        $('m-vib').innerText = `${vib.toFixed(3)} g${ai.shock_detected ? ' ⚡' : ''}`;
+        $('bar-vib').style.width = `${Math.min(100, (vib / 0.7) * 100)}%`;
+        $('bar-vib').style.background = ai.shock_detected ? 'var(--crit)' : 'var(--warn)';
+        $('m-press').innerText = `${press.toFixed(1)} hPa`;
+        $('bar-press').style.width = `${Math.max(10, Math.min(100, ((press - 950) / 100) * 100))}%`;
+        $('m-led').innerText = `💡 ไฟบอร์ด: ${(data.led_mode || 'safe').toUpperCase()}`;
+
+        // Status Strip
+        const hero = $('hero-banner');
+        hero.className = 'status-strip';
+        if (risk === 'CRITICAL') {
+          hero.classList.add('critical');
+          $('hero-icon').innerText = '🚨';
+          $('hero-heading').innerText = `เตือนภัยวิกฤต — ${ai.profile_name}`;
+          $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'อุณหภูมิเกินช่วงปลอดภัย!';
+          $('hero-badge').innerText = 'CRITICAL';
+        } else if (risk === 'WARNING') {
+          hero.classList.add('warning');
+          $('hero-icon').innerText = '⚠️';
+          $('hero-heading').innerText = `เฝ้าระวัง — แนวโน้มผิดปกติ`;
+          $('hero-desc').innerText = ai.anomaly_reasons?.[0] || 'อุณหภูมิหรือแรงสั่นเริ่มผิดปกติ';
+          $('hero-badge').innerText = 'WARNING';
+        } else {
+          $('hero-icon').innerText = '🟢';
+          $('hero-heading').innerText = `ปกติ — ${ai.profile_name}`;
+          $('hero-desc').innerText = `ค่าเซ็นเซอร์ทุกตัวอยู่ในเกณฑ์ปลอดภัย (${currentSafeRange[0]}–${currentSafeRange[1]}°C)`;
+          $('hero-badge').innerText = 'OPTIMAL';
+        }
+      } catch (e) {}
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/api/history?limit=25');
+        if (!res.ok) return;
+        const rows = await res.json();
+        if (!rows.length) return;
+        liveChart.data.labels = rows.map(r => r.ts ? r.ts.substring(11, 19) : '');
+        liveChart.data.datasets[0].data = rows.map(r => r.temp);
+        liveChart.data.datasets[1].data = rows.map(() => currentSafeRange[1]);
+        liveChart.data.datasets[2].data = rows.map(() => currentSafeRange[0]);
+        liveChart.update('none');
+      } catch (e) {}
+    }
+
+    async function fetchLogs() {
+      const box = $('log-box');
+      try {
+        if (activeLogTab === 'mqtt') {
+          const data = await (await fetch('/api/mqtt-log')).json();
+          if (!data.packets?.length) { box.innerHTML = '<div class="log-row">ยังไม่มีข้อมูล MQTT...</div>'; return; }
+          box.innerHTML = data.packets.slice(0, 10).map(p =>
+            `<div class="log-row">[${escHtml(p.dir)}] ${escHtml((p.ts||'').substring(11,19))} ${escHtml(p.topic)} → ${escHtml(JSON.stringify(p.payload))}</div>`
+          ).join('');
+        } else {
+          const data = await (await fetch('/api/audit')).json();
+          if (!data.audit_log?.length) { box.innerHTML = '<div class="log-row">ยังไม่มีประวัติคำสั่ง</div>'; return; }
+          box.innerHTML = data.audit_log.slice(0, 10).map(a =>
+            `<div class="log-row">[${a.allowed?'ALLOWED':'BLOCKED'}] ${escHtml((a.ts||'').substring(11,19))} ${escHtml(a.guardrail_note)}</div>`
+          ).join('');
+        }
+      } catch (e) {}
+    }
+
+    async function switchProfile(profile) {
+      haptic('light');
+      await fetch('/api/profile', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({profile}) });
       await fetchLatest();
       await fetchHistory();
-    } catch (e) { console.error(e); }
-  }
-
-  async function sendLed(mode) {
-    haptic('medium');
-    try {
-      const res = await fetch('/api/command/led', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode }) });
-      if (!res.ok) {
-        hapticNotify('error');
-        const err = await res.json();
-        appendChat('ai', `คำสั่งถูกปฏิเสธ: ${err.detail}`, 'GUARDRAIL BLOCKED', false);
-      } else {
-        appendChat('ai', `ส่งคำสั่งเปลี่ยนไฟ RGB บนบอร์ด Cucumber เป็น ${mode.toUpperCase()} เรียบร้อยครับ`, 'Direct Hardware CMD', true);
-      }
-      fetchLatest(); fetchLogs();
-    } catch (e) {
-      appendChat('ai', 'ไม่สามารถส่งคำสั่ง LED ได้ (ตรวจสอบ Backend)', 'Network Error', false);
     }
-  }
 
-  async function triggerScenario(scenario) {
-    haptic(scenario === 'normal' ? 'light' : 'heavy');
-    try {
-      await fetch(`/api/simulate-scenario?scenario=${encodeURIComponent(scenario)}`, { method: 'POST' });
+    async function sendLed(mode) {
+      haptic('medium');
+      try {
+        const res = await fetch('/api/command/led', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({mode}) });
+        if (!res.ok) {
+          const err = await res.json();
+          toggleChatPopup(true);
+          appendChat('ai', err.detail, true);
+        } else {
+          fetchLatest(); fetchLogs();
+        }
+      } catch (e) {}
+    }
+
+    async function triggerScenario(scenario) {
+      haptic(scenario === 'normal' ? 'light' : 'heavy');
+      await fetch(`/api/simulate-scenario?scenario=${scenario}`, { method: 'POST' });
       setTimeout(() => { fetchLatest(); fetchHistory(); fetchLogs(); }, 350);
-    } catch (e) { console.error(e); }
-  }
-
-  function appendChat(role, text, meta = '', allowed = true) {
-    const box = $('chat-messages');
-    const div = document.createElement('div');
-    div.className = `msg ${role}`;
-    const who = document.createElement('span');
-    who.className = 'who';
-    who.innerText = role === 'user' ? 'คุณ' : 'ผู้ช่วย AI';
-    div.appendChild(who);
-    div.appendChild(document.createTextNode(text));
-    if (meta) {
-      const m = document.createElement('div');
-      m.className = 'msg-meta';
-      const parts = meta.split(' | ');
-      parts.forEach((part, i) => {
-        const s = document.createElement('span');
-        // The guardrail verdict (or the only chip) carries the allowed/blocked colour
-        if (/GUARDRAIL|Guardrail|Error/.test(part) || parts.length === 1) s.className = allowed ? 'guard-ok' : 'guard-block';
-        s.innerText = part;
-        m.appendChild(s);
-      });
-      div.appendChild(m);
     }
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
-  }
 
-  function sendQuick(text) {
-    $('chat-input').value = text;
-    sendChat();
-  }
-
-  function appendTyping() {
-    const box = $('chat-messages');
-    const div = document.createElement('div');
-    div.className = 'msg ai typing-indicator';
-    div.innerHTML = '<span class="who">ผู้ช่วย AI</span><span class="typing-dots"><i></i><i></i><i></i></span>';
-    box.appendChild(div);
-    box.scrollTop = box.scrollHeight;
-    return div;
-  }
-
-  async function sendChat() {
-    const input = $('chat-input');
-    const btn = $('chat-send-btn');
-    const msg = input.value.trim();
-    if (!msg) return;
-    input.value = '';
-    appendChat('user', msg);
-    const typingEl = appendTyping();
-    btn.disabled = true;
-    try {
-      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      typingEl.remove();
-      if (!data.guardrail_allowed) hapticNotify('error');
-      const badge = data.guardrail_allowed ? '' : 'GUARDRAIL BLOCKED';
-      appendChat('ai', data.reply, badge, data.guardrail_allowed);
-      fetchLatest(); fetchHistory(); fetchLogs();
-    } catch (e) {
-      typingEl.remove();
-      appendChat('ai', 'ขออภัยครับ ตอนนี้ติดต่อผู้ช่วยไม่ได้ ลองใหม่อีกครั้งนะครับ', '', false);
-    } finally {
-      btn.disabled = false;
+    function appendChat(role, text, isBlocked = false) {
+      const box = $('chat-messages');
+      const row = document.createElement('div');
+      row.className = `bubble-row ${role}`;
+      const bubble = document.createElement('div');
+      bubble.className = `msg ${role}`;
+      bubble.innerText = text;
+      row.appendChild(bubble);
+      if (isBlocked) {
+        const g = document.createElement('div');
+        g.className = 'msg-guard';
+        g.innerText = '🛡️ GUARDRAIL BLOCKED';
+        row.appendChild(g);
+      }
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
     }
-  }
 
-  // Sidebar: highlight the section currently in view
-  const navLinks = [...document.querySelectorAll('.sb-link[href^="#"]')];
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(en => {
-      if (en.isIntersecting) navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
-    });
-  }, { rootMargin: '-40% 0px -55% 0px' });
-  ['overview', 'trend', 'copilot', 'control', 'events'].forEach(id => $(id) && io.observe($(id)));
+    function appendTyping() {
+      const box = $('chat-messages');
+      const row = document.createElement('div');
+      row.className = 'bubble-row ai';
+      row.innerHTML = '<div class="msg ai"><span class="typing-dots"><i></i><i></i><i></i></span></div>';
+      box.appendChild(row);
+      box.scrollTop = box.scrollHeight;
+      return row;
+    }
 
-  setInterval(fetchLatest, 1500);
-  setInterval(fetchHistory, 3000);
-  setInterval(fetchLogs, 3000);
-  setInterval(fetchHealth, 10000);
-  fetchLatest(); fetchHistory(); fetchLogs(); fetchHealth();
-</script>
+    function sendQuick(text) {
+      $('chat-input').value = text;
+      sendChat();
+    }
+
+    async function sendChat() {
+      const input = $('chat-input');
+      const btn = $('chat-send-btn');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+      appendChat('user', msg);
+      const typingEl = appendTyping();
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg }) });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        typingEl.remove();
+        appendChat('ai', data.reply, !data.guardrail_allowed);
+        fetchLatest(); fetchHistory(); fetchLogs();
+      } catch (e) {
+        typingEl.remove();
+        appendChat('ai', 'ขออภัยครับ ตอนนี้ติดต่อผู้ช่วยไม่ได้ ลองใหม่อีกครั้งนะครับ');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    setInterval(fetchLatest, 1500);
+    setInterval(fetchHistory, 3000);
+    setInterval(fetchLogs, 3000);
+    fetchLatest(); fetchHistory(); fetchLogs();
+  </script>
 </body>
 </html>
