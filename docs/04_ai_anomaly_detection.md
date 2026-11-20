@@ -7,6 +7,7 @@
 ## 4.1 ขีดจำกัดของระบบแจ้งเตือนแบบเดิม (Rule-Based vs AIoT)
 
 ในระบบเฝ้าระวังตู้แช่ยุคเก่า มักใช้กฎแบบพื้นฐาน (Hard Threshold):
+
 $$\text{IF } \text{Temp} > 8.0^\circ\text{C} \implies \text{TRIGGER ALARM}$$
 
 **ปัญหาของวิธีนี้คืออะไร?**
@@ -23,13 +24,13 @@ $$\text{IF } \text{Temp} > 8.0^\circ\text{C} \implies \text{TRIGGER ALARM}$$
 ระบบประกอบด้วย AI 3 ชั้นทำงานร่วมกัน:
 
 ```mermaid
-flowchart LR
+flowchart TB
     A["ข้อมูล Multi-Sensor<br>(Temp, Humid, Pressure, Vib)"] --> B["Feature Engineering<br>(Rolling Mean, Z-Score, Slope)"]
     B --> C["Layer 1: Fast Edge Engine<br>(Slope + Z-Score + Shock)"]
     B --> D["Layer 3: Google Colab ML<br>(Isolation Forest vs One-Class SVM)"]
     C --> E["ประเมิน Risk Level & Health Score"]
     D --> E
-    E --> F["Layer 2: Local Ollama qwen2.5<br>Thai Copilot + Safety Guardrails"]
+    E --> F["Layer 2: Gemini 2.5 Flash<br>(สำรอง: Ollama บนเครื่อง)<br>Thai Copilot + Safety Guardrails"]
 ```
 
 ### 1. Rolling Linear Slope Formula
@@ -41,11 +42,14 @@ $$\text{Slope} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sum (x_i - \bar{x})
 - $\text{Slope} > 0.15$: **วิกฤตแฝง!** คอมเพรสเซอร์หยุดทำงาน หรือประตูปิดไม่สนิท
 
 ### 2. Statistical Z-Score
+
 $$Z = \frac{\text{Temp} - \mu}{\sigma}$$
+
 ตรวจจับกรณีเซ็นเซอร์เสีย (Sensor Glitch) หรือมีคลื่นแม่เหล็กรบกวนกะทันหัน
 
 ### 3. Estimated Time to Failure (ETTF)
 พยากรณ์เวลาที่เหลือก่อนสินค้าจะเสียหาย:
+
 $$\text{ETTF} = \frac{T_{\text{max}} - T_{\text{current}}}{\text{Slope}} \times \Delta t$$
 
 ---

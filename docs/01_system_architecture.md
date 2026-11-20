@@ -17,28 +17,37 @@
 ## 1.2 โครงสร้างข้อมูลและการเดินทางของข้อมูล (Data Pipeline)
 
 ```mermaid
+%%{init: {"themeVariables": {"actorLineColor": "#b9bec7", "signalColor": "#8a909b"}}}%%
 sequenceDiagram
     autonumber
-    participant C as บอร์ด Cucumber / Simulator
-    participant M as MQTT Broker (EMQX)
-    participant B as Backend Service (FastAPI)
-    participant AI as AI Anomaly Engine
-    participant DB as SQLite Storage
-    participant TG as Telegram Bot (@Chanaps_Bot)
-    participant U as ผู้ใช้งาน / วิศวกร (Mini App)
+    participant C as บอร์ด
+    participant M as Broker
+    participant B as Backend
+    participant AI as AI
+    participant U as ผู้ใช้
 
-    C->>M: Publish JSON {"node_id", "temp", "humid", "ts"}
-    M->>B: ส่งต่อข้อความ (Subscription)
-    B->>AI: ส่งค่าเข้าวิเคราะห์ Real-Time
-    AI-->>B: ผลลัพธ์: Risk Level, Slope, Z-Score, ETTF
-    B->>DB: บันทึกข้อมูลลงฐานข้อมูล coldchain.db
-    alt สภาวะวิกฤต (WARNING หรือ CRITICAL)
-        B->>TG: ส่งการแจ้งเตือนฉุกเฉินพร้อมคำแนะนำ CAPA
-        TG->>U: ข้อความเด้งเตือนบนสมาร์ตโฟน
+    C->>M: ส่ง JSON ทุก 2 วินาที
+    M->>B: ส่งต่อข้อความ
+    B->>AI: วิเคราะห์ค่าล่าสุด
+    AI-->>B: ระดับความเสี่ยง + ETTF
+    Note over B: บันทึกลง SQLite
+    alt WARNING หรือ CRITICAL
+        B->>U: แจ้งเตือน Telegram + CAPA
     end
-    U->>B: เปิด Telegram Mini App / Web Dashboard
-    B-->>U: แสดงผลกราฟิกและเกจวัดแบบเรียลไทม์
+    U->>B: สั่งงาน เช่น "เปิดไฟแดง"
+    B->>AI: ตรวจด้วย Guardrails
+    AI-->>B: อนุญาต / ปฏิเสธ
+    B->>M: ส่งคำสั่งที่อนุญาต
+    M->>C: เปลี่ยนสีไฟ LED
 ```
+
+<div class="seq-legend">
+  <p><span class="seq-badge">1–4</span><b>ขาไป</b> บอร์ดส่งค่าเซ็นเซอร์ผ่าน Broker ให้ Backend ซึ่งส่งต่อให้ AI ประเมินความเสี่ยง แล้วบันทึกทุกค่าลงฐานข้อมูล</p>
+  <p><span class="seq-badge">5</span><b>แจ้งเตือน</b> เกิดเฉพาะเมื่อ AI ประเมินว่าเป็น WARNING หรือ CRITICAL โดยส่งเข้า Telegram พร้อมคำแนะนำ CAPA</p>
+  <p><span class="seq-badge">6–10</span><b>ขากลับ</b> คำสั่งจากผู้ใช้ต้องผ่าน Safety Guardrails ก่อนเสมอ ถ้าอนุญาตจึงส่งผ่าน Broker ไปเปลี่ยนไฟบนบอร์ด</p>
+</div>
+
+รายละเอียดเทคโนโลยีของแต่ละส่วนอยู่ในตารางหัวข้อ 1.3 ด้านล่าง
 
 ---
 

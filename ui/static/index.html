@@ -434,6 +434,271 @@
       .sidebar { position: static; height: auto; }
       .gauges-row { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* ======================================================================
+       Design refinement layer
+       - colour carries meaning only (status / brand), sensors stay neutral
+       - quieter status banner, subtler selected states
+       - mobile: nothing may push the page wider than the viewport
+       ====================================================================== */
+    :root { --s: var(--ok); --s-soft: rgba(16, 185, 129, 0.10); --meter: #3b6fd8; }
+    [data-theme="dark"] { --meter: #6f9cf0; }
+
+    /* Status banner: neutral card + status stripe instead of a full teal slab */
+    .hero-banner {
+      position: relative; overflow: hidden;
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      padding: 16px 22px 16px 26px;
+    }
+    .hero-banner::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--s); }
+    .hero-banner::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--s-soft), transparent 55%); pointer-events: none; }
+    .hero-banner > * { position: relative; z-index: 1; }
+    .hero-banner.status-warn { --s: var(--warn); --s-soft: rgba(245, 158, 11, 0.12); background: var(--card); }
+    .hero-banner.status-crit { --s: var(--crit); --s-soft: rgba(239, 68, 68, 0.12); background: var(--card); border-color: rgba(239, 68, 68, 0.35); }
+    .hero-banner h1 { color: var(--text); font-size: 1.08rem; }
+    .hero-banner p { color: var(--text-dim); }
+    .hero-tag { background: var(--s-soft); color: var(--s); letter-spacing: 0.06em; }
+    .hero-tag i { background: var(--s); }
+    .hero-banner .btn-ghost { background: transparent; color: var(--text); border-color: var(--border); }
+    .hero-banner .btn-ghost:hover { background: var(--card-2); border-color: var(--text-faint); }
+
+    /* Sensor cards: neutral labels, numbers lead */
+    .gauge-label { color: var(--text-dim) !important; font-weight: 500; }
+    .gauge-label svg { opacity: 0.7; }
+    .donut-box circle { stroke-width: 6; }
+    .gauge-card { transition: border-color .15s ease; }
+    .gauge-card:hover { border-color: var(--text-faint); }
+
+    /* Selected states: tinted rather than solid red slabs */
+    .sb-btn.active { background: var(--brand-soft) !important; color: var(--brand) !important; box-shadow: inset 3px 0 0 var(--brand); font-weight: 700; }
+    .sb-btn.active * { color: inherit !important; }
+    .act-btn.active { background: var(--brand-soft) !important; color: var(--brand) !important; border-color: var(--brand) !important; }
+
+    /* Tables: one line per row, long notes truncate instead of growing rows */
+    .clean-table td { vertical-align: middle; }
+    .clean-table td:nth-child(4) { max-width: 0; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .table-wrap { overflow-x: auto; }
+
+    /* Floating chat button: keep clear of panel headers */
+    .chat-fab { bottom: 22px; right: 22px; }
+
+    /* Grids must never be widened by their content (fixes mobile horizontal scroll) */
+    .shell { grid-template-columns: 240px minmax(0, 1fr); }
+    .workspace-row { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .events-row { grid-template-columns: minmax(0, 1fr); }
+    .card { min-width: 0; }
+    @media (max-width: 1180px) { .workspace-row, .events-row { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: minmax(0, 1fr); padding: 12px; }
+      .clean-table { min-width: 560px; }
+      .clean-table td:nth-child(4) { max-width: 260px; width: auto; }
+    }
+
+    /* ======================================================================
+       TSE identity theme (from the faculty logo)
+       Crimson gear  #8f1a1f  -> primary / selected / chart line
+       Gold arrow    #fdc94b  -> small accents only (stripes, dots, chart fill)
+       Graphite TSE  #58585a  -> secondary text, neutral meters
+       Status colours (ok / warn / crit) are untouched: they are signals.
+       ====================================================================== */
+    :root {
+      --tse-crimson: #8f1a1f;
+      --tse-gold: #fdc94b;
+      --tse-graphite: #58585a;
+
+      --bg: #f6f5f3;
+      --card: #ffffff;
+      --card-2: #f8f7f5;
+      --border: rgba(88, 88, 90, 0.13);
+      --text: #1f1f21;
+      --text-dim: #58585a;
+      --text-faint: #8d8d90;
+
+      --brand: #8f1a1f;
+      --brand-dark: #6b1216;
+      --brand-soft: rgba(143, 26, 31, 0.08);
+      --gold: #fdc94b;
+
+      --info: #58585a;
+      --meter: #58585a;
+      --ring-track: #eeedea;
+      --bubble-ai: #f3f2ef;
+    }
+    [data-theme="dark"] {
+      --bg: #141416;
+      --card: #1d1d20;
+      --card-2: #252528;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f2f2f3;
+      --text-dim: #a8a8ac;
+      --text-faint: #6e6e73;
+
+      --brand: #d2373e;
+      --brand-dark: #8f1a1f;
+      --brand-soft: rgba(210, 55, 62, 0.16);
+
+      --info: #b4b4b8;
+      --meter: #b4b4b8;
+      --ring-track: #2e2e33;
+      --bubble-ai: #26262a;
+    }
+
+    /* Brand rule across the top: crimson gear + gold arrow */
+    body::before {
+      content: ''; position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 2000;
+      background: linear-gradient(90deg, var(--tse-crimson) 0 78%, var(--tse-gold) 78% 100%);
+    }
+
+    /* Selected nav item: crimson text on soft crimson, gold marker */
+    .sb-btn.active { box-shadow: inset 3px 0 0 var(--tse-gold) !important; }
+    .sb-brand b { color: var(--brand); }
+
+    /* Neutral tags (sensor stream etc.) in graphite instead of blue */
+    .pill-tag.info { background: rgba(88, 88, 90, 0.10); color: var(--info); }
+    [data-theme="dark"] .pill-tag.info { background: rgba(255, 255, 255, 0.08); }
+
+    /* Primary actions keep the crimson; hover deepens it */
+    .send-btn:hover, .chat-fab:hover { background: var(--brand-dark); }
+    .chat-fab { box-shadow: 0 10px 28px rgba(143, 26, 31, 0.35); }
+
+    /* Card titles get a short gold underline accent, like the logo arrow */
+    .card-title { position: relative; }
+
+    /* ======================================================================
+       Bento refinements (reference: clean HR/ops dashboards)
+       - KPI cards: label top-left, big number left, compact ring right, change chip
+       - status heatmap strip under the trend chart
+       - ink pill tabs (brand colour stays for primary actions)
+       ====================================================================== */
+    .gauge-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "label ring" "val ring" "sub delta";
+      align-items: center; text-align: left;
+      gap: 2px 12px; padding: 16px 18px 14px;
+    }
+    .gauge-card .gauge-label { grid-area: label; justify-self: start; margin: 0; font-size: 0.82rem; }
+    .gauge-card .donut-box { display: contents; }
+    .gauge-card .donut-box svg { grid-area: ring; width: 56px; height: 56px; align-self: center; }
+    .gauge-card .donut-box circle { stroke-width: 12; }
+    .gauge-card .donut-center {
+      grid-area: val; position: static; inset: auto;
+      flex-direction: row; align-items: baseline; justify-content: flex-start; gap: 5px;
+    }
+    .gauge-card .donut-val { font-size: 1.95rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+    .gauge-card .donut-unit { font-size: 0.82rem; color: var(--text-dim); margin: 0; }
+    .gauge-card .gauge-sub { grid-area: sub; justify-self: start; margin-top: 10px; }
+    .kpi-delta {
+      grid-area: delta; justify-self: end; margin-top: 10px;
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+      padding: 2px 8px; border-radius: 999px; background: var(--card-2); color: var(--text-dim);
+    }
+    .kpi-delta:empty { display: none; }
+    .kpi-delta.up { color: var(--brand); background: var(--brand-soft); }
+    .kpi-delta.down { color: var(--text-dim); background: rgba(88, 88, 90, 0.10); }
+
+    /* Status heatmap strip */
+    .status-strip { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .ss-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; font-size: 0.76rem; color: var(--text-dim); }
+    .ss-head b { color: var(--text); font-weight: 600; font-size: 0.82rem; }
+    .ss-legend { display: inline-flex; gap: 10px; align-items: center; }
+    .ss-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+    .ss-grid { display: grid; grid-template-columns: repeat(40, minmax(0, 1fr)); gap: 3px; }
+    .ss-cell { display: block; height: 16px; border-radius: 4px; background: var(--ring-track); transition: transform .12s ease; }
+    .ss-cell:hover { transform: scaleY(1.25); }
+    .ss-cell.ok, .ss-legend i.ok { background: rgba(16, 185, 129, 0.45); }
+    .ss-cell.warn, .ss-legend i.warn { background: var(--warn); }
+    .ss-cell.crit, .ss-legend i.crit { background: var(--crit); }
+    @media (max-width: 560px) { .ss-grid { grid-template-columns: repeat(20, minmax(0, 1fr)); } }
+
+    /* Ink pill tabs */
+    .tab-pill.active { background: #18181b; color: #fff; }
+    [data-theme="dark"] .tab-pill.active { background: #f2f2f3; color: #141416; }
+
+    /* KPI cards: label spans the full width so it never wraps; smaller ring; footer chips truncate */
+    .gauge-card { grid-template-areas: "label label" "val ring" "sub delta"; }
+    .gauge-card .gauge-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .gauge-card .donut-box svg { width: 46px; height: 46px; }
+    .gauge-card .gauge-sub { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.72rem; }
+    .gauge-card .donut-val { font-size: 1.85rem; }
+
+    /* Flat selected states (no tint, no gradient, no glow) — same language as the ink pill tabs */
+    .act-btn.active {
+      background: #18181b !important; color: #fff !important; border-color: #18181b !important;
+      box-shadow: none !important;
+    }
+    [data-theme="dark"] .act-btn.active { background: #f2f2f3 !important; color: #141416 !important; border-color: #f2f2f3 !important; }
+    .act-btn { box-shadow: none; }
+
+    .sb-btn.active {
+      background: var(--card-2) !important; color: var(--text) !important;
+      box-shadow: inset 0 0 0 1px var(--border) !important; font-weight: 700;
+    }
+    .sb-btn.active svg { color: var(--brand) !important; }
+    .sb-btn.active small { color: var(--text-dim) !important; }
+    [data-theme="dark"] .sb-btn.active { background: #2a2a2e !important; }
+
+    /* Status banner: plain card; the status pill carries the colour */
+    .hero-banner, .hero-banner.status-warn, .hero-banner.status-crit {
+      background: var(--card) !important; border-color: var(--border) !important; box-shadow: var(--shadow);
+      padding: 16px 22px;
+    }
+    .hero-banner::before, .hero-banner::after { display: none; }
+    .hero-banner.status-crit .hero-tag { background: var(--crit); color: #fff; }
+    .hero-banner.status-crit .hero-tag i { background: #fff; }
+
+    /* Fresh neutrals: cool greys + pure white cards (warm beige read as dated) */
+    :root {
+      --bg: #f2f4f7;
+      --card: #ffffff;
+      --card-2: #f6f7f9;
+      --border: rgba(16, 24, 40, 0.08);
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.05);
+      --text: #101318;
+      --text-dim: #5b6170;
+      --text-faint: #98a0ad;
+      --brand: #a51d24;
+      --brand-dark: #85161c;
+      --brand-soft: rgba(165, 29, 36, 0.08);
+      --meter: #4b5260;
+      --info: #4b5260;
+      --ring-track: #eceef2;
+      --bubble-ai: #f2f4f7;
+    }
+    [data-theme="dark"] {
+      --bg: #0e0f12;
+      --card: #17181c;
+      --card-2: #202227;
+      --border: rgba(255, 255, 255, 0.07);
+      --text: #f4f5f7;
+      --text-dim: #a3a8b3;
+      --text-faint: #6b717d;
+      --brand: #e0474e;
+      --meter: #b6bbc5;
+      --info: #b6bbc5;
+      --ring-track: #2a2c32;
+      --bubble-ai: #22242a;
+    }
+    .pill-tag.info { background: rgba(75, 82, 96, 0.09); }
+
+    /* Exact TSE logo colours: crimson #8c181c, graphite #58585a, gold #ffd04f */
+    :root {
+      --tse-crimson: #8c181c; --tse-gold: #ffd04f; --tse-graphite: #58585a;
+      --brand: #8c181c; --brand-dark: #6e1216; --brand-soft: rgba(140, 24, 28, 0.08);
+      --meter: #58585a; --info: #58585a;
+    }
+    [data-theme="dark"] { --brand: #c4383d; --brand-dark: #8c181c; --brand-soft: rgba(196, 56, 61, 0.16); --meter: #b6bbc5; --info: #b6bbc5; }
+
+    /* Chat: no coloured glow — a plain, quiet elevation */
+    .chat-fab { box-shadow: 0 2px 6px rgba(16, 24, 40, 0.18) !important; }
+    .chat-fab:hover { transform: none; background: var(--brand-dark); }
+    .chat-popup { box-shadow: 0 12px 32px rgba(16, 24, 40, 0.12); }
+    [data-theme="dark"] .chat-popup { box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); }
+
+    /* AI chat bubbles: white card with a hairline border so they stand off the grey chat area */
+    .msg.ai { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); }
+    [data-theme="dark"] .msg.ai { background: var(--card-2); }
   </style>
 </head>
 <body>
@@ -547,14 +812,14 @@
       <!-- 5 Circular Donut Gauges FIRST -->
       <section class="gauges-row">
         <div class="card gauge-card">
-          <span class="gauge-label" style="color:#ec4899;">
+          <span class="gauge-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
             อุณหภูมิ
           </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-temp" class="donut-fill" cx="56" cy="56" r="46" stroke="#ec4899" stroke-dasharray="289" stroke-dashoffset="160"></circle>
+              <circle id="ring-temp" class="donut-fill" cx="56" cy="56" r="46" stroke="var(--meter)" stroke-dasharray="289" stroke-dashoffset="160"></circle>
             </svg>
             <div class="donut-center">
               <span id="temp-val" class="donut-val">--</span>
@@ -562,17 +827,18 @@
             </div>
           </div>
           <span id="temp-tag" class="gauge-sub">2.0 – 8.0 °C</span>
+          <span id="d-temp" class="kpi-delta"></span>
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label" style="color:#0ea5e9;">
+          <span class="gauge-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
             ความชื้นสัมพัทธ์
           </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-hum" class="donut-fill" cx="56" cy="56" r="46" stroke="#0ea5e9" stroke-dasharray="289" stroke-dashoffset="140"></circle>
+              <circle id="ring-hum" class="donut-fill" cx="56" cy="56" r="46" stroke="var(--meter)" stroke-dasharray="289" stroke-dashoffset="140"></circle>
             </svg>
             <div class="donut-center">
               <span id="hum-val" class="donut-val">--</span>
@@ -580,17 +846,18 @@
             </div>
           </div>
           <span class="gauge-sub">HTS221</span>
+          <span id="d-hum" class="kpi-delta"></span>
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label" style="color:#8b5cf6;">
+          <span class="gauge-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-3"/><circle cx="12" cy="12" r="1"/></svg>
             ความกดอากาศ
           </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-pres" class="donut-fill" cx="56" cy="56" r="46" stroke="#8b5cf6" stroke-dasharray="289" stroke-dashoffset="80"></circle>
+              <circle id="ring-pres" class="donut-fill" cx="56" cy="56" r="46" stroke="var(--meter)" stroke-dasharray="289" stroke-dashoffset="80"></circle>
             </svg>
             <div class="donut-center">
               <span id="pres-val" class="donut-val">--</span>
@@ -598,17 +865,18 @@
             </div>
           </div>
           <span class="gauge-sub">BMP280</span>
+          <span id="d-pres" class="kpi-delta"></span>
         </div>
 
         <div class="card gauge-card">
-          <span class="gauge-label" style="color:#f97316;">
+          <span class="gauge-label">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             แรงสั่นสะเทือน
           </span>
           <div class="donut-box">
             <svg viewBox="0 0 112 112">
               <circle class="donut-track" cx="56" cy="56" r="46"></circle>
-              <circle id="ring-vib" class="donut-fill" cx="56" cy="56" r="46" stroke="#f97316" stroke-dasharray="289" stroke-dashoffset="250"></circle>
+              <circle id="ring-vib" class="donut-fill" cx="56" cy="56" r="46" stroke="var(--meter)" stroke-dasharray="289" stroke-dashoffset="250"></circle>
             </svg>
             <div class="donut-center">
               <span id="vib-val" class="donut-val">--</span>
@@ -616,6 +884,7 @@
             </div>
           </div>
           <span id="vib-tag" class="gauge-sub">ปกติ</span>
+          <span id="d-vib" class="kpi-delta"></span>
         </div>
 
         <div class="card gauge-card">
@@ -665,6 +934,13 @@
             </div>
           </div>
           <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+          <div class="status-strip">
+            <div class="ss-head">
+              <span><b>สถานะย้อนหลัง</b> · <span id="ss-summary">—</span></span>
+              <span class="ss-legend"><span><i class="ok"></i>ปกติ</span><span><i class="warn"></i>เตือน</span><span><i class="crit"></i>วิกฤต</span></span>
+            </div>
+            <div id="status-strip" class="ss-grid"></div>
+          </div>
         </div>
 
         <div class="right-stack">
@@ -889,8 +1165,8 @@
     function initChart() {
       const ctx = document.getElementById('mainChart').getContext('2d');
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
-      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+      grad.addColorStop(0, 'rgba(140, 24, 28, 0.10)');
+      grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
 
       mainChart = new Chart(ctx, {
         type: 'line',
@@ -900,14 +1176,14 @@
           datasets: [{
             label: 'อุณหภูมิ (°C)',
             data: [],
-            borderColor: '#2563eb',
+            borderColor: '#8c181c',
             backgroundColor: grad,
             borderWidth: 2.5,
             tension: 0.36,
             fill: true,
             pointRadius: 0,
             pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#2563eb',
+            pointHoverBackgroundColor: '#8c181c',
             pointHoverBorderColor: '#ffffff',
             pointHoverBorderWidth: 2
           }]
@@ -959,11 +1235,12 @@
         vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)' }
       }[currentMetric];
 
-      const lineColor = '#2563eb';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const lineColor = isDark ? '#d0474c' : '#8c181c';   // TSE crimson
       const ctx = mainChart.ctx;
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
-      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+      grad.addColorStop(0, isDark ? 'rgba(224, 86, 92, 0.22)' : 'rgba(140, 24, 28, 0.10)');
+      grad.addColorStop(1, 'rgba(140, 24, 28, 0.0)');
 
       mainChart.data.labels = labels;
       mainChart.data.datasets[0].label = map.label;
@@ -984,6 +1261,37 @@
       document.getElementById('mode-sub').textContent = `${prof.label} · อัปเดตเรียลไทม์ผ่าน MQTT`;
     }
 
+    // KPI change chips (latest vs window average) and status heatmap strip
+    function renderInsights() {
+      const rows = Array.isArray(historyData) ? historyData : [];
+      const safe = (v) => String(v ?? '').replace(/[&<>"']/g, '');
+      [['d-temp', 'temp', 1, '°C'], ['d-hum', 'humid', 1, '%'], ['d-pres', 'pressure', 1, 'hPa'], ['d-vib', 'vib_g', 2, 'G']].forEach(([id, key, dp, unit]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const vals = rows.map(r => Number(r[key])).filter(Number.isFinite);
+        if (vals.length < 3) { el.textContent = ''; return; }
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        const d = vals[vals.length - 1] - avg;
+        const flat = Math.abs(d) < 0.5 * Math.pow(10, -dp);
+        el.className = 'kpi-delta ' + (flat ? '' : (d > 0 ? 'up' : 'down'));
+        el.textContent = flat ? '→ คงที่' : (d > 0 ? '↗ +' : '↘ ') + d.toFixed(dp) + ' ' + unit;
+        el.title = 'เทียบกับค่าเฉลี่ย ' + vals.length + ' จุดล่าสุด';
+      });
+      const strip = document.getElementById('status-strip');
+      if (!strip) return;
+      const n = { ok: 0, warn: 0, crit: 0 };
+      strip.innerHTML = rows.slice(-40).map(r => {
+        const lv = String(r.risk_level || 'NORMAL').toUpperCase();
+        const c = lv === 'CRITICAL' ? 'crit' : (lv === 'WARNING' ? 'warn' : 'ok');
+        n[c]++;
+        const t = safe((r.ts || '').substring(11, 19));
+        const temp = Number(r.temp);
+        return '<i class="ss-cell ' + c + '" title="' + t + ' · ' + (Number.isFinite(temp) ? temp.toFixed(1) + '°C · ' : '') + safe(lv) + '"></i>';
+      }).join('');
+      const sum = document.getElementById('ss-summary');
+      if (sum) sum.textContent = rows.length ? (rows.slice(-40).length + ' รอบล่าสุด — ปกติ ' + n.ok + ' · เตือน ' + n.warn + ' · วิกฤต ' + n.crit) : 'ยังไม่มีข้อมูล';
+    }
+
     async function fetchTelemetry() {
       try {
         const [latRes, hisRes] = await Promise.all([
@@ -995,6 +1303,7 @@
         const latest = data.telemetry || {};
         const ai = data.ai_evaluation || {};
         historyData = Array.isArray(hist) ? hist : (hist.history || hist.records || []);
+        renderInsights();
 
         if (ai.profile && ai.profile !== currentProfile) {
           currentProfile = ai.profile;
@@ -1011,10 +1320,11 @@
 
           const status = ai.risk_level || latest.risk_level || 'OPTIMAL';
           const shock = Boolean(ai.shock_detected ?? latest.shock);
-          const tempColor = '#ec4899'; // อุณหภูมิ: ชมพู
-          const humColor  = '#0ea5e9'; // ความชื้น: ฟ้า
-          const presColor = '#8b5cf6'; // ความกดอากาศ: ม่วง
-          const vibColor  = '#f97316'; // แรงสั่น: ส้ม
+          // Colour carries meaning: temperature follows risk status, other sensors share one neutral meter colour
+          const tempColor = status === 'CRITICAL' ? 'var(--crit)' : (status === 'WARNING' ? 'var(--warn)' : 'var(--ok)');
+          const humColor  = 'var(--meter)';
+          const presColor = 'var(--meter)';
+          const vibColor  = shock ? 'var(--crit)' : 'var(--meter)';
           const healthColor = score >= 80 ? '#10b981' : (score >= 50 ? '#f59e0b' : '#ef4444');
           metricColors = { temp: tempColor, hum: humColor, pres: presColor, vib: vibColor };
           const summaryText = (ai.anomaly_reasons && ai.anomaly_reasons.length)

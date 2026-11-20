@@ -46,73 +46,40 @@ hide:
 
 <p class="section-lead">ข้อมูลไหลจากบอร์ดผ่าน Broker เข้าสู่ AI แล้วคำสั่งที่ผ่านการตรวจสอบจะไหลกลับไปยังอุปกรณ์ — ทุกชั้นแยกจากกัน (decoupled) ผ่าน MQTT</p>
 
-<div class="arch">
-  <div class="arch-legend">
-    <span><i class="lg up"></i>Telemetry (บอร์ด → AI)</span>
-    <span><i class="lg down"></i>Command (AI → บอร์ด) ผ่าน Guardrails</span>
-    <span><i class="lg wss"></i>WSS ตรงจากเบราว์เซอร์</span>
-  </div>
-  <div class="arch-row">
-    <div class="arch-lane">
-      <span class="arch-kicker">01 · EDGE</span>
-      <strong>Cucumber RIS</strong>
-      <span class="arch-sub">ESP32-S2 · PlatformIO C++</span>
-    </div>
-    <div class="arch-nodes">
-      <div class="arch-node"><b>เซ็นเซอร์ 3 ชนิด</b><span class="chips"><code>HTS221</code><code>BMP280</code><code>MPU6050</code></span><small>อุณหภูมิ/ความชื้น · ความดัน · แรงสั่น</small></div>
-      <div class="arch-node"><b>ESP32-S2 MCU</b><small>อ่าน I2C → แพ็ก JSON → Publish</small></div>
-      <div class="arch-node act"><b>NeoPixel RGB LED</b><small>Actuator · GPIO 18</small></div>
-    </div>
-  </div>
-  <div class="arch-link">
-    <span class="flow up">Publish JSON</span>
-    <span class="flow down">Subscribe CMD</span>
-  </div>
-  <div class="arch-row">
-    <div class="arch-lane">
-      <span class="arch-kicker">02 · TRANSPORT</span>
-      <strong>MQTT Broker</strong>
-      <span class="arch-sub">broker.emqx.io · <code>tse/cn466/chanapa/</code></span>
-    </div>
-    <div class="arch-nodes">
-      <div class="arch-node"><b>TX · Telemetry</b><small><code>…/telemetry</code> บอร์ด → คลาวด์</small></div>
-      <div class="arch-node"><b>RX · Command</b><small><code>…/cmd</code> คลาวด์ → บอร์ด</small></div>
-      <div class="arch-node wss"><b>WebSocket</b><small>พอร์ต <code>8084</code> สำหรับเบราว์เซอร์</small></div>
-    </div>
-  </div>
-  <div class="arch-link">
-    <span class="flow up">Telemetry</span>
-    <span class="flow down">Validated CMD</span>
-  </div>
-  <div class="arch-row">
-    <div class="arch-lane">
-      <span class="arch-kicker">03 · INTELLIGENCE</span>
-      <strong>Triple-Layer Hybrid AI</strong>
-      <span class="arch-sub">FastAPI + SQLite + GMP CSV</span>
-    </div>
-    <div class="arch-nodes">
-      <div class="arch-node"><b>L1 · Anomaly Engine</b><small>Slope · Z-Score · ETTF · Shock</small></div>
-      <div class="arch-node ai"><b>L2 · Ollama <code>qwen2.5</code></b><small>Thai Copilot สั่งงานด้วยภาษาไทย</small></div>
-      <div class="arch-node guard"><b>🛡️ Safety Guardrails</b><small>Deterministic · บล็อกคำสั่งอันตราย</small></div>
-      <div class="arch-node offline"><b>L3 · Google Colab</b><small>Isolation Forest vs One-Class SVM (เทรนออฟไลน์)</small></div>
-    </div>
-  </div>
-  <div class="arch-link">
-    <span class="flow up">REST API</span>
-    <span class="flow down">คำสั่งจากผู้ใช้</span>
-    <span class="flow wss">WSS :8084</span>
-  </div>
-  <div class="arch-row">
-    <div class="arch-lane">
-      <span class="arch-kicker">04 · INTERFACE</span>
-      <strong>ผู้ใช้ &amp; ผู้เรียน</strong>
-      <span class="arch-sub">เว็บ · มือถือ · เอกสาร</span>
-    </div>
-    <div class="arch-nodes">
-      <div class="arch-node"><b>Web Command Center</b><small>+ Telegram Mini App</small></div>
-      <div class="arch-node"><b>Telegram Bot</b><small>@Chanaps_Bot · แจ้งเตือน CAPA</small></div>
-      <div class="arch-node wss"><b>GitHub Pages</b><small>เว็บสอน + Live MQTT Sandbox</small></div>
-    </div>
+<div class="flow">
+  <ol class="flow-steps">
+    <li class="flow-step">
+      <span class="flow-num">01</span>
+      <span class="flow-kicker">อุปกรณ์</span>
+      <h3>บอร์ด Cucumber RIS</h3>
+      <p>อ่านอุณหภูมิ ความชื้น ความดัน และแรงสั่น แล้วส่งเป็น JSON ทุก 2 วินาที</p>
+      <div class="flow-tags"><code>HTS221</code><code>BMP280</code><code>MPU6050</code></div>
+    </li>
+    <li class="flow-step">
+      <span class="flow-num">02</span>
+      <span class="flow-kicker">สื่อสาร</span>
+      <h3>MQTT Broker</h3>
+      <p>ตัวกลางรับ–ส่งข้อความ ทำให้บอร์ดกับแอปไม่ต้องเชื่อมกันโดยตรง</p>
+      <div class="flow-tags"><code>broker.emqx.io</code><code>…/telemetry</code><code>…/cmd</code></div>
+    </li>
+    <li class="flow-step">
+      <span class="flow-num">03</span>
+      <span class="flow-kicker">วิเคราะห์</span>
+      <h3>AI Engine + Copilot</h3>
+      <p>จับความผิดปกติก่อนเกินเกณฑ์ และแปลคำสั่งภาษาไทยเป็นการสั่งงานอุปกรณ์</p>
+      <div class="flow-tags"><code>Slope</code><code>Z-Score</code><code>ETTF</code><code>Gemini</code></div>
+    </li>
+    <li class="flow-step">
+      <span class="flow-num">04</span>
+      <span class="flow-kicker">ผู้ใช้</span>
+      <h3>หน้าจอ &amp; การแจ้งเตือน</h3>
+      <p>Dashboard, Telegram Mini App / Bot และ Live Sandbox บนเว็บนี้</p>
+      <div class="flow-tags"><code>Web</code><code>Telegram</code><code>GitHub Pages</code></div>
+    </li>
+  </ol>
+  <div class="flow-return">
+    <span class="flow-return-line" aria-hidden="true"></span>
+    <p><b>ขากลับ:</b> คำสั่งเปลี่ยนไฟ LED จาก AI หรือผู้ใช้ ต้องผ่าน <b>Safety Guardrails</b> ก่อน แล้วจึงส่งผ่าน Broker กลับไปที่บอร์ด</p>
   </div>
 </div>
 

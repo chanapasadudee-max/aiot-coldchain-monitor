@@ -6,7 +6,7 @@
 
 ## 8.1 ทำไมไม่ควรให้ LLM สั่งฮาร์ดแวร์โดยตรง?
 
-ในการนำโมเดลภาษาขนาดใหญ่ (เช่น Local Ollama `qwen2.5` หรือ Gemma) มาควบคุมบอร์ด IoT จริง มีความเสี่ยงสำคัญ 3 ประการ:
+ในการนำโมเดลภาษาขนาดใหญ่ (เช่น Gemini 2.5 Flash ที่โปรเจกต์นี้ใช้ หรือ Ollama `qwen2.5` ที่ใช้เป็นตัวสำรองบนเครื่อง) มาควบคุมบอร์ด IoT จริง มีความเสี่ยงสำคัญ 3 ประการ:
 
 1. **Prompt Injection / คำสั่งกำกวม:** ผู้ใช้อาจพิมพ์ข้อความหลอกล่อหรือพิมพ์ผิด เช่น *"ช่วยปิดไฟเตือนที รำคาญตา"* ในขณะที่ตู้แช่วัคซีนกำลังอยู่ในภาวะ **CRITICAL**
 2. **Hallucination (AI แต่งคำสั่งเอง):** โมเดลอาจสร้างพารามิเตอร์ที่ฮาร์ดแวร์ไม่รองรับ
@@ -17,12 +17,12 @@
 ## 8.2 สถาปัตยกรรม Guardrail Gateway ในโปรเจกต์นี้
 
 ```mermaid
-flowchart LR
-    U["ผู้ใช้พิมพ์แชตภาษาไทย<br>'ช่วยปิดไฟที'"] --> LLM["Layer 2: Local Ollama (qwen2.5)<br>แปลเป็น JSON Intent"]
-    LLM -- "{action: set_led, mode: off}" --> GR["🛡️ Safety Guardrail Engine<br>(Deterministic Rules)"]
+flowchart TB
+    U["ผู้ใช้พิมพ์แชตภาษาไทย<br>'ช่วยปิดไฟที'"] --> LLM["Layer 2: Gemini 2.5 Flash<br>(สำรอง: Ollama)<br>แปลเป็น JSON Intent"]
+    LLM -- "{action: set_led, mode: off}" --> GR["Safety Guardrail Engine<br>(Deterministic Rules)"]
     STATE["สถานะปัจจุบัน: CRITICAL"] --> GR
-    GR -- "❌ ไม่อนุญาต (BLOCKED)" --> LOG["📝 Guardrail Audit Log"]
-    GR -- "✅ อนุญาต (ALLOWED)" --> MQTT["ส่งคำสั่ง MQTT ไปยัง<br>บอร์ด Cucumber RIS"]
+    GR -- "ไม่อนุญาต (BLOCKED)" --> LOG["Guardrail Audit Log"]
+    GR -- "อนุญาต (ALLOWED)" --> MQTT["ส่งคำสั่ง MQTT ไปยัง<br>บอร์ด Cucumber RIS"]
 ```
 
 ---

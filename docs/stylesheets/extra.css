@@ -533,3 +533,163 @@
 
 /* Chapters use "---" before each section; h2 already draws its own rule, so drop the duplicate */
 .md-typeset hr:has(+ h2) { display: none; }
+
+/* ==============================================================================
+   Match the dashboard: exact logo colours, grey canvas + white cards, flat states
+   ============================================================================== */
+:root { --tse-red: #8c181c; --tse-gold: #ffd04f; --tse-graphite: #58585a; }
+[data-md-color-scheme="default"] {
+  --x-accent: #8c181c;
+  --x-accent-soft: rgba(140, 24, 28, 0.07);
+  --x-border: #e4e7ec;
+  --x-surface-2: #f6f7f9;
+  --x-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --md-accent-fg-color: #8c181c;
+}
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: #0e0f12;
+  --md-primary-fg-color: #17181c;
+  --x-surface: #17181c;
+  --x-surface-2: #202227;
+  --x-border: rgba(255, 255, 255, 0.08);
+  --x-accent: #d0474c;
+  --x-accent-soft: rgba(208, 71, 76, 0.12);
+  --md-typeset-a-color: #e0686d;
+  --md-accent-fg-color: #e0686d;
+}
+/* Brand rule: crimson gear + gold arrow, same as the dashboard */
+.md-header::after { background: linear-gradient(90deg, var(--tse-red) 0 78%, var(--tse-gold) 78% 100%); }
+[data-md-color-scheme="slate"] .md-header { border-bottom: 1px solid var(--x-border); }
+
+/* Home page: grey canvas with white cards (like the dashboard) */
+[data-md-color-scheme="default"] body:has(.landing) { --md-default-bg-color: #f2f4f7; }
+[data-md-color-scheme="default"] body:has(.landing) .md-main { background: #f2f4f7; }
+.md-typeset .course-card.featured { background: var(--x-surface); border-style: solid; }
+.md-typeset a.course-card:hover { transform: none; border-color: var(--x-accent); box-shadow: var(--x-shadow); }
+.md-typeset .spec, .md-typeset .stats { box-shadow: var(--x-shadow); }
+.md-typeset h2::before { background: var(--tse-red) !important; }
+
+/* ==============================================================================
+   Architecture: 4-step pipeline + one return path (replaces the dense diagram)
+   ============================================================================== */
+.md-typeset .flow { margin: 1rem 0 1.8rem; }
+.md-typeset .flow-steps {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px;
+}
+.md-typeset .flow-step {
+  position: relative; margin: 0; padding: 1rem 1.05rem 1.05rem;
+  background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 14px; box-shadow: var(--x-shadow);
+  display: flex; flex-direction: column;
+}
+/* arrow to the next step */
+.md-typeset .flow-step:not(:last-child)::after {
+  content: ''; position: absolute; top: 50%; right: -22px; width: 16px; height: 16px; margin-top: -8px;
+  background: no-repeat center / 16px 16px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c181c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+}
+.md-typeset .flow-num {
+  display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%;
+  background: var(--tse-red); color: #fff; font-size: 0.66rem; font-weight: 700; margin-bottom: 0.55rem;
+}
+.md-typeset .flow-kicker { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; color: var(--md-default-fg-color--light); }
+.md-typeset .flow-step h3 { margin: 0.1rem 0 0.35rem; font-size: 0.92rem; line-height: 1.4; border: 0; padding: 0; }
+.md-typeset .flow-step p { margin: 0 0 0.7rem; font-size: 0.76rem; line-height: 1.65; color: var(--md-default-fg-color--light); flex: 1; }
+.md-typeset .flow-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.md-typeset .flow-tags code { font-size: 0.64rem; padding: 0.1em 0.45em; border-radius: 5px; background: var(--x-surface-2); border: 1px solid var(--x-border); }
+
+/* return path: one dashed line under all four steps, arrowhead pointing back to step 1 */
+.md-typeset .flow-return { margin-top: 14px; }
+.md-typeset .flow-return-line {
+  position: relative; display: block; height: 14px; margin: 0 12.5% 6px;
+  border: 2px dashed var(--tse-red); border-top: 0; border-radius: 0 0 10px 10px; opacity: 0.75;
+}
+.md-typeset .flow-return-line::before {
+  content: ''; position: absolute; left: -7px; top: -7px;
+  border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid var(--tse-red);
+}
+.md-typeset .flow-return p {
+  margin: 0; text-align: center; font-size: 0.76rem; color: var(--md-default-fg-color--light);
+}
+.md-typeset .flow-return b { color: var(--md-default-fg-color); }
+
+@media (max-width: 60em) {
+  .md-typeset .flow-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .md-typeset .flow-step:not(:last-child)::after { display: none; }
+  .md-typeset .flow-return-line { display: none; }
+  .md-typeset .flow-return p { text-align: left; padding: 0.7rem 0.9rem; border: 1px dashed var(--tse-red); border-radius: 10px; }
+}
+@media (max-width: 30em) { .md-typeset .flow-steps { grid-template-columns: minmax(0, 1fr); } }
+
+/* Fixes: beat Material's ".md-typeset ol" display rule; theme attribute lives on <body> itself */
+.md-typeset .flow ol.flow-steps { display: grid; }
+body[data-md-color-scheme="default"]:has(.landing),
+body[data-md-color-scheme="default"]:has(.landing) .md-main { background: #f2f4f7; }
+
+/* Sequence-diagram legend (chapter 1.2) */
+.md-typeset .seq-legend {
+  display: grid; gap: 0.5rem; margin: 0.4rem 0 1.2rem; padding: 0.9rem 1rem;
+  border: 1px solid var(--x-border); border-radius: 12px; background: var(--x-surface);
+}
+.md-typeset .seq-legend p { margin: 0; font-size: 0.8rem; line-height: 1.7; color: var(--md-default-fg-color--light); }
+.md-typeset .seq-legend b { color: var(--md-default-fg-color); margin-right: 0.35rem; }
+.md-typeset .seq-badge {
+  display: inline-block; min-width: 2.6rem; margin-right: 0.5rem; padding: 0 0.4rem; border-radius: 999px;
+  background: var(--tse-red); color: #fff; font-size: 0.66rem; font-weight: 700; text-align: center; line-height: 1.6;
+}
+
+/* Info callouts follow the TSE palette (Material's default note/important blue clashed) */
+.md-typeset .admonition.note, .md-typeset .admonition.important, .md-typeset .admonition.info,
+.md-typeset details.note, .md-typeset details.info { border-color: var(--x-accent); }
+.md-typeset .note > .admonition-title, .md-typeset .important > .admonition-title, .md-typeset .info > .admonition-title,
+.md-typeset .note > summary, .md-typeset .info > summary { background-color: var(--x-accent-soft); }
+.md-typeset .note > .admonition-title::before, .md-typeset .important > .admonition-title::before, .md-typeset .info > .admonition-title::before,
+.md-typeset .note > summary::before, .md-typeset .info > summary::before { background-color: var(--x-accent); }
+.md-typeset .admonition, .md-typeset details { box-shadow: none; }
+
+/* ==============================================================================
+   Presentation-friendly chapters: wider canvas, larger type, content on a card
+   (same grey canvas + white card language as the home page and the dashboard)
+   ============================================================================== */
+.md-grid { max-width: 1680px; }
+.md-typeset { font-size: 0.98rem; line-height: 1.8; }
+.md-typeset h1 { font-size: 2rem; }
+.md-typeset h2 { font-size: 1.4rem; }
+.md-nav { font-size: 0.78rem; }
+
+body[data-md-color-scheme="default"],
+body[data-md-color-scheme="default"] .md-main { background: #f2f4f7; }
+body[data-md-color-scheme="slate"],
+body[data-md-color-scheme="slate"] .md-main { background: #0e0f12; }
+
+.md-main__inner { margin-top: 1.2rem; }
+.md-content__inner {
+  margin: 0 1rem 2rem; padding: 1.6rem 2.2rem 1.4rem;
+  background: var(--x-surface); border: 1px solid var(--x-border); border-radius: 16px;
+  box-shadow: var(--x-shadow);
+}
+.md-content__inner::before { display: none; }
+/* the home page already lays out its own cards */
+body:has(.landing) .md-content__inner { background: transparent; border: 0; box-shadow: none; padding: 0; margin: 0 1rem 2rem; }
+
+/* tables and diagrams use the full card width */
+.md-typeset table:not([class]) { display: table; width: 100%; }
+.md-typeset .mermaid { text-align: center; }
+
+/* sidebars sit on the canvas: give the active item the same flat selected look */
+.md-sidebar .md-nav__link--active { background: var(--x-surface); border-radius: 8px; box-shadow: inset 0 0 0 1px var(--x-border); padding: 0.2rem 0.5rem; margin-left: -0.5rem; }
+
+@media (max-width: 76.1875em) { .md-content__inner { margin: 0 0.6rem 1.6rem; padding: 1.2rem 1.2rem 1rem; } }
+@media (max-width: 44.9375em) { .md-content__inner { margin: 0 0 1.2rem; border-radius: 0; border-left: 0; border-right: 0; padding: 1rem 0.9rem; } }
+
+/* Sticky sidebar titles must match the grey canvas, not white */
+body[data-md-color-scheme="default"] .md-sidebar .md-nav__title { background: #f2f4f7; box-shadow: none; }
+body[data-md-color-scheme="slate"] .md-sidebar .md-nav__title { background: #0e0f12; box-shadow: none; }
+
+/* Balanced type scale: readable on screen and in a recording without excessive wrapping */
+.md-typeset { font-size: 0.88rem; line-height: 1.75; }
+.md-typeset h1 { font-size: 1.65rem; line-height: 1.35; }
+.md-typeset h2 { font-size: 1.22rem; }
+.md-typeset h3 { font-size: 1rem; }
+.md-nav { font-size: 0.74rem; }
+body[data-md-color-scheme="default"] .md-sidebar .md-nav__title { background: #f2f4f7 !important; box-shadow: none !important; }
+body[data-md-color-scheme="slate"] .md-sidebar .md-nav__title { background: #0e0f12 !important; box-shadow: none !important; }
