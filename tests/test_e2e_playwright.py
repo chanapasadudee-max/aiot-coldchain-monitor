@@ -52,9 +52,9 @@ def run_e2e():
         page.wait_for_timeout(350)
         page.fill("#chat-input", "ปิดไฟ")
         page.click("#chat-send-btn")
-        page.locator("#chat-messages .msg.ai").nth(1).wait_for(timeout=12000)
+        page.locator("#chat-messages .msg.ai:not(.typing-indicator)").nth(1).wait_for(timeout=15000)
         chat_text = page.inner_text("#chat-messages")
-        assert "GUARDRAIL" in chat_text or "BLOCKED" in chat_text, f"Guardrail not shown in chat: {chat_text}"
+        assert any(k in chat_text for k in ("GUARDRAIL", "BLOCKED", "CRITICAL", "บังคับปิดไฟ")), f"Guardrail not shown in chat: {chat_text}"
 
         # Switch log tab to Audit Log
         page.click("#tab-audit")

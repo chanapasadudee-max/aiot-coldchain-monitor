@@ -430,7 +430,7 @@
     .kpis .kpi:nth-child(3) { border-top: 3px solid #6366f1; }
     .kpis .kpi:nth-child(4) { border-top: 3px solid #d97706; }
 
-    /* Real iMessage-style Chat Bubbles inside AI assistance popup */
+    /* Real iMessage-style Chat Bubbles inside AI Assistant popup */
     .chat-popup { border-radius: 20px !important; }
     .chat-popup .chat-messages { background: var(--bg) !important; padding: 14px !important; gap: 10px !important; }
     .chat-popup .msg {
@@ -480,6 +480,44 @@
     .kpi-ring-center .big-number,
     .kpi-ring-center .v { font-family: var(--num); font-size: 1.48rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; }
     .kpi-ring-center .u { font-size: 0.72rem; color: var(--text-faint); font-weight: 500; margin-top: 2px; display: block; }
+
+
+    /* Apple Clean Minimalist Polish (Plan Approved) */
+    html[data-theme="light"] { --bg: #f2f3f7; }
+    .panel, .kpi {
+      border-radius: 16px !important;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
+    }
+    .kpi:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15, 23, 42, 0.09) !important; }
+    .kpi-top .kpi-lbl { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--text-strong); }
+    .kpi-top .kpi-lbl svg { width: 15px; height: 15px; opacity: 0.78; flex-shrink: 0; }
+
+    /* Health Score Mini Circular Ring */
+    .health-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+    .mini-ring-wrap { position: relative; width: 46px; height: 46px; flex-shrink: 0; display: grid; place-items: center; }
+    .mini-ring-wrap svg { width: 46px; height: 46px; transform: rotate(-90deg); }
+    .mini-ring-bg { fill: none; stroke: var(--panel-2); stroke-width: 5.5; }
+    .mini-ring-fg { fill: none; stroke-width: 5.5; stroke-linecap: round; stroke-dasharray: 113; stroke-dashoffset: 0; transition: stroke-dashoffset .7s ease, stroke .3s; }
+
+    /* Zebra Striping on Asset Table (ข้อมูลสินทรัพย์) */
+    .dl dt, .dl dd { padding: 9px 10px !important; border-radius: 0; }
+    html[data-theme="light"] .dl dt:nth-of-type(odd),
+    html[data-theme="light"] .dl dd:nth-of-type(odd) { background: #f8f9fc; }
+    html[data-theme="dark"] .dl dt:nth-of-type(odd),
+    html[data-theme="dark"] .dl dd:nth-of-type(odd) { background: rgba(255, 255, 255, 0.025); }
+    .dl dd { font-weight: 600; color: var(--text-strong); }
+
+    /* Refined iMessage-style Chat Bubbles */
+    html[data-theme="light"] .chat-popup .msg.ai {
+      background: #e9e9eb !important;
+      color: #1d1d1f !important;
+      border: 0 !important;
+    }
+    html[data-theme="dark"] .chat-popup .msg.ai {
+      background: #2c2c2e !important;
+      color: #f5f5f7 !important;
+      border: 0 !important;
+    }
 
   </style>
 </head>
@@ -588,7 +626,7 @@
       <!-- Primary KPIs (Circular Ring Gauges) -->
       <div class="kpis">
         <div class="panel kpi">
-          <div class="kpi-top"><span>อุณหภูมิ</span><span class="src">HTS221</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>อุณหภูมิ</span><span class="src">HTS221</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
@@ -602,7 +640,7 @@
           <div class="kpi-foot"><span id="temp-tag">ช่วงปลอดภัย: 2.0 – 8.0°C</span><span>0–45°C</span></div>
         </div>
         <div class="panel kpi">
-          <div class="kpi-top"><span>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
@@ -616,7 +654,7 @@
           <div class="kpi-foot"><span id="humid-tag">เป้าหมาย: 45% – 75%</span><span>0–100%</span></div>
         </div>
         <div class="panel kpi">
-          <div class="kpi-top"><span>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2.5"/></svg>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
@@ -629,7 +667,7 @@
           <div class="kpi-foot"><span>อ้างอิง 1013.25 hPa</span><span>950–1050</span></div>
         </div>
         <div class="panel kpi">
-          <div class="kpi-top"><span>แรงสั่นสะเทือน</span><span class="src">MPU6050</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>แรงสั่นสะเทือน</span><span class="src">MPU6050</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
@@ -645,7 +683,18 @@
 
       <!-- AI analytics row -->
       <div class="panel metrics">
-        <div class="metric"><div class="l">Health Score</div><div id="m-health" class="mini-val" style="color: var(--ok);">100 / 100</div><div class="meter" style="margin-top:7px"><div class="fill" id="health-bar" style="width:100%; background: var(--ok)"></div></div></div>
+        <div class="metric">
+          <div class="l">Health Score</div>
+          <div class="health-row">
+            <div class="mini-ring-wrap">
+              <svg viewBox="0 0 44 44">
+                <circle class="mini-ring-bg" cx="22" cy="22" r="18"/>
+                <circle id="ring-health" class="mini-ring-fg" cx="22" cy="22" r="18" stroke="var(--ok)"/>
+              </svg>
+            </div>
+            <div id="m-health" class="mini-val" style="color: var(--ok);">100 / 100</div>
+          </div>
+        </div>
         <div class="metric"><div class="l">ความชันอุณหภูมิ (AI)</div><div class="mini-val"><span id="slope-val">+0.00</span> <span class="s">°C/step</span></div><div class="s" id="slope-tag">ความชันคงที่</div></div>
         <div class="metric"><div class="l">เวลาก่อนเกินเกณฑ์</div><div id="m-ettf" class="mini-val">ปลอดภัย (∞)</div><div class="s">ETTF (พยากรณ์)</div></div>
         <div class="metric"><div class="l">Z-Score</div><div id="m-zscore" class="mini-val">0.00</div><div class="s">เทียบค่าเฉลี่ยเคลื่อนที่</div></div>
@@ -738,20 +787,20 @@
 </div>
 
 <!-- Floating Bottom-Right AI Chat Widget -->
-<button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="เปิดแชตผู้ช่วย AI" title="AI assistance">
+<button id="chat-fab" class="chat-fab" onclick="toggleChatPopup()" aria-label="เปิดแชตAI Assistant" title="AI Assistant">
   <span class="fab-dot"></span>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
   </svg>
 </button>
 
-<section id="chat-popup" class="chat-popup" aria-label="AI assistance">
+<section id="chat-popup" class="chat-popup" aria-label="AI Assistant">
   <div class="panel-head">
-    <h3>AI assistance</h3>
+    <h3>AI Assistant</h3>
     <button class="chat-close-btn" onclick="toggleChatPopup(false)" title="ปิดหน้าต่างแชต">✕</button>
   </div>
   <div id="chat-messages" class="chat-messages">
-    <div class="msg ai"><span class="who">ผู้ช่วย AI</span>สวัสดีครับ มีอะไรให้ช่วยเช็กอุณหภูมิหรือสั่งงานบอร์ด บอกได้เลยครับ</div>
+    <div class="msg ai"><span class="who">AI Assistant</span>สวัสดีครับ มีอะไรให้ช่วยเช็กอุณหภูมิหรือสั่งงานบอร์ด บอกได้เลยครับ</div>
   </div>
   <div class="chat-foot">
     <div class="quick-prompts">
@@ -965,13 +1014,16 @@
       setBand('temp-band', currentSafeRange[0], currentSafeRange[1], 45);
       $('temp-tag').innerText = `ช่วงปลอดภัย: ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
       $('chart-band-tag').innerText = `Safe: ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
+      setKpiRing('ring-temp', (temp / 45) * 100, riskColor);
 
       // Humidity
       $('humid-val').innerText = humid.toFixed(1);
       setGauge('humid-bar', humid);
       const hMin = prof.humid_min ?? 45, hMax = prof.humid_max ?? 75;
       setBand('humid-band', hMin, hMax, 100);
-      $('humid-bar').style.background = (humid >= hMin && humid <= hMax) ? 'var(--info)' : 'var(--warn)';
+      const hColor = (humid >= hMin && humid <= hMax) ? '#0284c7' : 'var(--warn)';
+      setKpiRing('ring-humid', humid, hColor);
+      if ($('humid-bar')) $('humid-bar').style.background = hColor;
       $('humid-tag').innerText = `เป้าหมาย: ${hMin}% – ${hMax}%`;
       $('as-humid').innerText = `${hMin} – ${hMax} %`;
 
@@ -979,12 +1031,15 @@
       const press = ai.current_pressure ?? 1013.25;
       $('m-press').innerHTML = `${press.toFixed(1)}${unitSpan('hPa')}`;
       setGauge('press-bar', press - 950);
+      setKpiRing('ring-press', press - 950, '#6366f1');
       const vib = ai.current_vib_g ?? 0, vibWarn = prof.vib_warn ?? 0.35;
       const vibEl = $('m-vib');
       vibEl.innerHTML = `${vib.toFixed(3)}${unitSpan('g')}`;
       vibEl.style.color = ai.shock_detected ? 'var(--crit)' : 'var(--text-strong)';
       setGauge('vib-bar', (vib / (vibWarn * 2)) * 100);
-      if ($('vib-bar')) $('vib-bar').style.background = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : 'var(--info)';
+      const vColor = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : '#d97706';
+      setKpiRing('ring-vib', (vib / (vibWarn * 2)) * 100, vColor);
+      if ($('vib-bar')) $('vib-bar').style.background = vColor;
       $('vib-tag').innerText = `เกณฑ์เตือน ${vibWarn} g`;
       $('shock-tag').innerHTML = ai.shock_detected ? '<span class="tag crit">SHOCK</span>' : '';
 
@@ -997,7 +1052,8 @@
       $('m-health').innerText = `${hs} / 100`;
       $('m-health').style.color = hsColor;
       setGauge('health-bar', hs);
-      $('health-bar').style.background = hsColor;
+      if ($('ring-health')) { $('ring-health').style.strokeDashoffset = 113 - (clamp(hs) / 100) * 113; $('ring-health').style.stroke = hsColor; }
+      if ($('health-bar')) $('health-bar').style.background = hsColor;
       $('m-ettf').innerText = ai.ettf_seconds != null ? `~${ai.ettf_seconds.toFixed(0)}s` : 'ปลอดภัย (∞)';
       $('m-ettf').style.color = ai.ettf_seconds != null ? 'var(--warn)' : '';
       $('m-zscore').innerText = ai.z_score.toFixed(2);
@@ -1134,7 +1190,7 @@
     div.className = `msg ${role}`;
     const who = document.createElement('span');
     who.className = 'who';
-    who.innerText = role === 'user' ? 'คุณ' : 'AI assistance';
+    who.innerText = role === 'user' ? 'คุณ' : 'AI Assistant';
     div.appendChild(who);
     div.appendChild(document.createTextNode(text));
     if (meta) {
@@ -1163,7 +1219,7 @@
     const box = $('chat-messages');
     const div = document.createElement('div');
     div.className = 'msg ai typing-indicator';
-    div.innerHTML = '<span class="who">ผู้ช่วย AI</span><span class="typing-dots"><i></i><i></i><i></i></span>';
+    div.innerHTML = '<span class="who">AI Assistant</span><span class="typing-dots"><i></i><i></i><i></i></span>';
     box.appendChild(div);
     box.scrollTop = box.scrollHeight;
     return div;
