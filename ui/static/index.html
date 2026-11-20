@@ -821,20 +821,26 @@
     const safeBandPlugin = {
       id: 'safeBand',
       beforeDatasetsDraw(chart) {
-        if (currentMetric !== 'temp') return;
         const prof = PROFILES[currentProfile] || PROFILES.coldchain;
+        const bands = {
+          temp: [prof.safeMin, prof.safeMax],
+          hum:  [prof.humMin, prof.humMax],
+          pres: [1000, 1025],
+          vib:  [0, prof.vibWarn]
+        };
+        const [bMin, bMax] = bands[currentMetric] || [prof.safeMin, prof.safeMax];
         const { ctx, chartArea, scales: { y } } = chart;
         if (!chartArea || !y) return;
-        const yTop = y.getPixelForValue(prof.safeMax);
-        const yBot = y.getPixelForValue(prof.safeMin);
+        const yTop = y.getPixelForValue(bMax);
+        const yBot = y.getPixelForValue(bMin);
         const top = Math.max(chartArea.top, Math.min(chartArea.bottom, yTop));
         const bot = Math.max(chartArea.top, Math.min(chartArea.bottom, yBot));
 
         ctx.save();
-        ctx.fillStyle = 'rgba(5, 150, 105, 0.09)';
+        ctx.fillStyle = 'rgba(5, 150, 105, 0.08)';
         ctx.fillRect(chartArea.left, top, chartArea.right - chartArea.left, Math.max(0, bot - top));
 
-        ctx.strokeStyle = 'rgba(5, 150, 105, 0.72)';
+        ctx.strokeStyle = 'rgba(5, 150, 105, 0.68)';
         ctx.lineWidth = 1.4;
         ctx.setLineDash([5, 4]);
         [yTop, yBot].forEach(py => {
@@ -922,16 +928,11 @@
         vib:  { key: 'vib_g', label: 'แรงสั่นสะเทือน (G)' }
       }[currentMetric];
 
-      const lineColor = metricColors[currentMetric] || '#059669';
-      const fillMap = {
-        '#059669': 'rgba(5, 150, 105, 0.16)',
-        '#f59e0b': 'rgba(245, 158, 11, 0.18)',
-        '#dc2626': 'rgba(220, 38, 38, 0.16)'
-      };
+      const lineColor = '#2563eb';
       const ctx = mainChart.ctx;
       const grad = ctx.createLinearGradient(0, 0, 0, 290);
-      grad.addColorStop(0, fillMap[lineColor] || 'rgba(5, 150, 105, 0.16)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      grad.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
+      grad.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
 
       mainChart.data.labels = labels;
       mainChart.data.datasets[0].label = map.label;
