@@ -425,10 +425,10 @@
       transition: transform .18s ease, box-shadow .18s ease;
     }
     .kpi:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08); }
-    .kpis .kpi:nth-child(1) { border-top: 3px solid #dc2626; }
-    .kpis .kpi:nth-child(2) { border-top: 3px solid #0284c7; }
-    .kpis .kpi:nth-child(3) { border-top: 3px solid #6366f1; }
-    .kpis .kpi:nth-child(4) { border-top: 3px solid #d97706; }
+    .kpis .kpi:nth-child(1) { border-top: 3px solid #8c181c; }
+    .kpis .kpi:nth-child(2) { border-top: 3px solid #d99b00; }
+    .kpis .kpi:nth-child(3) { border-top: 3px solid #58585a; }
+    .kpis .kpi:nth-child(4) { border-top: 3px solid #b45309; }
 
     /* Real iMessage-style Chat Bubbles inside AI Assistant popup */
     .chat-popup { border-radius: 20px !important; }
@@ -640,11 +640,11 @@
           <div class="kpi-foot"><span id="temp-tag">ช่วงปลอดภัย: 2.0 – 8.0°C</span><span>0–45°C</span></div>
         </div>
         <div class="panel kpi">
-          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#d99b00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
-              <circle id="ring-humid" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#0284c7"/>
+              <circle id="ring-humid" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#d99b00"/>
             </svg>
             <div class="kpi-ring-center">
               <span id="humid-val" class="big-number">60.0</span>
@@ -654,11 +654,11 @@
           <div class="kpi-foot"><span id="humid-tag">เป้าหมาย: 45% – 75%</span><span>0–100%</span></div>
         </div>
         <div class="panel kpi">
-          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2.5"/></svg>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
+          <div class="kpi-top"><span class="kpi-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="#58585a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 12l4-2.5"/></svg>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
           <div class="kpi-ring-wrap">
             <svg viewBox="0 0 108 108">
               <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
-              <circle id="ring-press" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#6366f1"/>
+              <circle id="ring-press" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#58585a"/>
             </svg>
             <div class="kpi-ring-center">
               <span id="m-press" class="v">1013.2<span class="u">hPa</span></span>
@@ -839,9 +839,20 @@
     popup.classList.toggle('open', willOpen);
     if (willOpen) setTimeout(() => $('chat-input')?.focus(), 120);
   }
-  document.querySelector('a[href="#copilot"]')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    toggleChatPopup(true);
+// Smooth scroll & active highlight for all sidebar nav links
+  document.querySelectorAll('.sidebar nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').slice(1);
+      document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      if (targetId === 'copilot') {
+        toggleChatPopup(true);
+        return;
+      }
+      const el = document.getElementById(targetId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   });
   const ICONS = {
     ok: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
@@ -1021,7 +1032,7 @@
       setGauge('humid-bar', humid);
       const hMin = prof.humid_min ?? 45, hMax = prof.humid_max ?? 75;
       setBand('humid-band', hMin, hMax, 100);
-      const hColor = (humid >= hMin && humid <= hMax) ? '#0284c7' : 'var(--warn)';
+      const hColor = (humid >= hMin && humid <= hMax) ? '#d99b00' : 'var(--crit)';
       setKpiRing('ring-humid', humid, hColor);
       if ($('humid-bar')) $('humid-bar').style.background = hColor;
       $('humid-tag').innerText = `เป้าหมาย: ${hMin}% – ${hMax}%`;
@@ -1031,13 +1042,13 @@
       const press = ai.current_pressure ?? 1013.25;
       $('m-press').innerHTML = `${press.toFixed(1)}${unitSpan('hPa')}`;
       setGauge('press-bar', press - 950);
-      setKpiRing('ring-press', press - 950, '#6366f1');
+      setKpiRing('ring-press', press - 950, '#58585a');
       const vib = ai.current_vib_g ?? 0, vibWarn = prof.vib_warn ?? 0.35;
       const vibEl = $('m-vib');
       vibEl.innerHTML = `${vib.toFixed(3)}${unitSpan('g')}`;
       vibEl.style.color = ai.shock_detected ? 'var(--crit)' : 'var(--text-strong)';
       setGauge('vib-bar', (vib / (vibWarn * 2)) * 100);
-      const vColor = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : '#d97706';
+      const vColor = (ai.shock_detected || vib >= vibWarn) ? '#8c181c' : '#d99b00';
       setKpiRing('ring-vib', (vib / (vibWarn * 2)) * 100, vColor);
       if ($('vib-bar')) $('vib-bar').style.background = vColor;
       $('vib-tag').innerText = `เกณฑ์เตือน ${vibWarn} g`;
