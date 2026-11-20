@@ -460,6 +460,27 @@
     .chat-popup .chat-input { border-radius: 999px !important; padding-left: 14px !important; }
     .chat-popup .send-btn { border-radius: 999px !important; padding: 0 18px !important; }
 
+
+    /* Circular Ring Gauges inside the 4 KPI cards */
+    .kpi-ring-wrap {
+      position: relative; width: 118px; height: 118px;
+      margin: 10px auto 8px; display: grid; place-items: center;
+    }
+    .kpi-ring-wrap svg { width: 118px; height: 118px; transform: rotate(-90deg); }
+    .kpi-ring-bg { fill: none; stroke: var(--panel-2); stroke-width: 10; }
+    .kpi-ring-fg {
+      fill: none; stroke-width: 10; stroke-linecap: round;
+      stroke-dasharray: 289; stroke-dashoffset: 289;
+      transition: stroke-dashoffset .75s cubic-bezier(0.22, 1, 0.36, 1), stroke .3s;
+    }
+    .kpi-ring-center {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+    }
+    .kpi-ring-center .big-number,
+    .kpi-ring-center .v { font-family: var(--num); font-size: 1.48rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; }
+    .kpi-ring-center .u { font-size: 0.72rem; color: var(--text-faint); font-weight: 500; margin-top: 2px; display: block; }
+
   </style>
 </head>
 <body>
@@ -564,30 +585,60 @@
         </div>
       </div>
 
-      <!-- Primary KPIs -->
+      <!-- Primary KPIs (Circular Ring Gauges) -->
       <div class="kpis">
         <div class="panel kpi">
           <div class="kpi-top"><span>อุณหภูมิ</span><span class="src">HTS221</span></div>
-          <div class="kpi-val"><span id="temp-val" class="big-number">4.2</span><span class="u">°C</span></div>
-          <div class="meter"><div class="band" id="temp-band"></div><div class="fill" id="temp-bar"></div></div>
-          <div class="kpi-foot"><span id="temp-tag">ช่วงปลอดภัย: 2.0 – 8.0°C</span><span>สเกล 0–45°C</span></div>
+          <div class="kpi-ring-wrap">
+            <svg viewBox="0 0 108 108">
+              <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
+              <circle id="ring-temp" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#dc2626"/>
+            </svg>
+            <div class="kpi-ring-center">
+              <span id="temp-val" class="big-number">4.2</span>
+              <span class="u">°C</span>
+            </div>
+          </div>
+          <div class="kpi-foot"><span id="temp-tag">ช่วงปลอดภัย: 2.0 – 8.0°C</span><span>0–45°C</span></div>
         </div>
         <div class="panel kpi">
           <div class="kpi-top"><span>ความชื้นสัมพัทธ์</span><span class="src">HTS221</span></div>
-          <div class="kpi-val"><span id="humid-val" class="big-number">60.0</span><span class="u">%RH</span></div>
-          <div class="meter"><div class="band" id="humid-band"></div><div class="fill" id="humid-bar"></div></div>
-          <div class="kpi-foot"><span id="humid-tag">เป้าหมาย: 45% – 75%</span><span>สเกล 0–100%</span></div>
+          <div class="kpi-ring-wrap">
+            <svg viewBox="0 0 108 108">
+              <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
+              <circle id="ring-humid" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#0284c7"/>
+            </svg>
+            <div class="kpi-ring-center">
+              <span id="humid-val" class="big-number">60.0</span>
+              <span class="u">%RH</span>
+            </div>
+          </div>
+          <div class="kpi-foot"><span id="humid-tag">เป้าหมาย: 45% – 75%</span><span>0–100%</span></div>
         </div>
         <div class="panel kpi">
           <div class="kpi-top"><span>ความดันบรรยากาศ</span><span class="src">BMP280</span></div>
-          <div class="kpi-val"><span id="m-press" class="v">1013.2<span class="u">hPa</span></span></div>
-          <div class="meter"><div class="fill" id="press-bar"></div></div>
-          <div class="kpi-foot"><span>อ้างอิง 1013.25 hPa</span><span>สเกล 950–1050</span></div>
+          <div class="kpi-ring-wrap">
+            <svg viewBox="0 0 108 108">
+              <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
+              <circle id="ring-press" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#6366f1"/>
+            </svg>
+            <div class="kpi-ring-center">
+              <span id="m-press" class="v">1013.2<span class="u">hPa</span></span>
+            </div>
+          </div>
+          <div class="kpi-foot"><span>อ้างอิง 1013.25 hPa</span><span>950–1050</span></div>
         </div>
         <div class="panel kpi">
           <div class="kpi-top"><span>แรงสั่นสะเทือน</span><span class="src">MPU6050</span></div>
-          <div class="kpi-val"><span id="m-vib" class="v">0.020<span class="u">g</span></span></div>
-          <div class="meter"><div class="fill" id="vib-bar"></div><div class="mark" style="left:50%"></div></div>
+          <div class="kpi-ring-wrap">
+            <svg viewBox="0 0 108 108">
+              <circle class="kpi-ring-bg" cx="54" cy="54" r="46"/>
+              <circle id="ring-vib" class="kpi-ring-fg" cx="54" cy="54" r="46" stroke="#d97706"/>
+            </svg>
+            <div class="kpi-ring-center">
+              <span id="m-vib" class="v">0.020<span class="u">g</span></span>
+            </div>
+          </div>
           <div class="kpi-foot"><span id="vib-tag">เกณฑ์เตือน 0.35 g</span><span id="shock-tag"></span></div>
         </div>
       </div>
@@ -720,6 +771,14 @@
   const $ = (id) => document.getElementById(id);
   const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const clamp = (v, a = 0, b = 100) => Math.max(a, Math.min(b, v));
+
+  function setKpiRing(id, pct, color) {
+    const el = $(id);
+    if (!el) return;
+    const C = 289;
+    el.style.strokeDashoffset = C - (clamp(pct) / 100) * C;
+    if (color) el.style.stroke = color;
+  }
   const fmtClock = (d) => d.toLocaleTimeString('en-GB', { hour12: false });
   function escHtml(str) {
     return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -902,7 +961,7 @@
       $('temp-val').innerText = temp.toFixed(1);
       $('temp-val').style.color = risk === 'NORMAL' ? 'var(--text-strong)' : riskColor;
       setGauge('temp-bar', (temp / 45) * 100);
-      $('temp-bar').style.background = riskColor;
+      if ($('temp-bar')) $('temp-bar').style.background = riskColor;
       setBand('temp-band', currentSafeRange[0], currentSafeRange[1], 45);
       $('temp-tag').innerText = `ช่วงปลอดภัย: ${currentSafeRange[0]} – ${currentSafeRange[1]}°C`;
       $('chart-band-tag').innerText = `Safe: ${currentSafeRange[0]}–${currentSafeRange[1]}°C`;
@@ -925,7 +984,7 @@
       vibEl.innerHTML = `${vib.toFixed(3)}${unitSpan('g')}`;
       vibEl.style.color = ai.shock_detected ? 'var(--crit)' : 'var(--text-strong)';
       setGauge('vib-bar', (vib / (vibWarn * 2)) * 100);
-      $('vib-bar').style.background = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : 'var(--info)';
+      if ($('vib-bar')) $('vib-bar').style.background = (ai.shock_detected || vib >= vibWarn) ? 'var(--crit)' : 'var(--info)';
       $('vib-tag').innerText = `เกณฑ์เตือน ${vibWarn} g`;
       $('shock-tag').innerHTML = ai.shock_detected ? '<span class="tag crit">SHOCK</span>' : '';
 
