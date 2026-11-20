@@ -313,17 +313,36 @@
     .dot-led.r { background: #dc2626; } .dot-led.o { border: 2px solid currentColor; }
     .ctrl-hint { margin-top: 10px; font-size: 0.76rem; color: var(--text-dim); }
 
-    /* ================= Bottom Row: Events & MQTT ================= */
-    .events-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .log-list {
-      max-height: 140px; overflow-y: auto; margin-top: 10px;
-      font-family: var(--mono); font-size: 0.73rem; color: var(--text-dim);
-      display: flex; flex-direction: column; gap: 6px;
+    /* ================= Bottom Row: Stacked Full-Width Clean Tables ================= */
+    .events-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .table-wrap {
+      margin-top: 12px; max-height: 240px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 14px;
     }
-    .log-row {
-      padding: 7px 11px; border-radius: 10px; background: var(--card-2);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .clean-table {
+      width: 100%; border-collapse: collapse; font-size: 0.83rem; text-align: left;
     }
+    .clean-table th {
+      position: sticky; top: 0; z-index: 1;
+      background: var(--card-2); color: var(--text-dim);
+      font-size: 0.74rem; font-weight: 700; padding: 10px 14px;
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .clean-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text); vertical-align: middle; line-height: 1.4;
+    }
+    .clean-table tr:last-child td { border-bottom: 0; }
+    .clean-table tr:hover td { background: var(--card-2); }
+    .td-mono { font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim); white-space: nowrap; }
+    .pill-tag {
+      display: inline-flex; align-items: center; padding: 3px 10px;
+      border-radius: 999px; font-size: 0.72rem; font-weight: 700; white-space: nowrap;
+    }
+    .pill-tag.ok { background: rgba(5, 150, 105, 0.12); color: var(--ok); }
+    .pill-tag.crit { background: rgba(220, 38, 38, 0.12); color: var(--crit); }
+    .pill-tag.info { background: rgba(37, 99, 235, 0.12); color: var(--info); }
+    .pill-tag.warn { background: rgba(217, 119, 6, 0.14); color: var(--warn); }
 
     footer { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--text-faint); padding: 4px 6px; }
 
@@ -666,15 +685,51 @@
         </div>
       </section>
 
-      <!-- Bottom Row: Audit Log & MQTT Stream -->
+      <!-- Bottom Stacked Tables: Audit Log on top, MQTT Stream below -->
       <section class="events-row">
         <div class="card">
-          <div id="tab-audit" class="card-title">บันทึกเหตุการณ์ (Audit Log)</div>
-          <div id="audit-list" class="log-list"><div class="log-row">กำลังโหลดข้อมูล...</div></div>
+          <div class="led-head">
+            <div id="tab-audit" class="card-title">บันทึกเหตุการณ์ (Audit Log)</div>
+            <span class="card-sub">ประวัติคำสั่ง AI และการตรวจสอบความปลอดภัย</span>
+          </div>
+          <div class="table-wrap">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>เวลา</th>
+                  <th>ข้อความผู้ใช้</th>
+                  <th>การทำงาน</th>
+                  <th>รายละเอียดระบบป้องกัน</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="audit-list">
+                <tr><td colspan="5" style="text-align:center;color:var(--text-dim);">กำลังโหลดข้อมูล...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+
         <div class="card">
-          <div class="card-title">สตรีมข้อมูล MQTT</div>
-          <div id="mqtt-list" class="log-list"><div class="log-row">รอรับข้อมูลจาก Broker...</div></div>
+          <div class="led-head">
+            <div class="card-title">สตรีมข้อมูล MQTT</div>
+            <span class="card-sub">ข้อมูลรับ-ส่งแบบเรียลไทม์ระหว่างบอร์ดกับเซิร์ฟเวอร์</span>
+          </div>
+          <div class="table-wrap">
+            <table class="clean-table">
+              <thead>
+                <tr>
+                  <th>เวลา</th>
+                  <th>ทิศทาง</th>
+                  <th>Topic</th>
+                  <th>ข้อมูลสรุป</th>
+                </tr>
+              </thead>
+              <tbody id="mqtt-list">
+                <tr><td colspan="4" style="text-align:center;color:var(--text-dim);">รอรับข้อมูลจาก Broker...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -917,6 +972,16 @@
       } catch (e) { console.error(e); }
     }
 
+    function fmtTime(ts) {
+      if (!ts) return '-';
+      const d = new Date(ts);
+      return isNaN(d.getTime()) ? String(ts).slice(11, 19) : d.toLocaleTimeString('th-TH', { hour12: false });
+    }
+
+    function esc(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
     async function fetchLogs() {
       try {
         const [aRes, mRes] = await Promise.all([fetch('/api/audit'), fetch('/api/mqtt-log')]);
@@ -924,14 +989,41 @@
         const mqtt = await mRes.json();
         const aList = document.getElementById('audit-list');
         const mList = document.getElementById('mqtt-list');
-        const auditRows = (audit.audit_log || audit.logs || []).slice().reverse().slice(0, 10);
-        const mqttRows = (mqtt.packets || mqtt.logs || []).slice().reverse().slice(0, 10);
-        aList.innerHTML = auditRows.map(l =>
-          `<div class="log-row">[${(l.timestamp||l.ts||'').slice(11,19)}] ${l.action || l.event || l.type || 'EVENT'} — ${l.detail || l.reason || l.message || JSON.stringify(l)}</div>`
-        ).join('') || '<div class="log-row">ยังไม่มีบันทึกเหตุการณ์</div>';
-        mList.innerHTML = mqttRows.map(l =>
-          `<div class="log-row">${typeof l === 'string' ? l : `[${(l.ts||l.timestamp||'').slice(11,19)}] ${l.topic || 'telemetry'} ${l.payload ? JSON.stringify(l.payload) : JSON.stringify(l)}`}</div>`
-        ).join('') || '<div class="log-row">ยังไม่มีข้อมูล MQTT</div>';
+        const auditRows = (audit.audit_log || []).slice(0, 10);
+        const mqttRows = (mqtt.packets || []).slice().reverse().slice(0, 10);
+
+        aList.innerHTML = auditRows.map(l => {
+          const ok = l.allowed !== false;
+          const badge = ok
+            ? '<span class="pill-tag ok">อนุญาต</span>'
+            : '<span class="pill-tag crit">บล็อก</span>';
+          const actMap = { chat: 'สนทนา', get_status: 'ดูสถานะ', set_led: 'สั่งไฟ LED' };
+          const actLabel = actMap[l.action] || l.action || 'EVENT';
+          return `<tr>
+            <td class="td-mono">${esc(fmtTime(l.ts || l.timestamp))}</td>
+            <td>${esc(l.user_message || '-')}</td>
+            <td><span class="pill-tag info">${esc(actLabel)}</span></td>
+            <td>${esc(l.guardrail_note || l.detail || '-')}</td>
+            <td>${badge}</td>
+          </tr>`;
+        }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);">ยังไม่มีบันทึกเหตุการณ์</td></tr>';
+
+        mList.innerHTML = mqttRows.map(p => {
+          const isRx = p.dir === 'RX_DATA';
+          const dirBadge = isRx
+            ? '<span class="pill-tag info">รับค่าเซ็นเซอร์</span>'
+            : '<span class="pill-tag warn">ส่งคำสั่งบอร์ด</span>';
+          const pl = p.payload || {};
+          const summary = isRx
+            ? `Node: ${pl.node_id || '-'} · อุณหภูมิ ${pl.temp ?? '-'}°C · ความชื้น ${pl.humid ?? '-'}% · แรงสั่น ${pl.vib_g ?? '-'}G`
+            : `คำสั่ง: ${pl.cmd || '-'} (${pl.mode || '-'}) RGB(${pl.r ?? 0}, ${pl.g ?? 0}, ${pl.b ?? 0})`;
+          return `<tr>
+            <td class="td-mono">${esc(fmtTime(p.ts))}</td>
+            <td>${dirBadge}</td>
+            <td class="td-mono">${esc(p.topic || '-')}</td>
+            <td>${esc(summary)}</td>
+          </tr>`;
+        }).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-dim);">ยังไม่มีข้อมูล MQTT</td></tr>';
       } catch (e) {}
     }
 
