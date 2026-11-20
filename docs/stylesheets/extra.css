@@ -693,3 +693,12 @@ body[data-md-color-scheme="slate"] .md-sidebar .md-nav__title { background: #0e0
 .md-nav { font-size: 0.74rem; }
 body[data-md-color-scheme="default"] .md-sidebar .md-nav__title { background: #f2f4f7 !important; box-shadow: none !important; }
 body[data-md-color-scheme="slate"] .md-sidebar .md-nav__title { background: #0e0f12 !important; box-shadow: none !important; }
+
+body[data-md-color-scheme="default"] .md-sidebar .md-nav__item--section > .md-nav__link {
+  background: #f2f4f7 !important;
+  box-shadow: none !important;
+}
+body[data-md-color-scheme="slate"] .md-sidebar .md-nav__item--section > .md-nav__link {
+  background: #0e0f12 !important;
+  box-shadow: none !important;
+}
